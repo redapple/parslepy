@@ -1,10 +1,12 @@
 parslepy
 ========
 
-Python/Lxml implementation of the Parsley language for extracting structured data from web pages.
+(partial) Python/Lxml implementation of the Parsley language for extracting structured data from web pages.
 
-Example usage
-=============
+**This *Parsley* has nothing to do with https://pypi.python.org/pypi/Parsley**
+
+### Example usage ###
+
 
 ```
 $ cat examples/engadget.let.js 
@@ -44,22 +46,22 @@ $ python run_parslepy.py --script examples/engadget.let.js --url http://www.enga
 
 ```
 
-References
-==========
+### References ###
+
 * https://github.com/fizx/parsley
 * https://github.com/fizx/parsley/wiki/JSON-Structure
 * http://snipplr.com/view/67016/parsley-spider/
+* https://news.ycombinator.com/item?id=1585301
 
-Dependencies
-============
+### Dependencies ###
+
 * lxml (http://lxml.de/)
 
-ToDo
-====
+### ToDo ###
 
 * add tests
 * support XPath functions with CSS selectors
 * support optionality operator ("?")
-* support complete arrays with the ! operator (https://github.com/fizx/parsley/wiki/JSON-Structure#requiring-complete-arrays-with-the--operator) 
+* support complete arrays with the "!" operator (https://github.com/fizx/parsley/wiki/JSON-Structure#requiring-complete-arrays-with-the--operator) 
 * support bucketed arrays (https://github.com/fizx/parsley/wiki/JSON-Structure#bucketed-arrays)
 * investigate PyParsley API
