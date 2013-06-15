@@ -25,7 +25,7 @@ def main():
 
     with open(options.parselet) as fp:
 
-        extractor = parslepy.ParsleyExtractor.from_jsonfile(fp, options.debug)
+        extractor = parslepy.Parselet.from_jsonfile(fp, options.debug)
         output = extractor.parse(options.url or options.inputfile)
         pprint.pprint(output)
 

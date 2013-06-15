@@ -6,6 +6,7 @@ import lxml.etree
 import lxml.cssselect
 import re
 from .funcs import *
+import json
 
 def xpathtostring(context, nodes):
     return tostring(nodes)
@@ -42,7 +43,7 @@ class Selector(object):
         self.selector = selector
 
 class selector_handlerandler(object):
-    DEBUG = True
+    DEBUG = False
 
     def make(self):
         raise NotImplemented
@@ -149,7 +150,7 @@ class Defaultselector_handlerandler(selector_handlerandler):
             return None
 
 
-class ParsleyExtractor(object):
+class Parselet(object):
 
     DEBUG = False
     SPECIAL_LEVEL_KEY = "--"
@@ -170,10 +171,21 @@ class ParsleyExtractor(object):
 
         self.compile()
 
+    # accept comments in parselets
+    REGEX_COMMENT_LINE = re.compile(r'^\s*#')
     @classmethod
     def from_jsonfile(cls, fp, debug=False):
-        import json
-        return cls(json.load(fp), debug=debug)
+        return cls._from_jsonlines(fp, debug=debug)
+
+    @classmethod
+    def from_jsonstring(cls, s, debug=False):
+        return cls._from_jsonlines(s.split("\n"), debug=debug)
+
+    @classmethod
+    def _from_jsonlines(cls, lines, debug=False):
+        return cls(json.loads(
+                u"\n".join([l for l in lines if not cls.REGEX_COMMENT_LINE.match(l)])
+            ), debug=debug)
 
     def parse(self, f):
         doc = lxml.html.parse(f).getroot()
@@ -241,7 +253,6 @@ class ParsleyExtractor(object):
         elif isinstance(parselet_node, basestring):
             return self.selector_handler.make(parselet_node)
 
-
     def extract(self, document):
         return self._extract(self.parselet_tree, document)
 
@@ -303,5 +314,3 @@ class ParsleyExtractor(object):
 
         elif isinstance(parselet_node, Selector):
             return self.selector_handler.extract(document, parselet_node)
-
-

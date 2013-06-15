@@ -1,4 +1,4 @@
-from parslepy.base import ParsleyExtractor
+from parslepy.base import Parselet
 
 _version__ = '0.1'
-__all__ = ['ParsleyExtractor']
+__all__ = ['Parselet']
