@@ -22,13 +22,33 @@ def xpathtostringnl(context, nodes):
 #           ...or
 #       ParsleyContext(key, options[, Selector]): Selector,
 #       ...)
-
+# --> a tree of ParsleyNode instances,
+#     with terminal leaves of type Selector,
+#     a parent ParsleyNode having 1 or more ParsleyNode children
+#     references through ParsleyContext keys
+#
 class ParsleyNode(dict):
-    pass
+    def __repr__(self):
+        return u"<ParsleyNode: k=%s; %s>" % self
 
 
 class ParsleyContext(object):
-    def __init__(self, key, operator=None, required=None, scope=None, iterate=False):
+    """
+    Stores parameters associated with extraction keys in `ParsleyNode` trees.
+    Used as keys in `ParsleyNode` objects
+    """
+
+    def __init__(self, key, operator=None, required=True, scope=None, iterate=False):
+        """
+        Only `key` is required
+
+        Arguments:
+        operator (str)     -- "?" optional,  "!" for complete arrays; defaults to None (i.e. required)
+        required (boolean) -- whether the key is required in the output (defaults to True)
+        scope (`Selector`) -- restrict extraction to elements matching this selector
+        iterate (boolean)  -- whether multiple objects will be extracted (defaults to False)
+        """
+
         self.key = key
         self.operator = operator
         self.required = required
@@ -41,24 +61,62 @@ class ParsleyContext(object):
 
 
 class Selector(object):
+    """
+    A dummy wrapper to easily detect that processing should be passed
+    to `SelectorHandler`when running the extraction on documents
+    """
+
     def __init__(self, selector):
         self.selector = selector
 
 
 class SelectorHandler(object):
+    """
+    Called when building abstract Parsley trees
+    and when etracting object values when actually parsing documents
+
+    This should be subclassed to implement the selector processing logic
+    you need for your Parsley handling.
+
+    All 3 methods, `make()`, `select()` and `extract()` MUST be overridden
+    """
+
     DEBUG = False
 
-    def make(self):
+    def make(self, selection):
+        """
+        Interpret `selection` (str) as a selector
+        for elements or element values in a (semi-)structured document
+
+        Return a `Selector` instance
+        """
         raise NotImplemented
 
-    def select(self, document):
+    def select(self, document, selector):
+        """
+        Apply the selector (`Selector instance) on the document (`lxml.etree.Element`)
+        and return `lxml.etree.Element`
+        """
         raise NotImplemented
 
-    def extract(self):
+    def extract(self, document, selector):
+        """
+        Apply the selector (`Selector instance) on the document (`lxml.etree.Element`)
+        and return a value for the matching elements, element attributes
+
+        This can be single- or multi-valued
+        """
         raise NotImplemented
 
 
 class DefaultSelectorHandler(SelectorHandler):
+    """
+    Default selector logic, loosely based on the original
+    implementation
+
+    This handler understands what cssselect and lxml.etree.XPath understands,
+    that is XPath 1.0 and CSS 3 for things that dont need browser context
+    """
 
     XPATH_EXTENSIONS = {
         ('parsley', 'str') : xpathtostring,
@@ -74,15 +132,29 @@ class DefaultSelectorHandler(SelectorHandler):
 
     @classmethod
     def _add_parsley_extension_functions(cls, namespace_dict):
+        """
+        Extend XPath evaluation with Parsley extensions' namespace
+        """
+
         namespace_dict.update({
             'prsl' : 'parsley',
             'parsley' : 'parsley'
         })
         return namespace_dict
 
+    # example: "a img @src" (fetch the 'src' attribute of an IMG tag)
     REGEX_ENDING_ATTRIBUTE = re.compile(r'^(?P<expr>.+)\s+(?P<attr>@[\w_\d]+)$')
     @classmethod
     def make(cls, selection):
+        """
+        Scopes and selectors are tested in this order:
+        * is this a CSS selector with an appended @something attribute?
+        * is this a regular CSS selector?
+        * is this an XPath expression?
+
+        XPath expression can also use EXSLT functions (as long as they are
+        understood by libxslt)
+        """
 
         namespaces = cls.EXSLT_NAMESPACES
         cls._add_parsley_extension_functions(namespaces)
@@ -122,8 +194,15 @@ class DefaultSelectorHandler(SelectorHandler):
             print str(e)
             return
 
-    def extract(self, document, parselet_node, debug_offset=''):
-        selected = self.select(document, parselet_node)
+    def extract(self, document, selector, debug_offset=''):
+        """
+        Try and convert matching Elements as unicode strings
+
+        If this fails, the selector evaluation probably already
+        gave some string of some sort, so return that instead.
+        """
+
+        selected = self.select(document, selector)
         if selected:
             if self.DEBUG:
                 print debug_offset, selected
@@ -155,11 +234,33 @@ class DefaultSelectorHandler(SelectorHandler):
 
 
 class Parselet(object):
+    """
+    Abstract representation of a Parsley script.
+
+    Instances should be initialized with a dict representing
+    key-to-objects mapping/structure to extract
+
+    Two helper methods instantiate the Parselet
+    from JSON Parsley scripts, either as files or strings
+    """
 
     DEBUG = False
     SPECIAL_LEVEL_KEY = "--"
 
     def __init__(self, parselet, selector_handler=None, debug=False):
+        """
+        Take a parselet (dict) and optional selector_handler
+        (SelectorHandler subclass instance)
+        and build an abstract representation of the Parsley extraction
+        logic
+
+        The internal abstract Parsley tree is a dict/tree of ParsleyNode
+        objects, with leaves being of type Selector (terminal elements).
+
+        Parent and child ParsleyNode instances are linked through
+        ParsleyContext keys.
+        """
+
         if debug:
             self.DEBUG = True
         self.parselet =  parselet
@@ -179,27 +280,74 @@ class Parselet(object):
     REGEX_COMMENT_LINE = re.compile(r'^\s*#')
     @classmethod
     def from_jsonfile(cls, fp, debug=False):
+        """
+        Create a Parselet instance from fp (an open file pointer) containing
+        the Parsley script as JSON
+
+        >>> import parslepy
+        >>> with open('parselet.js') as fp:
+        ...     parslepy.Parselet.from_jsonfile(fp)
+        ...
+        <parslepy.base.Parselet object at 0x2014e50>
+        >>>
+        """
+
         return cls._from_jsonlines(fp, debug=debug)
 
     @classmethod
     def from_jsonstring(cls, s, debug=False):
+        """
+        Create a Parselet instance from s (str) containing
+        the Parsley script as JSON
+
+        >>> import parslepy
+        >>> parsley_string = '{ "title": "h1", "link": "a @href"}'
+        >>> parslepy.Parselet.from_jsonstring(parsley_string)
+        <parslepy.base.Parselet object at 0x183a050>
+        >>>
+        """
+
         return cls._from_jsonlines(s.split("\n"), debug=debug)
 
     @classmethod
     def _from_jsonlines(cls, lines, debug=False):
+        """
+        Interpret input lines as a JSON Parsley script.
+        Python-style comment lines are skipped.
+        """
+
         return cls(json.loads(
                 u"\n".join([l for l in lines if not cls.REGEX_COMMENT_LINE.match(l)])
             ), debug=debug)
 
     def parse(self, f):
+        """
+        Parse an HTML document f (a file-like object) and
+        return the extacted object following the Parsley script structure
+        """
+        # FIXME: make the parser configurable,
+        #        for XML parsing for example, or to force encoding
         doc = lxml.html.parse(f).getroot()
         return self.extract(doc)
 
     def compile(self):
+        """
+        Build the abstract Parsley tree starting from the root node
+        (recursive)
+        """
+
         self.parselet_tree = self._compile(self.parselet)
 
     REGEX_PARSELET_KEY = re.compile("(?P<key>[^()!+?]+)(?P<operator>[+!?])?(\((?P<scope>.+)\))?")
     def _compile(self, parselet_node, level=0):
+        """
+        Build part of the abstract Parsley extraction tree
+
+        Arguments:
+        parselet_node (dict) -- part of the Parsley tree to compile
+                                (can be the root dict/node)
+        level (int)          -- current recursion depth (used for debug)
+        """
 
         if self.DEBUG:
             debug_offset = "".join(["    " for x in range(level)])
@@ -212,6 +360,8 @@ class Parselet(object):
             parselet_tree = ParsleyNode()
             for k, v in parselet_node.iteritems():
 
+                # we parse the key raw elements but without much
+                # interpretation (which is done by the SelectorHandler)
                 m = self.REGEX_PARSELET_KEY.match(k)
                 if not m:
                     if self.DEBUG:
@@ -235,6 +385,7 @@ class Parselet(object):
                 else:
                     iterate = False
 
+                # keys in the abstract Parsley trees are of type `ParsleyContext`
                 parsley_context = ParsleyContext(
                     key,
                     operator=operator,
@@ -245,6 +396,7 @@ class Parselet(object):
                 if self.DEBUG:
                     print debug_offset, "current context:", parsley_context
 
+                # go deeper in the Parsley tree...
                 child_tree = self._compile(v, level=level+1)
                 if self.DEBUG:
                     print debug_offset, "child tree:", child_tree
@@ -253,26 +405,44 @@ class Parselet(object):
 
             return parselet_tree
 
-        # a string leaf should match some kind of selector
+        # a string leaf should match some kind of selector,
+        # let the selector handler deal with it
         elif isinstance(parselet_node, basestring):
+            # FIXME: if the selector handler does not understand the input
+            #        we should raise some kind of exception
             return self.selector_handler.make(parselet_node)
 
     def extract(self, document):
+        """
+        Extract values as a dict object following the structure
+        of the Parsley script (recursive)
+        """
+
         return self._extract(self.parselet_tree, document)
 
     def _extract(self, parselet_node, document, level=0):
+        """
+        Extract values at this document node level
+        using the parselet_node instructions:
+        - go deeper in tree
+        - or call selector handler in case of a terminal selector leaf
+        """
 
         if self.DEBUG:
             debug_offset = "".join(["    " for x in range(level)])
 
+        # we must go deeper in the Parsley tree
         if isinstance(parselet_node, ParsleyNode):
 
             output = {}
 
+            # process all children
             for ctx, v in parselet_node.iteritems():
                 if self.DEBUG:
                     print debug_offset, "context:", ctx, v
 
+                # scoped-extraction:
+                # extraction should be done deeper in the document tree
                 if ctx.scope:
                     extracted = []
                     selected = self.selector_handler.select(document, ctx.scope)
@@ -289,10 +459,12 @@ class Parselet(object):
                         if self.DEBUG:
                             print debug_offset, "parsed %d elements in scope (%s)" % (i, ctx.scope)
 
+                # local extraction
                 else:
                     extracted = self._extract(v, document, level=level+1)
 
                 # keep only the first element if we're not in an array
+                # FIXME: this should be configurable
                 try:
                     if (    isinstance(extracted, list)
                         and extracted
@@ -307,8 +479,25 @@ class Parselet(object):
                         print str(e)
                         print debug_offset, "error getting first element"
 
-                # special key to extract hierarchically
+                # ---
+                # FIXME: this is where we should deal with empty extration
+                #        and required keys
+                # ---
+
+                # special key to extract a selector-defined level deeper
                 # but still output at same level
+                # this can be useful for breaking up long selectors
+                # or when you need to mix XPath and CSS selectors
+                # e.g.
+                # {
+                #   "something(#content div.main)": {
+                #       "--(.//div[re:test(@class, 'style\d{3,6}')])": {
+                #           "title": "h1",
+                #           "subtitle": "h2"
+                #       }
+                #   }
+                # }
+                #
                 if (    ctx.key == self.SPECIAL_LEVEL_KEY
                     and isinstance(extracted, dict)):
                     output.update(extracted)
@@ -318,3 +507,9 @@ class Parselet(object):
 
         elif isinstance(parselet_node, Selector):
             return self.selector_handler.extract(document, parselet_node)
+
+        else:
+            # FIXME: can this happen?
+            #        if selector handler returned None at compile time,
+            #        probably yes
+            pass
