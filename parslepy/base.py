@@ -63,7 +63,7 @@ class ParsleyContext(object):
 class Selector(object):
     """
     A dummy wrapper to easily detect that processing should be passed
-    to `SelectorHandler`when running the extraction on documents
+    to `SelectorHandler` when running the extraction on documents
     """
 
     def __init__(self, selector):
@@ -73,7 +73,8 @@ class Selector(object):
 class SelectorHandler(object):
     """
     Called when building abstract Parsley trees
-    and when etracting object values when actually parsing documents
+    and when etracting object values during the actual parsing
+    of documents
 
     This should be subclassed to implement the selector processing logic
     you need for your Parsley handling.
@@ -86,7 +87,8 @@ class SelectorHandler(object):
     def make(self, selection):
         """
         Interpret `selection` (str) as a selector
-        for elements or element values in a (semi-)structured document
+        for elements or element attributes in a (semi-)structured document.
+        In cas of XPath selectors, this can also be a function call.
 
         Return a `Selector` instance
         """
@@ -94,14 +96,14 @@ class SelectorHandler(object):
 
     def select(self, document, selector):
         """
-        Apply the selector (`Selector instance) on the document (`lxml.etree.Element`)
-        and return `lxml.etree.Element`
+        Apply the selector (`Selector` instance) on the document (`lxml.etree.Element`)
+        and return a `lxml.etree.Element` list
         """
         raise NotImplemented
 
     def extract(self, document, selector):
         """
-        Apply the selector (`Selector instance) on the document (`lxml.etree.Element`)
+        Apply the selector (`Selector` instance) on the document (`lxml.etree.Element`)
         and return a value for the matching elements, element attributes
 
         This can be single- or multi-valued
@@ -115,7 +117,7 @@ class DefaultSelectorHandler(SelectorHandler):
     implementation
 
     This handler understands what cssselect and lxml.etree.XPath understands,
-    that is XPath 1.0 and CSS 3 for things that dont need browser context
+    that is (roughly) XPath 1.0 and CSS3 for things that dont need browser context
     """
 
     XPATH_EXTENSIONS = {
@@ -128,7 +130,6 @@ class DefaultSelectorHandler(SelectorHandler):
         're': 'http://exslt.org/regular-expressions',
         'str': 'http://exslt.org/strings',
     }
-
 
     @classmethod
     def _add_parsley_extension_functions(cls, namespace_dict):
@@ -169,7 +170,8 @@ class DefaultSelectorHandler(SelectorHandler):
                 selector = lxml.etree.XPath("%s/%s" % (cssxpath, attribute))
             else:
                 selector = lxml.cssselect.CSSSelector(selection)
-
+        
+        # FIXME: we can test a specific CSSSelector Exception
         except Exception as e:
             if cls.DEBUG:
                 print selection, "is not a CSS selector"
@@ -180,9 +182,10 @@ class DefaultSelectorHandler(SelectorHandler):
                     extensions = cls.XPATH_EXTENSIONS)
             except Exception as e:
                 if cls.DEBUG:
-                    print selection, "is not a XPath selector"
+                    print selection, "is not an XPath selector"
                     print str(e)
                 return None
+                
         # wrap it
         return Selector(selector)
 
@@ -196,16 +199,17 @@ class DefaultSelectorHandler(SelectorHandler):
 
     def extract(self, document, selector, debug_offset=''):
         """
-        Try and convert matching Elements as unicode strings
+        Try and convert matching Elements to unicode strings.
 
         If this fails, the selector evaluation probably already
-        gave some string of some sort, so return that instead.
+        returned some string(s) of some sort, so return that instead.
         """
 
         selected = self.select(document, selector)
         if selected:
             if self.DEBUG:
                 print debug_offset, selected
+                
             if isinstance(selected, (list, tuple)):
 
                 # try decoding to a string if no text() or prsl:str() has been used
@@ -215,7 +219,7 @@ class DefaultSelectorHandler(SelectorHandler):
                         print debug_offset, "return", retval
                     return retval
 
-                # assume the selection is already a string(-list)
+                # assume the selection is already a string (or string list)
                 except Exception as e:
                     if self.DEBUG:
                         print debug_offset, "tostring failed:", str(e)
@@ -229,7 +233,7 @@ class DefaultSelectorHandler(SelectorHandler):
         # selector did not match anything
         else:
             if self.DEBUG:
-                print debug_offset, "selector did not match anything; return", {}
+                print debug_offset, "selector did not match anything; return None"
             return None
 
 
