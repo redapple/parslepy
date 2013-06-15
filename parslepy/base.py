@@ -26,6 +26,7 @@ def xpathtostringnl(context, nodes):
 class ParsleyNode(dict):
     pass
 
+
 class ParsleyContext(object):
     def __init__(self, key, operator=None, required=None, scope=None, iterate=False):
         self.key = key
@@ -38,11 +39,13 @@ class ParsleyContext(object):
         return u"<ParsleyContext: k=%s; op=%s; required=%s; scope=%s; iter=%s>" % (
             self.key, self.operator, self.required, self.scope, self.iterate)
 
+
 class Selector(object):
     def __init__(self, selector):
         self.selector = selector
 
-class selector_handlerandler(object):
+
+class SelectorHandler(object):
     DEBUG = False
 
     def make(self):
@@ -54,7 +57,8 @@ class selector_handlerandler(object):
     def extract(self):
         raise NotImplemented
 
-class Defaultselector_handlerandler(selector_handlerandler):
+
+class DefaultSelectorHandler(SelectorHandler):
 
     XPATH_EXTENSIONS = {
         ('parsley', 'str') : xpathtostring,
@@ -161,10 +165,10 @@ class Parselet(object):
         self.parselet =  parselet
 
         if not selector_handler:
-            self.selector_handler = Defaultselector_handlerandler()
+            self.selector_handler = DefaultSelectorHandler()
 
-        elif not(isinstance(selector_handlerandler)):
-            raise ValueError("You must provide a selector_handlerandler instance")
+        elif not(isinstance(SelectorHandler)):
+            raise ValueError("You must provide a SelectorHandler instance")
 
         else:
             self.selector_handler = selector_handler
