@@ -92,14 +92,14 @@ class SelectorHandler(object):
 
         Return a `Selector` instance
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def select(self, document, selector):
         """
         Apply the selector (`Selector` instance) on the document (`lxml.etree.Element`)
         and return a `lxml.etree.Element` list
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def extract(self, document, selector):
         """
@@ -108,7 +108,7 @@ class SelectorHandler(object):
 
         This can be single- or multi-valued
         """
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class DefaultSelectorHandler(SelectorHandler):
@@ -170,7 +170,7 @@ class DefaultSelectorHandler(SelectorHandler):
                 selector = lxml.etree.XPath("%s/%s" % (cssxpath, attribute))
             else:
                 selector = lxml.cssselect.CSSSelector(selection)
-        
+
         # FIXME: we can test a specific CSSSelector Exception
         except Exception as e:
             if cls.DEBUG:
@@ -185,7 +185,7 @@ class DefaultSelectorHandler(SelectorHandler):
                     print selection, "is not an XPath selector"
                     print str(e)
                 return None
-                
+
         # wrap it
         return Selector(selector)
 
@@ -209,7 +209,7 @@ class DefaultSelectorHandler(SelectorHandler):
         if selected:
             if self.DEBUG:
                 print debug_offset, selected
-                
+
             if isinstance(selected, (list, tuple)):
 
                 # try decoding to a string if no text() or prsl:str() has been used
@@ -272,7 +272,7 @@ class Parselet(object):
         if not selector_handler:
             self.selector_handler = DefaultSelectorHandler()
 
-        elif not(isinstance(SelectorHandler)):
+        elif not(isinstance(selector_handler, SelectorHandler)):
             raise ValueError("You must provide a SelectorHandler instance")
 
         else:

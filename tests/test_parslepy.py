@@ -7,7 +7,7 @@ def dict_match(first, second):
     return not (set(first.items()) - set(second.items()))
 
 
-def test_parslepy_init():
+def test_parslepy_init_default():
     parselet_script = {
         "title": "h1",
         "subtitle": "//h2"
@@ -22,6 +22,41 @@ def test_parslepy_init():
     for k,v in parselet.parselet_tree.items():
         assert_is_instance(k, parslepy.base.ParsleyContext)
         assert_is_instance(v, parslepy.base.Selector)
+
+    # since we did not provide a selector handler
+    assert_is_instance(parselet.selector_handler, parslepy.base.DefaultSelectorHandler)
+
+
+@raises(NotImplementedError)
+def test_parslepy_init_selector_handler_error():
+    parselet_script = {
+        "title": "h1",
+        "subtitle": "//h2"
+    }
+    class MyHandler(parslepy.base.SelectorHandler):
+        _dummy = True
+
+    mh = MyHandler()
+
+    parselet = parslepy.Parselet(parselet_script, selector_handler=mh)
+
+def test_parslepy_init_selector_handler_error():
+    parselet_script = {
+        "title": "h1",
+        "subtitle": "//h2"
+    }
+    class MyHandler(parslepy.base.SelectorHandler):
+        def make(self, selection):
+            return parslepy.base.Selector(lxml.etree.XPath("body"))
+        def select(self, document, selector):
+            return None
+        def extract(self, document, selector):
+            return None
+
+    mh = MyHandler()
+
+    parselet = parslepy.Parselet(parselet_script, selector_handler=mh)
+    assert_is_instance(parselet.selector_handler, MyHandler)
 
 
 def test_default_selector_handler():
