@@ -26,6 +26,9 @@ def test_parslepy_init_default():
     # since we did not provide a selector handler
     assert_is_instance(parselet.selector_handler, parslepy.base.DefaultSelectorHandler)
 
+@raises(ValueError)
+def test_parslepy_init_invalid_parselet():
+    parselet = parslepy.Parselet("{ 'title': 'h1'}")
 
 @raises(NotImplementedError)
 def test_parslepy_init_selector_handler_error():
@@ -35,10 +38,16 @@ def test_parslepy_init_selector_handler_error():
     }
     class MyHandler(parslepy.base.SelectorHandler):
         _dummy = True
-
     mh = MyHandler()
-
     parselet = parslepy.Parselet(parselet_script, selector_handler=mh)
+
+@raises(ValueError)
+def test_parslepy_init_wrong_selector_handler():
+    parselet_script = {
+        "title": "h1",
+        "subtitle": "//h2"
+    }
+    parselet = parslepy.Parselet(parselet_script, selector_handler=lambda s: s)
 
 def test_parslepy_init_selector_handler_error():
     parselet_script = {

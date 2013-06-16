@@ -339,7 +339,9 @@ class Parselet(object):
         Build the abstract Parsley tree starting from the root node
         (recursive)
         """
-
+        if not isinstance(self.parselet, dict):
+            raise ValueError(
+                "Parselet must be a dict of some sort. Or use .from_jsonstring() or .from_jsonfile()")
         self.parselet_tree = self._compile(self.parselet)
 
     REGEX_PARSELET_KEY = re.compile("(?P<key>[^()!+?]+)(?P<operator>[+!?])?(\((?P<scope>.+)\))?")
