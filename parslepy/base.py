@@ -252,6 +252,10 @@ class DefaultSelectorHandler(SelectorHandler):
             return None
 
 
+class NonMatchingNonOptionalKey(RuntimeError):
+    pass
+
+
 class Parselet(object):
     """
     Abstract representation of a Parsley script.
@@ -405,6 +409,8 @@ class Parselet(object):
 
                 # example: get list of H3 tags
                 # { "titles": ["h3"] }
+                # FIXME: should we support multiple selectors in list?
+                #        e.g. { "titles": ["h1", "h2", "h3", "h4"] }
                 if isinstance(v, (list, tuple)):
                     v = v[0]
                     iterate = True
@@ -467,27 +473,33 @@ class Parselet(object):
                 if self.DEBUG:
                     print debug_offset, "context:", ctx, v
 
-                # scoped-extraction:
-                # extraction should be done deeper in the document tree
-                if ctx.scope:
-                    extracted = []
-                    selected = self.selector_handler.select(document, ctx.scope)
-                    if selected:
-                        for i, elem in enumerate(selected, start=1):
-                            parse_result = self._extract(v, elem, level=level+1)
+                try:
+                    # scoped-extraction:
+                    # extraction should be done deeper in the document tree
+                    if ctx.scope:
+                        extracted = []
+                        selected = self.selector_handler.select(document, ctx.scope)
+                        if selected:
+                            for i, elem in enumerate(selected, start=1):
+                                parse_result = self._extract(v, elem, level=level+1)
 
-                            if isinstance(parse_result, (dict, basestring)):
-                                extracted.append(parse_result)
+                                if isinstance(parse_result, (dict, basestring)):
+                                    extracted.append(parse_result)
 
-                            elif isinstance(parse_result, list):
-                                extracted.extend(parse_result)
+                                elif isinstance(parse_result, list):
+                                    extracted.extend(parse_result)
 
-                        if self.DEBUG:
-                            print debug_offset, "parsed %d elements in scope (%s)" % (i, ctx.scope)
+                            if self.DEBUG:
+                                print debug_offset, "parsed %d elements in scope (%s)" % (i, ctx.scope)
 
-                # local extraction
-                else:
-                    extracted = self._extract(v, document, level=level+1)
+                    # local extraction
+                    else:
+                        extracted = self._extract(v, document, level=level+1)
+                except NonMatchingNonOptionalKey:
+                    if not ctx.required:
+                        output[ctx.key] = {}
+                    else:
+                        raise
 
                 # keep only the first element if we're not in an array
                 if self.KEEP_ONLY_FIRST_ELEMENT_IF_LIST:
@@ -509,6 +521,8 @@ class Parselet(object):
                 # FIXME: this is where we should deal with empty extration
                 #        and required keys
                 # ---
+                if ctx.required and extracted is None:
+                    raise NonMatchingNonOptionalKey("key %s is required but yield nothing" % ctx.key)
 
                 # special key to extract a selector-defined level deeper
                 # but still output at same level
@@ -528,7 +542,11 @@ class Parselet(object):
                     and isinstance(extracted, dict)):
                     output.update(extracted)
                 else:
-                    output[ctx.key] = extracted
+                    if ctx.required and extracted is not None:
+                        output[ctx.key] = extracted
+                    else:
+                        # do not add this optional key/value pair in the output
+                        pass
             return output
 
         elif isinstance(parselet_node, Selector):
