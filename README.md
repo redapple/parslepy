@@ -66,7 +66,7 @@ $ python run_parslepy.py --script examples/engadget.let.js --url http://www.enga
 
 * add more tests
 * support XPath functions with CSS selectors
-* support optionality operator ("?")
+* <del>support optionality operator ("?")</del>
 * support complete arrays with the "!" operator (https://github.com/fizx/parsley/wiki/JSON-Structure#requiring-complete-arrays-with-the--operator) 
 * support bucketed arrays (https://github.com/fizx/parsley/wiki/JSON-Structure#bucketed-arrays)
 * investigate PyParsley API
