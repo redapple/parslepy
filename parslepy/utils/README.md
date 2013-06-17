@@ -1,12 +1,22 @@
-=== Tools for Scrapy framework ===
+### Tools for Scrapy framework ###
 
+* `parslepy.utils.scrapytools.ParsleyItemClassLoader`
+* `parslepy.utils.scrapytools.ParsleyItemLoaderConfig`
+
+Provide your Parsley script at the command line:
+
+```
+$ scrapy crawl MySpider -a parseletfile=myparselet.let.js
+```
+
+with a Scrapy spider similar to this:
 ```python
 from mycrawler.items import MyItem
 import parslepy
 
 from scrapy.contrib.loader import ItemLoader
 from scrapy.contrib.loader.processor import TakeFirst
-from parslepy.utils.scrapytools import *
+from parslepy.utils.scrapytools import ParsleyItemClassLoader, ParsleyItemLoaderConfig
 
 class MyItemLoader(ItemLoader):
     default_output_processor = TakeFirst()
