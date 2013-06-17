@@ -56,10 +56,15 @@ $ python run_parslepy.py --script examples/engadget.let.js --url http://www.enga
 ### Dependencies ###
 
 * lxml (http://lxml.de/)
+ 
+### Run tests using `nose` ###
+
+`$ nosetests -v tests`
+
 
 ### ToDo ###
 
-* add tests
+* add more tests
 * support XPath functions with CSS selectors
 * support optionality operator ("?")
 * support complete arrays with the "!" operator (https://github.com/fizx/parsley/wiki/JSON-Structure#requiring-complete-arrays-with-the--operator) 
