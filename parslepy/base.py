@@ -28,8 +28,7 @@ def xpathtostringnl(context, nodes):
 #     references through ParsleyContext keys
 #
 class ParsleyNode(dict):
-    def __repr__(self):
-        return u"<ParsleyNode: k=%s; %s>" % self
+    _dummy_wrapper = True
 
 
 class ParsleyContext(object):
@@ -69,6 +68,9 @@ class Selector(object):
     def __init__(self, selector):
         self.selector = selector
 
+    def __repr__(self):
+        return u"<Selector: inner=%s>" % self.selector
+
 
 class SelectorHandler(object):
     """
@@ -83,6 +85,10 @@ class SelectorHandler(object):
     """
 
     DEBUG = False
+
+    def __init__(self, debug=False):
+        if debug:
+            self.DEBUG = True
 
     def make(self, selection):
         """
@@ -144,7 +150,7 @@ class DefaultSelectorHandler(SelectorHandler):
         return namespace_dict
 
     # example: "a img @src" (fetch the 'src' attribute of an IMG tag)
-    REGEX_ENDING_ATTRIBUTE = re.compile(r'^(?P<expr>.+)\s+(?P<attr>@[\w_\d]+)$')
+    REGEX_ENDING_ATTRIBUTE = re.compile(r'^(?P<expr>.+)\s+(?P<attr>@[\w_\d-]+)$')
     @classmethod
     def make(cls, selection):
         """
@@ -171,20 +177,29 @@ class DefaultSelectorHandler(SelectorHandler):
             else:
                 selector = lxml.cssselect.CSSSelector(selection)
 
-        # FIXME: we can test a specific CSSSelector Exception
-        except Exception as e:
+        except lxml.cssselect.SelectorSyntaxError as syntax_error:
             if cls.DEBUG:
-                print selection, "is not a CSS selector"
-                print str(e)
+                print repr(syntax_error), selection
+                print "Try interpreting as XPath selector"
             try:
                 selector = lxml.etree.XPath(selection,
                     namespaces = namespaces,
                     extensions = cls.XPATH_EXTENSIONS)
+
+            except lxml.etree.XPathSyntaxError as syntax_error:
+                if cls.DEBUG:
+                    print repr(syntax_error), selection
+                return None
+
             except Exception as e:
                 if cls.DEBUG:
-                    print selection, "is not an XPath selector"
-                    print str(e)
+                    print repr(e), selection
                 return None
+
+        except Exception as e:
+            if cls.DEBUG:
+                print repr(e), selection
+            return None
 
         # wrap it
         return Selector(selector)
@@ -250,6 +265,7 @@ class Parselet(object):
 
     DEBUG = False
     SPECIAL_LEVEL_KEY = "--"
+    KEEP_ONLY_FIRST_ELEMENT_IF_LIST = True
 
     def __init__(self, parselet, selector_handler=None, debug=False):
         """
@@ -270,7 +286,7 @@ class Parselet(object):
         self.parselet =  parselet
 
         if not selector_handler:
-            self.selector_handler = DefaultSelectorHandler()
+            self.selector_handler = DefaultSelectorHandler(debug=self.DEBUG)
 
         elif not(isinstance(selector_handler, SelectorHandler)):
             raise ValueError("You must provide a SelectorHandler instance")
@@ -324,14 +340,18 @@ class Parselet(object):
                 u"\n".join([l for l in lines if not cls.REGEX_COMMENT_LINE.match(l)])
             ), debug=debug)
 
-    def parse(self, f):
+    def parse(self, f, parser=None):
         """
         Parse an HTML document f (a file-like object) and
-        return the extacted object following the Parsley script structure
+        return the extacted object following the Parsley script structure.
+
+        Arguments:
+        f       -- file-like objects containing an HTML or XML document
+        parser  -- (optional) lxml parser instance; defaults to lxml.etree.HTMLParser()
         """
-        # FIXME: make the parser configurable,
-        #        for XML parsing for example, or to force encoding
-        doc = lxml.html.parse(f).getroot()
+        if parser is None:
+            parser = lxml.etree.HTMLParser()
+        doc = lxml.html.parse(f, parser=parser).getroot()
         return self.extract(doc)
 
     def compile(self):
@@ -470,20 +490,20 @@ class Parselet(object):
                     extracted = self._extract(v, document, level=level+1)
 
                 # keep only the first element if we're not in an array
-                # FIXME: this should be configurable
-                try:
-                    if (    isinstance(extracted, list)
-                        and extracted
-                        and not ctx.iterate):
+                if self.KEEP_ONLY_FIRST_ELEMENT_IF_LIST:
+                    try:
+                        if (    isinstance(extracted, list)
+                            and extracted
+                            and not ctx.iterate):
 
+                            if self.DEBUG:
+                                print debug_offset, "keep only 1st element"
+                            extracted =  extracted[0]
+
+                    except Exception as e:
                         if self.DEBUG:
-                            print debug_offset, "keep only 1st element"
-                        extracted =  extracted[0]
-
-                except Exception as e:
-                    if self.DEBUG:
-                        print str(e)
-                        print debug_offset, "error getting first element"
+                            print str(e)
+                            print debug_offset, "error getting first element"
 
                 # ---
                 # FIXME: this is where we should deal with empty extration
