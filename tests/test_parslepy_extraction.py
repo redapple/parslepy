@@ -175,6 +175,7 @@ def test_creativecommon_extraction():
             },
             {'images': [{'alt': 'cc logo', 'url': '/images/deed/cc-logo.jpg'},
                         {'alt': 'This license is acceptable for Free Cultural Works.',
+                         'style': 'border: 0',
                          'url': '/images/deed/seal.png'},
                         {'alt': 'Information', 'url': '/images/information.png'}]}
 

@@ -136,6 +136,7 @@ class DefaultSelectorHandler(SelectorHandler):
         're': 'http://exslt.org/regular-expressions',
         'str': 'http://exslt.org/strings',
     }
+    _selector_cache = {}
 
     @classmethod
     def _add_parsley_extension_functions(cls, namespace_dict):
@@ -162,6 +163,9 @@ class DefaultSelectorHandler(SelectorHandler):
         XPath expression can also use EXSLT functions (as long as they are
         understood by libxslt)
         """
+        cached = cls._selector_cache.get(selection)
+        if cached:
+            return cached
 
         namespaces = cls.EXSLT_NAMESPACES
         cls._add_parsley_extension_functions(namespaces)
@@ -201,8 +205,9 @@ class DefaultSelectorHandler(SelectorHandler):
                 print repr(e), selection
             return None
 
-        # wrap it
-        return Selector(selector)
+        # wrap it/cache it
+        cls._selector_cache[selection] = Selector(selector)
+        return cls._selector_cache[selection]
 
     @classmethod
     def select(cls, document, selector):
@@ -495,11 +500,18 @@ class Parselet(object):
                     # local extraction
                     else:
                         extracted = self._extract(v, document, level=level+1)
-                except NonMatchingNonOptionalKey:
+                except NonMatchingNonOptionalKey as e:
+                    if self.DEBUG:
+                        print debug_offset, str(e)
                     if not ctx.required:
                         output[ctx.key] = {}
+                        continue
                     else:
                         raise
+                except Exception as e:
+                    print "Exception"
+                    print str(e)
+                    raise
 
                 # keep only the first element if we're not in an array
                 if self.KEEP_ONLY_FIRST_ELEMENT_IF_LIST:
@@ -538,15 +550,22 @@ class Parselet(object):
                 #   }
                 # }
                 #
-                if (    ctx.key == self.SPECIAL_LEVEL_KEY
-                    and isinstance(extracted, dict)):
-                    output.update(extracted)
+                if ctx.key == self.SPECIAL_LEVEL_KEY:
+                    if isinstance(extracted, dict):
+                        output.update(extracted)
+                    elif isinstance(extracted, list):
+                        if extracted:
+                            raise RuntimeError(
+                                "could not merge non-empty list at higher level")
+                        else:
+                            #empty list, dont bother?
+                            pass
                 else:
-                    if ctx.required and extracted is not None:
+                    if extracted is not None:
                         output[ctx.key] = extracted
-                    else:
+                    #else:
                         # do not add this optional key/value pair in the output
-                        pass
+                        #pass
             return output
 
         elif isinstance(parselet_node, Selector):
