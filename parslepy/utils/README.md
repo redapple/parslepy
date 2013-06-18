@@ -2,6 +2,7 @@
 
 * `parslepy.utils.scrapytools.ParsleyItemClassLoader`
 * `parslepy.utils.scrapytools.ParsleyItemLoaderConfig`
+* `parslepy.utils.scrapytools.ParsleyImplicitItemClassLoader`: EXPERIMENTAL, TO BE DOCUMENTED
 
 Provide your Parsley script at the command line:
 
