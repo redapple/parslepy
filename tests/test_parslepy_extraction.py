@@ -231,7 +231,7 @@ class test_optionality_operator():
             }},
             {'stuff': {}}
         )
-        parselet = parslepy.Parselet(input_parselet, debug=self.debug)
+        parselet = parslepy.Parselet(input_parselet, strict=True, debug=self.debug)
         extracted = parselet.extract(self.root)
         if self.debug:
             pprint.pprint(extracted)
@@ -253,7 +253,7 @@ class test_optionality_operator():
             }},
             {'stuff': {'nothing': u'Creative Commons License Deed'}}
         )
-        parselet = parslepy.Parselet(input_parselet, debug=self.debug)
+        parselet = parslepy.Parselet(input_parselet, strict=True, debug=self.debug)
         extracted = parselet.extract(self.root)
         if self.debug:
             pprint.pprint(extracted)
@@ -271,7 +271,7 @@ class test_optionality_operator():
             {"stuff?": {"perhaps": "spanner"}},
             {'stuff': {}}
         )
-        parselet = parslepy.Parselet(input_parselet, debug=self.debug)
+        parselet = parslepy.Parselet(input_parselet, strict=True, debug=self.debug)
         extracted = parselet.extract(self.root)
         if self.debug:
             pprint.pprint(extracted)
@@ -287,7 +287,7 @@ class test_optionality_operator():
             {"stuff": {"broken": "spanner"}},
             {}
         )
-        parselet = parslepy.Parselet(input_parselet, debug=self.debug)
+        parselet = parslepy.Parselet(input_parselet, strict=True, debug=self.debug)
         extracted = parselet.extract(self.root)
         if self.debug:
             pprint.pprint(extracted)
@@ -306,14 +306,14 @@ class test_optionality_operator():
             }},
             {'stuff': {}}
         )
-        parselet = parslepy.Parselet(input_parselet, debug=self.debug)
+        parselet = parslepy.Parselet(input_parselet, strict=True, debug=self.debug)
         extracted = parselet.extract(self.root)
         if self.debug:
             pprint.pprint(extracted)
         assert_dict_equal(extracted, expected_output)
 
     @raises(parslepy.base.NonMatchingNonOptionalKey)
-    def test_one_required_broken(self):
+    def test_one_required_broken_one_matching(self):
         """
         Broken content with 1 non-matching selector
         """
@@ -325,7 +325,7 @@ class test_optionality_operator():
             }},
             {'stuff': {}}
         )
-        parselet = parslepy.Parselet(input_parselet, debug=self.debug)
+        parselet = parslepy.Parselet(input_parselet, strict=True, debug=self.debug)
         extracted = parselet.extract(self.root)
         if self.debug:
             pprint.pprint(extracted)
@@ -345,7 +345,7 @@ class test_optionality_operator():
             {'stuff': {'title': {'novalue': {},
                        'value': u'Creative Commons License Deed'}}}
         )
-        parselet = parslepy.Parselet(input_parselet, debug=self.debug)
+        parselet = parslepy.Parselet(input_parselet, strict=True, debug=self.debug)
         extracted = parselet.extract(self.root)
         if self.debug:
             pprint.pprint(extracted)

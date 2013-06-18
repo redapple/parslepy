@@ -275,13 +275,17 @@ class Parselet(object):
     DEBUG = False
     SPECIAL_LEVEL_KEY = "--"
     KEEP_ONLY_FIRST_ELEMENT_IF_LIST = True
+    STRICT_MODE = False
 
-    def __init__(self, parselet, selector_handler=None, debug=False):
+    def __init__(self, parselet, selector_handler=None, strict=False, debug=False):
         """
         Take a parselet (dict) and optional selector_handler
         (SelectorHandler subclass instance)
         and build an abstract representation of the Parsley extraction
-        logic
+        logic.
+        Set the strict (boolean) parameter to True is you want to
+        enforce that missing required keys raise an Exception
+        (defaults to lenient/non-strict mode)
 
         The internal abstract Parsley tree is a dict/tree of ParsleyNode
         objects, with leaves being of type Selector (terminal elements).
@@ -292,6 +296,9 @@ class Parselet(object):
 
         if debug:
             self.DEBUG = True
+        if strict:
+            self.STRICT_MODE = True
+
         self.parselet =  parselet
 
         if not selector_handler:
@@ -477,7 +484,7 @@ class Parselet(object):
             for ctx, v in parselet_node.iteritems():
                 if self.DEBUG:
                     print debug_offset, "context:", ctx, v
-
+                extracted=None
                 try:
                     # scoped-extraction:
                     # extraction should be done deeper in the document tree
@@ -503,9 +510,8 @@ class Parselet(object):
                 except NonMatchingNonOptionalKey as e:
                     if self.DEBUG:
                         print debug_offset, str(e)
-                    if not ctx.required:
+                    if not ctx.required or not self.STRICT_MODE:
                         output[ctx.key] = {}
-                        continue
                     else:
                         raise
                 except Exception as e:
@@ -529,11 +535,10 @@ class Parselet(object):
                             print str(e)
                             print debug_offset, "error getting first element"
 
-                # ---
-                # FIXME: this is where we should deal with empty extration
-                #        and required keys
-                # ---
-                if ctx.required and extracted is None:
+                # extraction for a required key gave nothing
+                if (    self.STRICT_MODE
+                    and ctx.required
+                    and extracted is None):
                     raise NonMatchingNonOptionalKey("key %s is required but yield nothing" % ctx.key)
 
                 # special key to extract a selector-defined level deeper
@@ -563,9 +568,9 @@ class Parselet(object):
                 else:
                     if extracted is not None:
                         output[ctx.key] = extracted
-                    #else:
+                    else:
                         # do not add this optional key/value pair in the output
-                        #pass
+                        pass
             return output
 
         elif isinstance(parselet_node, Selector):
