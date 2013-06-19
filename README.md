@@ -3,7 +3,20 @@ parslepy
 
 (partial) Python/Lxml implementation of the Parsley language for extracting structured data from web pages.
 
-**This *Parsley* has nothing to do with https://pypi.python.org/pypi/Parsley**
+**This *Parsley* has nothing to do with the parsing library https://pypi.python.org/pypi/Parsley**
+
+Kudos go to Kyle Maxwell (@fizx) for coming up with this smart and easy syntax to define extracting rules.
+
+### References ###
+
+* https://github.com/fizx/parsley
+* https://github.com/fizx/parsley/wiki/JSON-Structure
+* http://snipplr.com/view/67016/parsley-spider/
+* https://news.ycombinator.com/item?id=1585301
+
+### Dependencies ###
+
+* lxml (http://lxml.de/)
 
 ### Install ###
 
@@ -111,16 +124,7 @@ $ python run_parslepy.py --script examples/engadget.let.js --url http://www.enga
 
 ```
 
-### References ###
 
-* https://github.com/fizx/parsley
-* https://github.com/fizx/parsley/wiki/JSON-Structure
-* http://snipplr.com/view/67016/parsley-spider/
-* https://news.ycombinator.com/item?id=1585301
-
-### Dependencies ###
-
-* lxml (http://lxml.de/)
 
 ### Run tests using `nose` ###
 
