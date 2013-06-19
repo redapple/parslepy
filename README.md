@@ -7,18 +7,43 @@ parslepy
 
 ### Install ###
 
-```$ python setup.py install```
-
-or
-
-```$ sudo python setup.py install```
-
-
-### Example usage ###
-
-
+```bash
+$ python setup.py install
+...or
+$ sudo python setup.py install
 ```
-$ cat examples/engadget.let.js 
+
+### Example usage from command line ###
+
+```python
+>>> import parslepy
+>>> import urllib
+>>> parselet = parslepy.Parselet({"titles": ["h1,h2,h3,h4,h5,h6"], "links": ["a @href"]})
+>>> pprint.pprint(parselet.parse(urllib.urlopen('http://www.facebook.com')))
+{'links': ['/',
+           'http://www.facebook.com/recover/initiate',
+           '#',
+           '/legal/terms',
+           '/about/privacy',
+           '/help/cookies',
+           '/pages/create/',
+           'https://www.facebook.com/',
+...
+           'http://www.facebook.com/policies/?ref=pf',
+           'http://www.facebook.com/help/?ref=pf',
+           '/ajax/intl/language_dialog.php?uri=https%3A%2F%2Fwww.facebook.com%2F'],
+ 'titles': [u'Inscription',
+            u'C\u2019est gratuit (et \xe7a le restera toujours).',
+            u'JavaScript est d\xe9sactiv\xe9 dans votre navigateur.',
+            u'Test de s\xe9curit\xe9']}
+>>>
+```
+
+### Example usage with parselet file ###
+
+
+```bash
+$ cat examples/engadget.let.js
 {
     "sections(nav#nav-main > ul li)": [{
         "title": ".",
@@ -65,10 +90,12 @@ $ python run_parslepy.py --script examples/engadget.let.js --url http://www.enga
 ### Dependencies ###
 
 * lxml (http://lxml.de/)
- 
+
 ### Run tests using `nose` ###
 
-`$ nosetests -v tests`
+```bash
+$ nosetests -v tests
+```
 
 
 ### ToDo ###
@@ -76,6 +103,6 @@ $ python run_parslepy.py --script examples/engadget.let.js --url http://www.enga
 * add more tests
 * support XPath functions with CSS selectors
 * <del>support optionality operator ("?")</del>
-* support complete arrays with the "!" operator (https://github.com/fizx/parsley/wiki/JSON-Structure#requiring-complete-arrays-with-the--operator) 
+* support complete arrays with the "!" operator (https://github.com/fizx/parsley/wiki/JSON-Structure#requiring-complete-arrays-with-the--operator)
 * support bucketed arrays (https://github.com/fizx/parsley/wiki/JSON-Structure#bucketed-arrays)
 * investigate PyParsley API
