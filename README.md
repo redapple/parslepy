@@ -13,11 +13,12 @@ $ python setup.py install
 $ sudo python setup.py install
 ```
 
-### Example usage from command line ###
+### Example usage from the command line ###
 
 ```python
 >>> import parslepy
 >>> import urllib
+>>> import pprint
 >>> parselet = parslepy.Parselet({"titles": ["h1,h2,h3,h4,h5,h6"], "links": ["a @href"]})
 >>> pprint.pprint(parselet.parse(urllib.urlopen('http://www.facebook.com')))
 {'links': ['/',
