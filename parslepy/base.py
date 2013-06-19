@@ -194,17 +194,17 @@ class DefaultSelectorHandler(SelectorHandler):
             except lxml.etree.XPathSyntaxError as syntax_error:
                 if cls.DEBUG:
                     print repr(syntax_error), selection
-                return None
+                raise
 
             except Exception as e:
                 if cls.DEBUG:
                     print repr(e), selection
-                return None
+                raise
 
         except Exception as e:
             if cls.DEBUG:
                 print repr(e), selection
-            return None
+            raise
 
         # wrap it/cache it
         cls._selector_cache[selection] = Selector(selector)
@@ -259,6 +259,10 @@ class DefaultSelectorHandler(SelectorHandler):
 
 
 class NonMatchingNonOptionalKey(RuntimeError):
+    pass
+
+
+class InvalidKeySyntax(SyntaxError):
     pass
 
 
@@ -381,7 +385,13 @@ class Parselet(object):
                 "Parselet must be a dict of some sort. Or use .from_jsonstring() or .from_jsonfile()")
         self.parselet_tree = self._compile(self.parselet)
 
-    REGEX_PARSELET_KEY = re.compile("(?P<key>[^()!+?]+)(?P<operator>[+!?])?(\((?P<scope>.+)\))?")
+    VALID_KEY_CHARS = "\w-"
+    SUPPORTED_OPERATORS = "?"   # "!" not supported for now
+    REGEX_PARSELET_KEY = re.compile(
+        "^(?P<key>[%(validkeychars)s]+)(?P<operator>[%(suppop)s])?(\((?P<scope>.+)\))?$" % {
+            'validkeychars': VALID_KEY_CHARS,
+            'suppop': SUPPORTED_OPERATORS}
+        )
     def _compile(self, parselet_node, level=0):
         """
         Build part of the abstract Parsley extraction tree
@@ -409,7 +419,7 @@ class Parselet(object):
                 if not m:
                     if self.DEBUG:
                         print debug_offset, "could not parse key", k
-                    continue
+                    raise InvalidKeySyntax(k)
 
                 key = m.group('key')
                 # by default, fields are required
@@ -431,18 +441,29 @@ class Parselet(object):
                     iterate = False
 
                 # keys in the abstract Parsley trees are of type `ParsleyContext`
-                parsley_context = ParsleyContext(
-                    key,
-                    operator=operator,
-                    required=key_required,
-                    scope=self.selector_handler.make(scope) if scope else None,
-                    iterate=iterate)
+                try:
+                    parsley_context = ParsleyContext(
+                        key,
+                        operator=operator,
+                        required=key_required,
+                        scope=self.selector_handler.make(scope) if scope else None,
+                        iterate=iterate)
+                except SyntaxError:
+                    print "Invalid scope:", scope
+                    raise
 
                 if self.DEBUG:
                     print debug_offset, "current context:", parsley_context
 
                 # go deeper in the Parsley tree...
-                child_tree = self._compile(v, level=level+1)
+                try:
+                    child_tree = self._compile(v, level=level+1)
+                except SyntaxError:
+                    print "Invalid value: ", v
+                    raise
+                except:
+                    raise
+
                 if self.DEBUG:
                     print debug_offset, "child tree:", child_tree
 
@@ -540,7 +561,12 @@ class Parselet(object):
                 if (    self.STRICT_MODE
                     and ctx.required
                     and extracted is None):
-                    raise NonMatchingNonOptionalKey("key %s is required but yield nothing" % ctx.key)
+                    raise NonMatchingNonOptionalKey(
+                        'key "%s" is required but yield nothing\nCurrent path: %s/(%s)\n' % (
+                            ctx.key,
+                            document.getroottree().getpath(document),v
+                            )
+                        )
 
                 # special key to extract a selector-defined level deeper
                 # but still output at same level
