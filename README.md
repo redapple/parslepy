@@ -5,6 +5,15 @@ parslepy
 
 **This *Parsley* has nothing to do with https://pypi.python.org/pypi/Parsley**
 
+### Install ###
+
+```$ python setup.py install```
+
+or
+
+```$ sudo python setup.py install```
+
+
 ### Example usage ###
 
 

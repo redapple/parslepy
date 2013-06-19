@@ -4,6 +4,7 @@
 import lxml
 import lxml.etree
 import lxml.cssselect
+import lxml.html
 import re
 from .funcs import *
 import json
