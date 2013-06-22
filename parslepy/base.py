@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from __future__ import unicode_literals
 import lxml
 import lxml.etree
 import lxml.cssselect
@@ -14,6 +14,15 @@ def xpathtostring(context, nodes):
 
 def xpathtostringnl(context, nodes):
     return tostringnl(nodes)
+
+# http://stackoverflow.com/questions/11301138/how-to-check-if-variable-is-string-with-python-2-and-3-compatibility
+try:
+    isinstance("", basestring)
+    def isstr(s):
+        return isinstance(s, basestring)
+except NameError:
+    def isstr(s):
+        return isinstance(s, str)
 
 # ----------------------------------------------------------------------
 
@@ -184,7 +193,7 @@ class DefaultSelectorHandler(SelectorHandler):
 
         except lxml.cssselect.SelectorSyntaxError as syntax_error:
             if cls.DEBUG:
-                print((repr(syntax_error), selection))
+                print(repr(syntax_error), selection)
                 print("Try interpreting as XPath selector")
             try:
                 selector = lxml.etree.XPath(selection,
@@ -193,17 +202,17 @@ class DefaultSelectorHandler(SelectorHandler):
 
             except lxml.etree.XPathSyntaxError as syntax_error:
                 if cls.DEBUG:
-                    print((repr(syntax_error), selection))
+                    print(repr(syntax_error), selection)
                 raise
 
             except Exception as e:
                 if cls.DEBUG:
-                    print((repr(e), selection))
+                    print(repr(e), selection)
                 raise
 
         except Exception as e:
             if cls.DEBUG:
-                print((repr(e), selection))
+                print(repr(e), selection)
             raise
 
         # wrap it/cache it
@@ -215,7 +224,8 @@ class DefaultSelectorHandler(SelectorHandler):
         try:
             return selector.selector(document)
         except Exception as e:
-            print((str(e)))
+            if cls.DEBUG:
+                print(str(e))
             return
 
     def extract(self, document, selector, debug_offset=''):
@@ -225,11 +235,10 @@ class DefaultSelectorHandler(SelectorHandler):
         If this fails, the selector evaluation probably already
         returned some string(s) of some sort, so return that instead.
         """
-
         selected = self.select(document, selector)
         if selected:
             if self.DEBUG:
-                print((debug_offset, selected))
+                print(debug_offset, selected)
 
             if isinstance(selected, (list, tuple)):
 
@@ -237,7 +246,7 @@ class DefaultSelectorHandler(SelectorHandler):
                 try:
                     retval = tostring(selected)
                     if self.DEBUG:
-                        print((debug_offset, "return", retval))
+                        print(debug_offset, "return", retval)
                     return retval
 
                 # assume the selection is already a string (or string list)
@@ -248,13 +257,13 @@ class DefaultSelectorHandler(SelectorHandler):
                     return selected
             else:
                 if self.DEBUG:
-                    print((debug_offset, "selected is not a list; return", selected))
+                    print(debug_offset, "selected is not a list; return", selected)
                 return selected
 
         # selector did not match anything
         else:
             if self.DEBUG:
-                print((debug_offset, "selector did not match anything; return None"))
+                print(debug_offset, "selector did not match anything; return None")
             return None
 
 
@@ -276,7 +285,6 @@ class Parselet(object):
     Two helper methods instantiate the Parselet
     from JSON Parsley scripts, either as files or strings
     """
-
     DEBUG = False
     SPECIAL_LEVEL_KEY = "--"
     KEEP_ONLY_FIRST_ELEMENT_IF_LIST = True
@@ -298,7 +306,6 @@ class Parselet(object):
         Parent and child ParsleyNode instances are linked through
         ParsleyContext keys.
         """
-
         if debug:
             self.DEBUG = True
         if strict:
@@ -406,8 +413,8 @@ class Parselet(object):
             debug_offset = "".join(["    " for x in range(level)])
 
         if self.DEBUG:
-            print((debug_offset, "%s::compile(%s)" % (
-                self.__class__.__name__, parselet_node)))
+            print(debug_offset, "%s::compile(%s)" % (
+                self.__class__.__name__, parselet_node))
 
         if isinstance(parselet_node, dict):
             parselet_tree = ParsleyNode()
@@ -415,11 +422,14 @@ class Parselet(object):
 
                 # we parse the key raw elements but without much
                 # interpretation (which is done by the SelectorHandler)
-                m = self.REGEX_PARSELET_KEY.match(k)
-                if not m:
-                    if self.DEBUG:
-                        print((debug_offset, "could not parse key", k))
-                    raise InvalidKeySyntax(k)
+                try:
+                    m = self.REGEX_PARSELET_KEY.match(k)
+                    if not m:
+                        if self.DEBUG:
+                            print(debug_offset, "could not parse key", k)
+                        raise InvalidKeySyntax(k)
+                except:
+                    raise InvalidKeySyntax("Key %s is not valid" % k)
 
                 key = m.group('key')
                 # by default, fields are required
@@ -449,23 +459,25 @@ class Parselet(object):
                         scope=self.selector_handler.make(scope) if scope else None,
                         iterate=iterate)
                 except SyntaxError:
-                    print(("Invalid scope:", scope))
+                    if self.DEBUG:
+                        print("Invalid scope:", k, scope)
                     raise
 
                 if self.DEBUG:
-                    print((debug_offset, "current context:", parsley_context))
+                    print(debug_offset, "current context:", parsley_context)
 
                 # go deeper in the Parsley tree...
                 try:
                     child_tree = self._compile(v, level=level+1)
                 except SyntaxError:
-                    print(("Invalid value: ", v))
+                    if self.DEBUG:
+                        print("Invalid value: ", v)
                     raise
                 except:
                     raise
 
                 if self.DEBUG:
-                    print((debug_offset, "child tree:", child_tree))
+                    print(debug_offset, "child tree:", child_tree)
 
                 parselet_tree[parsley_context] = child_tree
 
@@ -473,10 +485,12 @@ class Parselet(object):
 
         # a string leaf should match some kind of selector,
         # let the selector handler deal with it
-        elif isinstance(parselet_node, str):
-            # FIXME: if the selector handler does not understand the input
-            #        we should raise some kind of exception
+        elif isstr(parselet_node):
             return self.selector_handler.make(parselet_node)
+        else:
+            raise ValueError(
+                    "Unsupported type(%s) for Parselet node <%s>" % (
+                        type(parselet_node), parselet_node))
 
     def extract(self, document):
         """
@@ -505,7 +519,7 @@ class Parselet(object):
             # process all children
             for ctx, v in list(parselet_node.items()):
                 if self.DEBUG:
-                    print((debug_offset, "context:", ctx, v))
+                    print(debug_offset, "context:", ctx, v)
                 extracted=None
                 try:
                     # scoped-extraction:
@@ -524,21 +538,22 @@ class Parselet(object):
                                     extracted.extend(parse_result)
 
                             if self.DEBUG:
-                                print((debug_offset, "parsed %d elements in scope (%s)" % (i, ctx.scope)))
+                                print(debug_offset,
+                                    "parsed %d elements in scope (%s)" % (i, ctx.scope))
 
                     # local extraction
                     else:
                         extracted = self._extract(v, document, level=level+1)
                 except NonMatchingNonOptionalKey as e:
                     if self.DEBUG:
-                        print((debug_offset, str(e)))
+                        print(debug_offset, str(e))
                     if not ctx.required or not self.STRICT_MODE:
                         output[ctx.key] = {}
                     else:
                         raise
                 except Exception as e:
-                    print("Exception")
-                    print((str(e)))
+                    if self.DEBUG:
+                        print(str(e))
                     raise
 
                 # keep only the first element if we're not in an array
@@ -549,13 +564,13 @@ class Parselet(object):
                             and not ctx.iterate):
 
                             if self.DEBUG:
-                                print((debug_offset, "keep only 1st element"))
+                                print(debug_offset, "keep only 1st element")
                             extracted =  extracted[0]
 
                     except Exception as e:
                         if self.DEBUG:
-                            print((str(e)))
-                            print((debug_offset, "error getting first element"))
+                            print(str(e))
+                            print(debug_offset, "error getting first element")
 
                 # extraction for a required key gave nothing
                 if (    self.STRICT_MODE

@@ -1,28 +1,31 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 import re
 import lxml.etree
 
 # ----------------------------------------------------------------------
 
-def extract_unicode(element, keep_nl=False, with_tail=True):
-    try:
-        return remove_multiple_whitespaces(
-            lxml.etree.tostring(element, method="text", with_tail=with_tail,
-                encoding=str),
-            keep_nl=keep_nl).strip()
-    except TypeError:
+try:
+    unicode     # Python 2.x
+    def extract_unicode(element, keep_nl=False, with_tail=True):
         return remove_multiple_whitespaces(
             lxml.etree.tostring(element, method="text", with_tail=with_tail,
                 encoding=unicode),
             keep_nl=keep_nl).strip()
-    except:
-        raise
+except NameError:   # Python 3.x
+    def extract_unicode(element, keep_nl=False, with_tail=True):
+        return remove_multiple_whitespaces(
+            lxml.etree.tostring(element, method="text", with_tail=with_tail,
+                encoding=str),
+            keep_nl=keep_nl).strip()
+except:
+    raise
 
 
 REGEX_NEWLINE = re.compile(r'\n')
-REGEX_WHITESPACE = re.compile(r'\s{1,}', re.UNICODE)
+REGEX_WHITESPACE = re.compile(r'\s+', re.UNICODE)
 def remove_multiple_whitespaces(input_string, keep_nl = False):
 
     if keep_nl:
@@ -48,10 +51,12 @@ def format_alter_htmltags(tree, text_tags=[], tail_tags=[], replacement=" "):
             else:
                 elem.tail += replacement
 
+NEWLINE_TEXT_TAGS = ['br', 'hr']
+NEWLINE_TAIL_TAGS = ['p', 'div', 'ul', 'li', 'ol', 'dl', 'dt', 'dd', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']
 def format_htmltags_to_newline(tree):
     format_alter_htmltags(tree,
-        text_tags=['br', 'hr'],
-        tail_tags=['p', 'div', 'ul', 'li', 'ol', 'dl', 'dt', 'dd', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+        text_tags=NEWLINE_TEXT_TAGS,
+        tail_tags=NEWLINE_TAIL_TAGS,
         replacement="\n")
 
 

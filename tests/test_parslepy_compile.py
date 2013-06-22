@@ -50,3 +50,14 @@ class TestKeySyntax(object):
 
     def init_with_invalid_parselet_dict(self, parselet_dict, target_exception):
         assert_raises(target_exception, parslepy.Parselet, parselet_dict)
+
+    with_invalid_value_type = (
+        ({'title': 1}, ValueError),
+        ({'title': None}, ValueError),
+        ({'title': (43,)}, ValueError),
+        ({'title': {44: 45}}, InvalidKeySyntax),
+    )
+
+    def test_invalid_value_type(self):
+        for parselet_dict, target_exception in self.with_invalid_value_type:
+            yield self.init_with_invalid_parselet_dict, parselet_dict, target_exception
