@@ -5,7 +5,7 @@ from nose.tools import *
 import cStringIO as StringIO
 import pprint
 import os
-
+from .tools import *
 
 def test_w3c_validator_extraction():
     debug = False

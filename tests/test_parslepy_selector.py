@@ -2,6 +2,7 @@ import parslepy
 import parslepy.base
 import lxml.cssselect
 from nose.tools import *
+from .tools import *
 
 @raises(SyntaxError)
 def test_parslepy_init_invalid_css_parselet():

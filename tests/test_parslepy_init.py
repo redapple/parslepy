@@ -2,6 +2,7 @@ import parslepy
 import parslepy.base
 import lxml.cssselect
 from nose.tools import *
+from .tools import *
 
 def test_parslepy_init_default():
     parselet_script = {

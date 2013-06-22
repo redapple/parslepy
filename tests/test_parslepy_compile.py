@@ -2,6 +2,7 @@ import parslepy
 from parslepy.base import InvalidKeySyntax
 from nose.tools import *
 from lxml.etree import XPathSyntaxError
+from .tools import *
 
 class TestKeySyntax(object):
 
