@@ -243,8 +243,8 @@ class DefaultSelectorHandler(SelectorHandler):
                 # assume the selection is already a string (or string list)
                 except Exception as e:
                     if self.DEBUG:
-                        print((debug_offset, "tostring failed:", str(e)))
-                        print((debug_offset, "return", selected))
+                        print(debug_offset, "tostring failed:", str(e))
+                        print(debug_offset, "return", selected)
                     return selected
             else:
                 if self.DEBUG:

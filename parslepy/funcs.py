@@ -7,10 +7,18 @@ import lxml.etree
 # ----------------------------------------------------------------------
 
 def extract_unicode(element, keep_nl=False, with_tail=True):
-    return remove_multiple_whitespaces(
-        lxml.etree.tostring(element, method="text", with_tail=with_tail,
-            encoding=str),
-        keep_nl=keep_nl).strip()
+    try:
+        return remove_multiple_whitespaces(
+            lxml.etree.tostring(element, method="text", with_tail=with_tail,
+                encoding=str),
+            keep_nl=keep_nl).strip()
+    except TypeError:
+        return remove_multiple_whitespaces(
+            lxml.etree.tostring(element, method="text", with_tail=with_tail,
+                encoding=unicode),
+            keep_nl=keep_nl).strip()
+    except:
+        raise
 
 
 REGEX_NEWLINE = re.compile(r'\n')
@@ -48,10 +56,7 @@ def format_htmltags_to_newline(tree):
 
 
 def tostring(nodes):
-    return list(
-        remove_multiple_whitespaces(
-            lxml.etree.tostring(e, method="text", encoding=str).strip())
-        for e in nodes)
+    return list(extract_unicode(e) for e in nodes)
 
 
 def tostringnl(nodes):
@@ -59,12 +64,7 @@ def tostringnl(nodes):
         o = []
         for e in nodes:
             format_htmltags_to_newline(e)
-            o.append(
-                remove_multiple_whitespaces(
-                    lxml.etree.tostring(e, method="text", encoding=str).strip(),
-                    keep_nl=True
-                )
-            )
+            o.append(extract_unicode(e, keep_nl=True))
         return o
     except Exception as e:
         print((str(e)))
