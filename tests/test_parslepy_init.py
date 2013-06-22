@@ -16,7 +16,7 @@ def test_parslepy_init_default():
     assert_is_instance(parselet.parselet_tree, parslepy.base.ParsleyNode)
     assert_equal(len(parselet.parselet_tree), len(parselet_script), "not the same number of keys")
 
-    for k,v in parselet.parselet_tree.items():
+    for k,v in list(parselet.parselet_tree.items()):
         assert_is_instance(k, parslepy.base.ParsleyContext)
         assert_is_instance(v, parslepy.base.Selector)
 

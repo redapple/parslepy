@@ -17,10 +17,10 @@ def main():
     (options, args) = parser.parse_args()
 
     if not options.parselet:
-        print "You must provide a Parsley script"
+        print("You must provide a Parsley script")
         return
     if not options.url and not options.inputfile:
-        print "You must provide an URL"
+        print("You must provide an URL")
         return
 
     with open(options.parselet) as fp:

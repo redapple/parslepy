@@ -9,7 +9,7 @@ import lxml.etree
 def extract_unicode(element, keep_nl=False, with_tail=True):
     return remove_multiple_whitespaces(
         lxml.etree.tostring(element, method="text", with_tail=with_tail,
-            encoding=unicode),
+            encoding=str),
         keep_nl=keep_nl).strip()
 
 
@@ -50,7 +50,7 @@ def format_htmltags_to_newline(tree):
 def tostring(nodes):
     return list(
         remove_multiple_whitespaces(
-            lxml.etree.tostring(e, method="text", encoding=unicode).strip())
+            lxml.etree.tostring(e, method="text", encoding=str).strip())
         for e in nodes)
 
 
@@ -61,11 +61,11 @@ def tostringnl(nodes):
             format_htmltags_to_newline(e)
             o.append(
                 remove_multiple_whitespaces(
-                    lxml.etree.tostring(e, method="text", encoding=unicode).strip(),
+                    lxml.etree.tostring(e, method="text", encoding=str).strip(),
                     keep_nl=True
                 )
             )
         return o
     except Exception as e:
-        print str(e)
+        print((str(e)))
         return nodes

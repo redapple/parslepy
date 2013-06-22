@@ -1,8 +1,8 @@
-import cStringIO as StringIO
+import io as StringIO
 from scrapy.contrib.loader import ItemLoader
 from scrapy.item import Item, Field
 from scrapy.http import Request
-import urlparse
+import urllib.parse
 import pprint
 
 class ParsleyItemLoaderConfig(object):
@@ -13,7 +13,7 @@ class ParsleyItemLoaderConfig(object):
         self.iter_item_key = iter_item_key
 
     def __repr__(self):
-        return u"<ParsleyItemLoaderConfig: item=%s, loader=%s, key=%s>" % (
+        return "<ParsleyItemLoaderConfig: item=%s, loader=%s, key=%s>" % (
                 self.item_class, self.item_loader_class, self.iter_item_key)
 
 
@@ -28,7 +28,7 @@ class ParsleyRequestConfig(object):
         self.callback = callback
 
     def __repr__(self):
-        return u"<ParsleyRequestConfig: key=%s, getter=%s, callback=%s>" % (
+        return "<ParsleyRequestConfig: key=%s, getter=%s, callback=%s>" % (
                 self.iter_request_key, self.url_getter, self.callback)
 
 
@@ -79,15 +79,15 @@ class ParsleyImplicitItemClassLoader(object):
                 keys = [
                     k
                     for e in extracted.get(config.iter_item_key)
-                    for k in e.iterkeys()
+                    for k in list(e.keys())
                 ]
                 class_name = "%sClass" % config.iter_item_key.capitalize()
             else:
-                keys = extracted.keys()
+                keys = list(extracted.keys())
                 class_name = "CustomClass"
 
             if keys:
-                print "keys:", set(keys)
+                print(("keys:", set(keys)))
                 config.item_class = type(
                     class_name,
                     (Item,),
@@ -124,7 +124,7 @@ class ParsleyImplicitItemClassLoader(object):
         #pprint.pprint(self.extracted)
         for request_info in extracted.get(iter_request_key):
             yield Request(
-                url=urlparse.urljoin(
+                url=urllib.parse.urljoin(
                             response.url,
                             get_url_function(request_info)),
                 callback=request_callback)
@@ -143,11 +143,11 @@ class ParsleyLoader(object):
             keys = [
                 k
                 for e in extracted.get(config.iter_item_key)
-                for k in e.iterkeys()
+                for k in list(e.keys())
             ]
             class_name = "%sClass" % config.iter_item_key.capitalize()
         else:
-            keys = extracted.keys()
+            keys = list(extracted.keys())
             class_name = "CustomClass"
 
         if keys:
@@ -205,7 +205,7 @@ class ParsleyLoader(object):
         reqdata = extracted.get(config.iter_request_key)
         if reqdata:
             for request_data in reqdata:
-                nurl = urlparse.urljoin(
+                nurl = urllib.parse.urljoin(
                                 response.url,
                                 config.url_getter(request_data))
                 if nurl:
