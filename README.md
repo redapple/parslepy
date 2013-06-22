@@ -1,6 +1,8 @@
 parslepy
 ========
 
+[![Build Status](https://travis-ci.org/redapple/parslepy.png?branch=master)](https://travis-ci.org/redapple/parslepy)
+
 (partial) Python/Lxml implementation of the Parsley language for extracting structured data from web pages.
 
 **This *Parsley* has nothing to do with the parsing library https://pypi.python.org/pypi/Parsley**
@@ -16,7 +18,7 @@ Kudos go to Kyle Maxwell (@fizx) for coming up with this smart and easy syntax t
 
 ### Dependencies ###
 
-* lxml (http://lxml.de/)
+* lxml (http://lxml.de/): tested with lxml-3.2.1 + Python 2.6/2.7/3.2/3.3
 
 ### Install ###
 
