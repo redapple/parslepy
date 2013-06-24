@@ -1,0 +1,217 @@
+# -*- coding: utf-8 -*-
+
+import lxml.cssselect
+import lxml.etree
+import parslepy.funcs
+import re
+
+def xpathtostring(context, nodes):
+    return parslepy.funcs.tostring(nodes)
+
+def xpathtostringnl(context, nodes):
+    return parslepy.funcs.tostringnl(nodes)
+
+def xpathtohtml(context, nodes):
+    return parslepy.funcs.tohtml(nodes)
+
+
+class Selector(object):
+    """
+    A dummy wrapper to easily detect that processing should be passed
+    to `SelectorHandler` when running the extraction on documents
+    """
+
+    def __init__(self, selector):
+        self.selector = selector
+
+    def __repr__(self):
+        return "<Selector: inner=%s>" % self.selector
+
+
+class SelectorHandler(object):
+    """
+    Called when building abstract Parsley trees
+    and when etracting object values during the actual parsing
+    of documents
+
+    This should be subclassed to implement the selector processing logic
+    you need for your Parsley handling.
+
+    All 3 methods, `make()`, `select()` and `extract()` MUST be overridden
+    """
+
+    DEBUG = False
+
+    def __init__(self, debug=False):
+        if debug:
+            self.DEBUG = True
+
+    def make(self, selection):
+        """
+        Interpret `selection` (str) as a selector
+        for elements or element attributes in a (semi-)structured document.
+        In cas of XPath selectors, this can also be a function call.
+
+        Return a `Selector` instance
+        """
+        raise NotImplementedError
+
+    def select(self, document, selector):
+        """
+        Apply the selector (`Selector` instance) on the document (`lxml.etree.Element`)
+        and return a `lxml.etree.Element` list
+        """
+        raise NotImplementedError
+
+    def extract(self, document, selector):
+        """
+        Apply the selector (`Selector` instance) on the document (`lxml.etree.Element`)
+        and return a value for the matching elements, element attributes
+
+        This can be single- or multi-valued
+        """
+        raise NotImplementedError
+
+
+class DefaultSelectorHandler(SelectorHandler):
+    """
+    Default selector logic, loosely based on the original
+    implementation
+
+    This handler understands what cssselect and lxml.etree.XPath understands,
+    that is (roughly) XPath 1.0 and CSS3 for things that dont need browser context
+    """
+
+    XPATH_EXTENSIONS = {
+        ('parsley', 'str') : xpathtostring,
+        ('parsley', 'strnl') : xpathtostringnl,
+        ('parsley', 'nl') : xpathtostringnl,
+        ('parsley', 'html') : xpathtohtml,
+    }
+    EXSLT_NAMESPACES={
+        'math': 'http://exslt.org/math',
+        're': 'http://exslt.org/regular-expressions',
+        'str': 'http://exslt.org/strings',
+    }
+    _selector_cache = {}
+
+    @classmethod
+    def _add_parsley_extension_functions(cls, namespace_dict):
+        """
+        Extend XPath evaluation with Parsley extensions' namespace
+        """
+
+        namespace_dict.update({
+            'prsl' : 'parsley',
+            'parsley' : 'parsley'
+        })
+        return namespace_dict
+
+    # example: "a img @src" (fetch the 'src' attribute of an IMG tag)
+    REGEX_ENDING_ATTRIBUTE = re.compile(r'^(?P<expr>.+)\s+(?P<attr>@[\w_\d-]+)$')
+    @classmethod
+    def make(cls, selection):
+        """
+        Scopes and selectors are tested in this order:
+        * is this a CSS selector with an appended @something attribute?
+        * is this a regular CSS selector?
+        * is this an XPath expression?
+
+        XPath expression can also use EXSLT functions (as long as they are
+        understood by libxslt)
+        """
+        cached = cls._selector_cache.get(selection)
+        if cached:
+            return cached
+
+        namespaces = cls.EXSLT_NAMESPACES
+        cls._add_parsley_extension_functions(namespaces)
+        try:
+            # CSS with attribute? (non-standard but convenient)
+            # construct CSS selector and append attribute to XPath expression
+            m = cls.REGEX_ENDING_ATTRIBUTE.match(selection)
+            if m:
+                cssselector = m.group("expr")
+                attribute = m.group("attr")
+                cssxpath = lxml.cssselect.CSSSelector(cssselector).path
+                selector = lxml.etree.XPath("%s/%s" % (cssxpath, attribute))
+            else:
+                selector = lxml.cssselect.CSSSelector(selection)
+
+        except lxml.cssselect.SelectorSyntaxError as syntax_error:
+            if cls.DEBUG:
+                print(repr(syntax_error), selection)
+                print("Try interpreting as XPath selector")
+            try:
+                selector = lxml.etree.XPath(selection,
+                    namespaces = namespaces,
+                    extensions = cls.XPATH_EXTENSIONS)
+
+            except lxml.etree.XPathSyntaxError as syntax_error:
+                if cls.DEBUG:
+                    print(repr(syntax_error), selection)
+                raise
+
+            except Exception as e:
+                if cls.DEBUG:
+                    print(repr(e), selection)
+                raise
+
+        except Exception as e:
+            if cls.DEBUG:
+                print(repr(e), selection)
+            raise
+
+        # wrap it/cache it
+        cls._selector_cache[selection] = Selector(selector)
+        return cls._selector_cache[selection]
+
+    @classmethod
+    def select(cls, document, selector):
+        try:
+            return selector.selector(document)
+        except Exception as e:
+            if cls.DEBUG:
+                print(str(e))
+            return
+
+    def extract(self, document, selector, debug_offset=''):
+        """
+        Try and convert matching Elements to unicode strings.
+
+        If this fails, the selector evaluation probably already
+        returned some string(s) of some sort, so return that instead.
+        """
+        selected = self.select(document, selector)
+        if selected:
+            if self.DEBUG:
+                print(debug_offset, selected)
+
+            if isinstance(selected, (list, tuple)):
+
+                # try decoding to a string if no text() or prsl:str() has been used
+                try:
+                    retval = parslepy.funcs.tostring(selected)
+                    if self.DEBUG:
+                        print(debug_offset, "return", retval)
+                    return retval
+
+                # assume the selection is already a string (or string list)
+                except Exception as e:
+                    if self.DEBUG:
+                        print(debug_offset, "tostring failed:", str(e))
+                        print(debug_offset, "return", selected)
+                    return selected
+            else:
+                if self.DEBUG:
+                    print(debug_offset, "selected is not a list; return", selected)
+                return selected
+
+        # selector did not match anything
+        else:
+            if self.DEBUG:
+                print(debug_offset, "selector did not match anything; return None")
+            return None
+
+
+

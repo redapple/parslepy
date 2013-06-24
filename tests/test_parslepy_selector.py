@@ -1,8 +1,10 @@
 import parslepy
 import parslepy.base
+import parslepy.selectors
 import lxml.cssselect
 from nose.tools import *
 from .tools import *
+
 
 @raises(SyntaxError)
 def test_parslepy_init_invalid_css_parselet():
@@ -38,7 +40,7 @@ class TestDefaultSelectorHandlerSelectors(object):
 
     def compare_selector_class(self, selector_string, target_class):
         s = self.dsh.make(selector_string)
-        assert_is_instance(s, parslepy.base.Selector)
+        assert_is_instance(s, parslepy.selectors.Selector)
         assert_is_instance(
             s.selector, target_class,
             "%s compiled to '%s' and is not an instance of %s" % (selector_string, s.selector, target_class)
@@ -47,7 +49,7 @@ class TestDefaultSelectorHandlerSelectors(object):
 
 class TestInvalidSelectors(object):
 
-    dsh = parslepy.base.DefaultSelectorHandler()
+    dsh = parslepy.selectors.DefaultSelectorHandler()
 
     invalid_selectors = (
         '# ',

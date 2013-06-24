@@ -1,27 +1,31 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
 import re
 import lxml.etree
+import traceback
 
 # ----------------------------------------------------------------------
 
 try:
-    unicode     # Python 2.x
-    def extract_unicode(element, keep_nl=False, with_tail=True):
-        return remove_multiple_whitespaces(
-            lxml.etree.tostring(element, method="text", with_tail=with_tail,
-                encoding=unicode),
-            keep_nl=keep_nl).strip()
+    unicode         # Python 2.x
+    def lxml_tostring(element, method="text", with_tail=True):
+        return lxml.etree.tostring(element, method=method,
+                encoding=unicode, with_tail=with_tail)
 except NameError:   # Python 3.x
-    def extract_unicode(element, keep_nl=False, with_tail=True):
-        return remove_multiple_whitespaces(
-            lxml.etree.tostring(element, method="text", with_tail=with_tail,
-                encoding=str),
-            keep_nl=keep_nl).strip()
+    def lxml_tostring(element, method="text", with_tail=True):
+        return lxml.etree.tostring(element, method=method,
+                encoding=str, with_tail=with_tail)
 except:
     raise
+
+def extract_unicode(element, keep_nl=False, with_tail=True):
+    return remove_multiple_whitespaces(
+        lxml_tostring(element, method="text", with_tail=with_tail),
+        keep_nl=keep_nl).strip()
+
+def extract_html(element, with_tail=False):
+    return lxml_tostring(element, method="html", with_tail=with_tail)
 
 
 REGEX_NEWLINE = re.compile(r'\n')
@@ -50,11 +54,15 @@ def format_alter_htmltags(tree, text_tags=[], tail_tags=[], replacement=" "):
                 elem.tail = replacement
             else:
                 elem.tail += replacement
+    return tree
 
 NEWLINE_TEXT_TAGS = ['br', 'hr']
-NEWLINE_TAIL_TAGS = ['p', 'div', 'ul', 'li', 'ol', 'dl', 'dt', 'dd', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+NEWLINE_TAIL_TAGS = ['p', 'div',
+    'ul', 'li', 'ol',
+    'dl', 'dt', 'dd',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6']
 def format_htmltags_to_newline(tree):
-    format_alter_htmltags(tree,
+    return format_alter_htmltags(tree,
         text_tags=NEWLINE_TEXT_TAGS,
         tail_tags=NEWLINE_TAIL_TAGS,
         replacement="\n")
@@ -66,11 +74,14 @@ def tostring(nodes):
 
 def tostringnl(nodes):
     try:
-        o = []
-        for e in nodes:
-            format_htmltags_to_newline(e)
-            o.append(extract_unicode(e, keep_nl=True))
-        return o
+        return list(extract_unicode(format_htmltags_to_newline(e),
+                        keep_nl=True)
+                    for e in nodes)
     except Exception as e:
-        print((str(e)))
+        print(traceback.format_exc())
+        print(str(e))
         return nodes
+
+
+def tohtml(nodes):
+    return list(extract_html(e) for e in nodes)

@@ -18,7 +18,7 @@ def test_parslepy_init_default():
 
     for k,v in list(parselet.parselet_tree.items()):
         assert_is_instance(k, parslepy.base.ParsleyContext)
-        assert_is_instance(v, parslepy.base.Selector)
+        assert_is_instance(v, parslepy.selectors.Selector)
 
     # since we did not provide a selector handler
     assert_is_instance(parselet.selector_handler, parslepy.base.DefaultSelectorHandler)
@@ -33,7 +33,7 @@ def test_parslepy_init_selector_handler_error():
         "title": "h1",
         "subtitle": "//h2"
     }
-    class MyHandler(parslepy.base.SelectorHandler):
+    class MyHandler(parslepy.selectors.SelectorHandler):
         _dummy = True
     mh = MyHandler()
     parselet = parslepy.Parselet(parselet_script, selector_handler=mh)
@@ -51,11 +51,13 @@ def test_parslepy_init_selector_handler_error():
         "title": "h1",
         "subtitle": "//h2"
     }
-    class MyHandler(parslepy.base.SelectorHandler):
+    class MyHandler(parslepy.selectors.SelectorHandler):
         def make(self, selection):
-            return parslepy.base.Selector(lxml.etree.XPath("body"))
+            return parslepy.selectors.Selector(lxml.etree.XPath("body"))
+
         def select(self, document, selector):
             return None
+
         def extract(self, document, selector):
             return None
 
