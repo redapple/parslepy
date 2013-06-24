@@ -18,6 +18,7 @@ Kudos go to Kyle Maxwell (@fizx) for coming up with this smart and easy syntax t
 
 ### Dependencies ###
 
+* cssselect
 * lxml (http://lxml.de/): tested with lxml-3.2.1 + Python 2.6/2.7/3.2/3.3
 
 ### Install ###
