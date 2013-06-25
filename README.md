@@ -29,6 +29,10 @@ $ python setup.py install
 $ sudo python setup.py install
 ```
 
+### Usage
+
+See https://github.com/redapple/parslepy/wiki#usage and the other Wiki pages https://github.com/redapple/parslepy/wiki/_pages
+
 ### Example usage from Python shell ###
 
 ```python
