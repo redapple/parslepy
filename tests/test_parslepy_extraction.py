@@ -356,3 +356,175 @@ class test_optionality_operator():
         if self.debug:
             pprint.pprint(extracted)
         assert_dict_equal(extracted, expected_output)
+
+
+class test_xml_extraction(object):
+    debug=True
+
+    @classmethod
+    def setup_class(cls):
+        hp = lxml.etree.XMLParser()
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        cls.fp = open(
+                os.path.join(dirname,
+                    'data/itunes.topalbums.rss'))
+        cls.docroot = lxml.etree.parse(cls.fp, parser=hp).getroot()
+
+    @classmethod
+    def teardown_class(cls):
+        del cls.docroot
+        cls.fp.close()
+        del cls.fp
+
+
+    def test_itunes_top_albums(self):
+        input_parselet, expected_output = (
+            {"entries(//atom:feed/atom:entry)": [{
+                    "title": "atom:title",
+                    "name": "im:name",
+                    "id": "atom:id/@im:id",
+                    "artist(im:artist)": {
+                        "name": ".",
+                        "href": "@href",
+                    },
+                    "images(im:image)": [{
+                        "height": "@height",
+                        "url": ".",
+                    }],
+                    #"content": "atom:content[@type='html']"
+                    "releasedate": "im:releaseDate",
+                }]
+            },
+            {'entries': [{'artist': {'href': 'https://itunes.apple.com/us/artist/wale/id129335935?uo=2',
+                                     'name': 'Wale'},
+                          'id': '647928068',
+                          'images': [{'height': '55',
+                                      'url': 'http://a815.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.55x55-70.jpg'},
+                                     {'height': '60',
+                                      'url': 'http://a1537.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.60x60-50.jpg'},
+                                     {'height': '170',
+                                      'url': 'http://a976.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.170x170-75.jpg'}],
+                          'name': 'The Gifted',
+                          'releasedate': '2013-06-24T00:00:00-07:00',
+                          'title': 'The Gifted - Wale'},
+                         {'artist': {'href': 'https://itunes.apple.com/us/artist/kanye-west/id2715720?uo=2',
+                                     'name': 'Kanye West'},
+                          'id': '662392801',
+                          'images': [{'height': '55',
+                                      'url': 'http://a697.phobos.apple.com/us/r1000/033/Music4/v4/b8/fc/be/b8fcbe49-510d-8afe-7c34-fa268da339f2/UMG_cvrart_00602537439317_01_RGB72_1500x1500_13UAAIM08444.55x55-70.jpg'},
+                                     {'height': '60',
+                                      'url': 'http://a1419.phobos.apple.com/us/r1000/033/Music4/v4/b8/fc/be/b8fcbe49-510d-8afe-7c34-fa268da339f2/UMG_cvrart_00602537439317_01_RGB72_1500x1500_13UAAIM08444.60x60-50.jpg'},
+                                     {'height': '170',
+                                      'url': 'http://a1930.phobos.apple.com/us/r1000/033/Music4/v4/b8/fc/be/b8fcbe49-510d-8afe-7c34-fa268da339f2/UMG_cvrart_00602537439317_01_RGB72_1500x1500_13UAAIM08444.170x170-75.jpg'}],
+                          'name': 'Yeezus',
+                          'releasedate': '2013-06-18T00:00:00-07:00',
+                          'title': 'Yeezus - Kanye West'},
+                         {'artist': {'href': 'https://itunes.apple.com/us/artist/j-cole/id73705833?uo=2',
+                                     'name': 'J Cole'},
+                          'id': '651105499',
+                          'images': [{'height': '55',
+                                      'url': 'http://a537.phobos.apple.com/us/r30/Music2/v4/c5/03/68/c5036883-38b9-702c-baf0-876db639b1f9/886444025935.55x55-70.jpg'},
+                                     {'height': '60',
+                                      'url': 'http://a1259.phobos.apple.com/us/r30/Music2/v4/c5/03/68/c5036883-38b9-702c-baf0-876db639b1f9/886444025935.60x60-50.jpg'},
+                                     {'height': '170',
+                                      'url': 'http://a1354.phobos.apple.com/us/r30/Music2/v4/c5/03/68/c5036883-38b9-702c-baf0-876db639b1f9/886444025935.170x170-75.jpg'}],
+                          'name': 'Born Sinner (Deluxe Version)',
+                          'releasedate': '2013-06-14T00:00:00-07:00',
+                          'title': 'Born Sinner (Deluxe Version) - J Cole'},
+                         {'artist': {'href': 'https://itunes.apple.com/us/artist/august-burns-red/id47796394?uo=2',
+                                     'name': 'August Burns Red'},
+                          'id': '655052532',
+                          'images': [{'height': '55',
+                                      'url': 'http://a854.phobos.apple.com/us/r30/Music2/v4/05/81/64/05816462-e832-80e4-9fa1-554d9bdd2542/886443989689.55x55-70.jpg'},
+                                     {'height': '60',
+                                      'url': 'http://a1576.phobos.apple.com/us/r30/Music2/v4/05/81/64/05816462-e832-80e4-9fa1-554d9bdd2542/886443989689.60x60-50.jpg'},
+                                     {'height': '170',
+                                      'url': 'http://a359.phobos.apple.com/us/r30/Music2/v4/05/81/64/05816462-e832-80e4-9fa1-554d9bdd2542/886443989689.170x170-75.jpg'}],
+                          'name': 'Rescue & Restore',
+                          'releasedate': '2013-06-25T00:00:00-07:00',
+                          'title': 'Rescue & Restore - August Burns Red'},
+                         {'artist': {'href': 'https://itunes.apple.com/us/artist/mac-miller/id419944559?uo=2',
+                                     'name': 'Mac Miller'},
+                          'id': '650864146',
+                          'images': [{'height': '55',
+                                      'url': 'http://a1599.phobos.apple.com/us/r30/Music/v4/7c/03/68/7c03681e-3cb6-23cb-5584-5b9dd42e54f7/040232021398_Cover.55x55-70.jpg'},
+                                     {'height': '60',
+                                      'url': 'http://a321.phobos.apple.com/us/r30/Music/v4/7c/03/68/7c03681e-3cb6-23cb-5584-5b9dd42e54f7/040232021398_Cover.60x60-50.jpg'},
+                                     {'height': '170',
+                                      'url': 'http://a1696.phobos.apple.com/us/r30/Music/v4/7c/03/68/7c03681e-3cb6-23cb-5584-5b9dd42e54f7/040232021398_Cover.170x170-75.jpg'}],
+                          'name': 'Watching Movies With the Sound Off (Deluxe Edition)',
+                          'releasedate': '2013-06-18T00:00:00-07:00',
+                          'title': 'Watching Movies With the Sound Off (Deluxe Edition) - Mac Miller'},
+                         {'artist': {'href': 'https://itunes.apple.com/us/artist/daft-punk/id5468295?uo=2',
+                                     'name': 'Daft Punk'},
+                          'id': '617154241',
+                          'images': [{'height': '55',
+                                      'url': 'http://a1849.phobos.apple.com/us/r1000/096/Music2/v4/52/aa/50/52aa5008-4934-0c27-a08d-8ebd7d13c030/886443919266.55x55-70.jpg'},
+                                     {'height': '60',
+                                      'url': 'http://a923.phobos.apple.com/us/r1000/096/Music2/v4/52/aa/50/52aa5008-4934-0c27-a08d-8ebd7d13c030/886443919266.60x60-50.jpg'},
+                                     {'height': '170',
+                                      'url': 'http://a1450.phobos.apple.com/us/r1000/096/Music2/v4/52/aa/50/52aa5008-4934-0c27-a08d-8ebd7d13c030/886443919266.170x170-75.jpg'}],
+                          'name': 'Random Access Memories',
+                          'releasedate': '2013-05-21T00:00:00-07:00',
+                          'title': 'Random Access Memories - Daft Punk'},
+                         {'artist': {'href': 'https://itunes.apple.com/us/artist/skillet/id1750802?uo=2',
+                                     'name': 'Skillet'},
+                          'id': '655774977',
+                          'images': [{'height': '55',
+                                      'url': 'http://a545.phobos.apple.com/us/r1000/050/Music/v4/b8/3f/7b/b83f7b74-4e7a-6b06-9385-667dc1288d7d/075679954787.55x55-70.jpg'},
+                                     {'height': '60',
+                                      'url': 'http://a1267.phobos.apple.com/us/r1000/050/Music/v4/b8/3f/7b/b83f7b74-4e7a-6b06-9385-667dc1288d7d/075679954787.60x60-50.jpg'},
+                                     {'height': '170',
+                                      'url': 'http://a114.phobos.apple.com/us/r1000/050/Music/v4/b8/3f/7b/b83f7b74-4e7a-6b06-9385-667dc1288d7d/075679954787.170x170-75.jpg'}],
+                          'name': 'Rise',
+                          'releasedate': '2013-06-21T00:00:00-07:00',
+                          'title': 'Rise - Skillet'},
+                         {'artist': {'href': 'https://itunes.apple.com/us/artist/skillet/id1750802?uo=2',
+                                     'name': 'Skillet'},
+                          'id': '662457451',
+                          'images': [{'height': '55',
+                                      'url': 'http://a399.phobos.apple.com/us/r1000/022/Music/v4/87/3e/eb/873eebf6-618c-d8e1-b8df-4d0b60f6729b/075679954749.55x55-70.jpg'},
+                                     {'height': '60',
+                                      'url': 'http://a1473.phobos.apple.com/us/r1000/022/Music/v4/87/3e/eb/873eebf6-618c-d8e1-b8df-4d0b60f6729b/075679954749.60x60-50.jpg'},
+                                     {'height': '170',
+                                      'url': 'http://a880.phobos.apple.com/us/r1000/022/Music/v4/87/3e/eb/873eebf6-618c-d8e1-b8df-4d0b60f6729b/075679954749.170x170-75.jpg'}],
+                          'name': 'Rise (Deluxe Version)',
+                          'releasedate': '2013-06-21T00:00:00-07:00',
+                          'title': 'Rise (Deluxe Version) - Skillet'},
+                         {'artist': {'href': 'https://itunes.apple.com/us/artist/attila/id46893195?uo=2',
+                                     'name': 'Attila'},
+                          'id': '649587514',
+                          'images': [{'height': '55',
+                                      'url': 'http://a608.phobos.apple.com/us/r30/Music/v4/ee/7d/b2/ee7db2ad-e783-2c3a-2ad3-6549868315e7/793018342834.55x55-70.jpg'},
+                                     {'height': '60',
+                                      'url': 'http://a1682.phobos.apple.com/us/r30/Music/v4/ee/7d/b2/ee7db2ad-e783-2c3a-2ad3-6549868315e7/793018342834.60x60-50.jpg'},
+                                     {'height': '170',
+                                      'url': 'http://a1297.phobos.apple.com/us/r30/Music/v4/ee/7d/b2/ee7db2ad-e783-2c3a-2ad3-6549868315e7/793018342834.170x170-75.jpg'}],
+                          'name': 'About That Life',
+                          'releasedate': '2013-06-25T00:00:00-07:00',
+                          'title': 'About That Life - Attila'},
+                         {'artist': {'href': 'https://itunes.apple.com/us/artist/india.arie/id92325?uo=2',
+                                     'name': 'India.Arie'},
+                          'id': '659585460',
+                          'images': [{'height': '55',
+                                      'url': 'http://a1694.phobos.apple.com/us/r30/Music/v4/d5/65/b2/d565b212-4463-6486-7ee2-eeab22ff3d87/UMG_cvrart_00602537429486_01_RGB72_1500x1500_13UAAIM06584.55x55-70.jpg'},
+                                     {'height': '60',
+                                      'url': 'http://a768.phobos.apple.com/us/r30/Music/v4/d5/65/b2/d565b212-4463-6486-7ee2-eeab22ff3d87/UMG_cvrart_00602537429486_01_RGB72_1500x1500_13UAAIM06584.60x60-50.jpg'},
+                                     {'height': '170',
+                                      'url': 'http://a63.phobos.apple.com/us/r30/Music/v4/d5/65/b2/d565b212-4463-6486-7ee2-eeab22ff3d87/UMG_cvrart_00602537429486_01_RGB72_1500x1500_13UAAIM06584.170x170-75.jpg'}],
+                          'name': 'SongVersation (Deluxe Edition)',
+                          'releasedate': '2013-06-25T00:00:00-07:00',
+                          'title': 'SongVersation (Deluxe Edition) - India.Arie'}]}
+        )
+        xsh = parslepy.selectors.XPathSelectorHandler(
+            namespaces={
+                'atom': 'http://www.w3.org/2005/Atom',
+                'im': 'http://itunes.apple.com/rss'
+            })
+        parselet = parslepy.Parselet(
+            input_parselet, selector_handler=xsh, strict=True,
+            debug=self.debug)
+        extracted = parselet.extract(self.docroot)
+        if self.debug:
+            pprint.pprint(extracted)
+        assert_dict_equal(extracted, expected_output)

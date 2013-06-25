@@ -73,20 +73,18 @@ class SelectorHandler(object):
         raise NotImplementedError
 
 
-class DefaultSelectorHandler(SelectorHandler):
+class XPathSelectorHandler(SelectorHandler):
     """
-    Default selector logic, loosely based on the original
-    implementation
-
-    This handler understands what cssselect and lxml.etree.XPath understands,
-    that is (roughly) XPath 1.0 and CSS3 for things that dont need browser context
+    This selector only accepts XPath selectors
+    It understands what lxml.etree.XPath understands, that is XPath 1.0
+    expressions
     """
-
-    XPATH_EXTENSIONS = {
-        ('parsley', 'str') : xpathtostring,
-        ('parsley', 'strnl') : xpathtostringnl,
-        ('parsley', 'nl') : xpathtostringnl,
-        ('parsley', 'html') : xpathtohtml,
+    PARSLEY_NAMESPACE = 'local-parsley'
+    PARSLEY_XPATH_EXTENSIONS = {
+        (PARSLEY_NAMESPACE, 'str') : xpathtostring,
+        (PARSLEY_NAMESPACE, 'strnl') : xpathtostringnl,
+        (PARSLEY_NAMESPACE, 'nl') : xpathtostringnl,
+        (PARSLEY_NAMESPACE, 'html') : xpathtohtml,
     }
     EXSLT_NAMESPACES={
         'math': 'http://exslt.org/math',
@@ -95,76 +93,59 @@ class DefaultSelectorHandler(SelectorHandler):
     }
     _selector_cache = {}
 
+    def __init__(self, namespaces=None, extensions=None, debug=False):
+        super(XPathSelectorHandler, self).__init__(debug=debug)
+
+        # support EXSLT extensions
+        self.namespaces = self.EXSLT_NAMESPACES
+        self._add_parsley_ns(self.namespaces)
+        self.extensions = self.PARSLEY_XPATH_EXTENSIONS
+
+        # add user-defined extensions
+        if namespaces:
+            self.namespaces.update(namespaces)
+        if extensions:
+            self.extensions.update(extensions)
+
     @classmethod
-    def _add_parsley_extension_functions(cls, namespace_dict):
+    def _add_parsley_ns(cls, namespace_dict):
         """
         Extend XPath evaluation with Parsley extensions' namespace
         """
 
         namespace_dict.update({
-            'prsl' : 'parsley',
-            'parsley' : 'parsley'
+            'parsley' : cls.PARSLEY_NAMESPACE,
         })
         return namespace_dict
 
-    # example: "a img @src" (fetch the 'src' attribute of an IMG tag)
-    REGEX_ENDING_ATTRIBUTE = re.compile(r'^(?P<expr>.+)\s+(?P<attr>@[\w_\d-]+)$')
-    @classmethod
-    def make(cls, selection):
+    def make(self, selection):
         """
-        Scopes and selectors are tested in this order:
-        * is this a CSS selector with an appended @something attribute?
-        * is this a regular CSS selector?
-        * is this an XPath expression?
-
         XPath expression can also use EXSLT functions (as long as they are
         understood by libxslt)
         """
-        cached = cls._selector_cache.get(selection)
+        cached = self._selector_cache.get(selection)
         if cached:
             return cached
 
-        namespaces = cls.EXSLT_NAMESPACES
-        cls._add_parsley_extension_functions(namespaces)
+
         try:
-            # CSS with attribute? (non-standard but convenient)
-            # construct CSS selector and append attribute to XPath expression
-            m = cls.REGEX_ENDING_ATTRIBUTE.match(selection)
-            if m:
-                cssselector = m.group("expr")
-                attribute = m.group("attr")
-                cssxpath = lxml.cssselect.CSSSelector(cssselector).path
-                selector = lxml.etree.XPath("%s/%s" % (cssxpath, attribute))
-            else:
-                selector = lxml.cssselect.CSSSelector(selection)
+            selector = lxml.etree.XPath(selection,
+                namespaces = self.namespaces,
+                extensions = self.extensions)
 
-        except lxml.cssselect.SelectorSyntaxError as syntax_error:
-            if cls.DEBUG:
+        except lxml.etree.XPathSyntaxError as syntax_error:
+            if self.DEBUG:
                 print(repr(syntax_error), selection)
-                print("Try interpreting as XPath selector")
-            try:
-                selector = lxml.etree.XPath(selection,
-                    namespaces = namespaces,
-                    extensions = cls.XPATH_EXTENSIONS)
-
-            except lxml.etree.XPathSyntaxError as syntax_error:
-                if cls.DEBUG:
-                    print(repr(syntax_error), selection)
-                raise
-
-            except Exception as e:
-                if cls.DEBUG:
-                    print(repr(e), selection)
-                raise
+            raise
 
         except Exception as e:
-            if cls.DEBUG:
+            if self.DEBUG:
                 print(repr(e), selection)
             raise
 
         # wrap it/cache it
-        cls._selector_cache[selection] = Selector(selector)
-        return cls._selector_cache[selection]
+        self._selector_cache[selection] = Selector(selector)
+        return self._selector_cache[selection]
 
     @classmethod
     def select(cls, document, selector):
@@ -214,4 +195,69 @@ class DefaultSelectorHandler(SelectorHandler):
             return None
 
 
+class DefaultSelectorHandler(XPathSelectorHandler):
+    """
+    Default selector logic, loosely based on the original
+    implementation
 
+    This handler understands what cssselect and lxml.etree.XPath understands,
+    that is (roughly) XPath 1.0 and CSS3 for things that dont need browser context
+    """
+
+    # example: "a img @src" (fetch the 'src' attribute of an IMG tag)
+    REGEX_ENDING_ATTRIBUTE = re.compile(r'^(?P<expr>.+)\s+(?P<attr>@[\w_\d-]+)$')
+    def make(self, selection):
+        """
+        Scopes and selectors are tested in this order:
+        * is this a CSS selector with an appended @something attribute?
+        * is this a regular CSS selector?
+        * is this an XPath expression?
+
+        XPath expression can also use EXSLT functions (as long as they are
+        understood by libxslt)
+        """
+        cached = self._selector_cache.get(selection)
+        if cached:
+            return cached
+
+        namespaces = self.EXSLT_NAMESPACES
+        self._add_parsley_ns(namespaces)
+        try:
+            # CSS with attribute? (non-standard but convenient)
+            # construct CSS selector and append attribute to XPath expression
+            m = self.REGEX_ENDING_ATTRIBUTE.match(selection)
+            if m:
+                cssselector = m.group("expr")
+                attribute = m.group("attr")
+                cssxpath = lxml.cssselect.CSSSelector(cssselector).path
+                selector = lxml.etree.XPath("%s/%s" % (cssxpath, attribute))
+            else:
+                selector = lxml.cssselect.CSSSelector(selection)
+
+        except lxml.cssselect.SelectorSyntaxError as syntax_error:
+            if self.DEBUG:
+                print(repr(syntax_error), selection)
+                print("Try interpreting as XPath selector")
+            try:
+                selector = lxml.etree.XPath(selection,
+                    namespaces = self.namespaces,
+                    extensions = self.extensions)
+
+            except lxml.etree.XPathSyntaxError as syntax_error:
+                if self.DEBUG:
+                    print(repr(syntax_error), selection)
+                raise
+
+            except Exception as e:
+                if self.DEBUG:
+                    print(repr(e), selection)
+                raise
+
+        except Exception as e:
+            if self.DEBUG:
+                print(repr(e), selection)
+            raise
+
+        # wrap it/cache it
+        self._selector_cache[selection] = Selector(selector)
+        return self._selector_cache[selection]

@@ -1,0 +1,866 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+	<feed xmlns:im="http://itunes.apple.com/rss" xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+		<id>https://itunes.apple.com/us/rss/topalbums/limit=10/explicit=true/xml</id><title>iTunes Store: Top Albums</title><updated>2013-06-25T06:27:25-07:00</updated><link rel="alternate" type="text/html" href="https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?cc=us&amp;id=38&amp;popId=11"/><link rel="self" href="https://itunes.apple.com/us/rss/topalbums/limit=10/explicit=true/xml"/><icon>http://itunes.apple.com/favicon.ico</icon><author><name>iTunes Store</name><uri>http://www.apple.com/itunes/</uri></author><rights>Copyright 2008 Apple Inc.</rights>
+		
+			<entry>
+				<updated>2013-06-25T06:27:25-07:00</updated>
+				
+					<id im:id="647928068">https://itunes.apple.com/us/album/the-gifted/id647928068?uo=2</id>
+				
+					<title>The Gifted - Wale</title>
+				
+					
+				
+					<im:name>The Gifted</im:name>
+				
+					<link rel="alternate" type="text/html" href="https://itunes.apple.com/us/album/the-gifted/id647928068?uo=2"/>
+				
+					<im:contentType term="Music" label="Music"><im:contentType term="Album" label="Album"/></im:contentType>
+				
+					<category im:id="18" term="Hip Hop/Rap" scheme="https://itunes.apple.com/us/genre/music-hip-hop-rap/id18?uo=2" label="Hip-Hop/Rap"/>
+				
+					<im:artist href="https://itunes.apple.com/us/artist/wale/id129335935?uo=2">Wale</im:artist>
+				
+					<im:price amount="9.99000" currency="USD">$9.99</im:price>
+				
+					<im:image height="55">http://a815.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.55x55-70.jpg</im:image>
+				
+					<im:image height="60">http://a1537.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.60x60-50.jpg</im:image>
+				
+					<im:image height="170">http://a976.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.170x170-75.jpg</im:image>
+				
+					<rights>&#8471; 2013 Maybach Music Group, LLC/Atlantic for the United States and Maybach Music Group, LLC/WEA International Inc. for the rest of the world</rights>
+				
+					<im:releaseDate label="June 24, 2013">2013-06-24T00:00:00-07:00</im:releaseDate>
+				
+					<im:itemCount>16</im:itemCount>
+				
+				
+					<content type="html">&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;
+                &lt;tr valign=&quot;top&quot; align=&quot;left&quot;&gt;
+                    
+                        &lt;td align=&quot;center&quot; width=&quot;166&quot; valign=&quot;top&quot;&gt;
+                            &lt;a href=&quot;https://itunes.apple.com/us/album/the-gifted/id647928068?uo=2&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Wale - The Gifted artwork&quot; src=&quot;http://a976.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.170x170-75.jpg&quot; /&gt;&lt;/a&gt;
+                        &lt;/td&gt;
+                        &lt;td width=&quot;10&quot;&gt;&lt;img alt=&quot;&quot; width=&quot;10&quot; height=&quot;1&quot; src=&quot;https://s.mzstatic.com/images/spacer.gif&quot; /&gt;&lt;/td&gt;
+                    	&lt;td width=&quot;95%&quot;&gt;
+                    
+                    
+                        &lt;b&gt;&lt;a href=&quot;https://itunes.apple.com/us/album/the-gifted/id647928068?uo=2&quot;&gt;The Gifted&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;
+                        
+                        
+                        
+                        
+
+                        &lt;a href=&quot;https://itunes.apple.com/us/artist/wale/id129335935?uo=2&quot;&gt;Wale&lt;/a&gt;
+
+                       &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt;
+						
+						 	&lt;br/&gt;
+                            &lt;b&gt;Genre:&lt;/b&gt; &lt;a href=&quot;https://itunes.apple.com/us/genre/music-hip-hop-rap/id18?uo=2&quot;&gt;Hip-Hop/Rap&lt;/a&gt;
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Price:&lt;/b&gt; $9.99
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Release Date:&lt;/b&gt; June 24, 2013
+                        
+                        &lt;/font&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            
+            
+            
+                &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt; &amp;#169; ℗ 2013 Maybach Music Group, LLC/Atlantic for the United States and Maybach Music Group, LLC/WEA International Inc. for the rest of the world&lt;/font&gt;
+	        
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</content>
+				
+			</entry>
+		
+			<entry>
+				<updated>2013-06-25T06:27:25-07:00</updated>
+				
+					<id im:id="662392801">https://itunes.apple.com/us/album/yeezus/id662392801?uo=2</id>
+				
+					<title>Yeezus - Kanye West</title>
+				
+					
+				
+					<im:name>Yeezus</im:name>
+				
+					<link rel="alternate" type="text/html" href="https://itunes.apple.com/us/album/yeezus/id662392801?uo=2"/>
+				
+					<im:contentType term="Music" label="Music"><im:contentType term="Album" label="Album"/></im:contentType>
+				
+					<category im:id="18" term="Hip Hop/Rap" scheme="https://itunes.apple.com/us/genre/music-hip-hop-rap/id18?uo=2" label="Hip-Hop/Rap"/>
+				
+					<im:artist href="https://itunes.apple.com/us/artist/kanye-west/id2715720?uo=2">Kanye West</im:artist>
+				
+					<im:price amount="11.99000" currency="USD">$11.99</im:price>
+				
+					<im:image height="55">http://a697.phobos.apple.com/us/r1000/033/Music4/v4/b8/fc/be/b8fcbe49-510d-8afe-7c34-fa268da339f2/UMG_cvrart_00602537439317_01_RGB72_1500x1500_13UAAIM08444.55x55-70.jpg</im:image>
+				
+					<im:image height="60">http://a1419.phobos.apple.com/us/r1000/033/Music4/v4/b8/fc/be/b8fcbe49-510d-8afe-7c34-fa268da339f2/UMG_cvrart_00602537439317_01_RGB72_1500x1500_13UAAIM08444.60x60-50.jpg</im:image>
+				
+					<im:image height="170">http://a1930.phobos.apple.com/us/r1000/033/Music4/v4/b8/fc/be/b8fcbe49-510d-8afe-7c34-fa268da339f2/UMG_cvrart_00602537439317_01_RGB72_1500x1500_13UAAIM08444.170x170-75.jpg</im:image>
+				
+					<rights>&#8471; 2013 Def Jam Recordings, a division of UMG Recordings, Inc.</rights>
+				
+					<im:releaseDate label="June 18, 2013">2013-06-18T00:00:00-07:00</im:releaseDate>
+				
+					<im:itemCount>10</im:itemCount>
+				
+				
+					<content type="html">&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;
+                &lt;tr valign=&quot;top&quot; align=&quot;left&quot;&gt;
+                    
+                        &lt;td align=&quot;center&quot; width=&quot;166&quot; valign=&quot;top&quot;&gt;
+                            &lt;a href=&quot;https://itunes.apple.com/us/album/yeezus/id662392801?uo=2&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Kanye West - Yeezus artwork&quot; src=&quot;http://a1930.phobos.apple.com/us/r1000/033/Music4/v4/b8/fc/be/b8fcbe49-510d-8afe-7c34-fa268da339f2/UMG_cvrart_00602537439317_01_RGB72_1500x1500_13UAAIM08444.170x170-75.jpg&quot; /&gt;&lt;/a&gt;
+                        &lt;/td&gt;
+                        &lt;td width=&quot;10&quot;&gt;&lt;img alt=&quot;&quot; width=&quot;10&quot; height=&quot;1&quot; src=&quot;https://s.mzstatic.com/images/spacer.gif&quot; /&gt;&lt;/td&gt;
+                    	&lt;td width=&quot;95%&quot;&gt;
+                    
+                    
+                        &lt;b&gt;&lt;a href=&quot;https://itunes.apple.com/us/album/yeezus/id662392801?uo=2&quot;&gt;Yeezus&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;
+                        
+                        
+                        
+                        
+
+                        &lt;a href=&quot;https://itunes.apple.com/us/artist/kanye-west/id2715720?uo=2&quot;&gt;Kanye West&lt;/a&gt;
+
+                       &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt;
+						
+						 	&lt;br/&gt;
+                            &lt;b&gt;Genre:&lt;/b&gt; &lt;a href=&quot;https://itunes.apple.com/us/genre/music-hip-hop-rap/id18?uo=2&quot;&gt;Hip-Hop/Rap&lt;/a&gt;
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Price:&lt;/b&gt; $11.99
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Release Date:&lt;/b&gt; June 18, 2013
+                        
+                        &lt;/font&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            
+            
+            
+                &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt; &amp;#169; ℗ 2013 Def Jam Recordings, a division of UMG Recordings, Inc.&lt;/font&gt;
+	        
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</content>
+				
+			</entry>
+		
+			<entry>
+				<updated>2013-06-25T06:27:25-07:00</updated>
+				
+					<id im:id="651105499">https://itunes.apple.com/us/album/born-sinner-deluxe-version/id651105499?uo=2</id>
+				
+					<title>Born Sinner (Deluxe Version) - J Cole</title>
+				
+					
+				
+					<im:name>Born Sinner (Deluxe Version)</im:name>
+				
+					<link rel="alternate" type="text/html" href="https://itunes.apple.com/us/album/born-sinner-deluxe-version/id651105499?uo=2"/>
+				
+					<im:contentType term="Music" label="Music"><im:contentType term="Album" label="Album"/></im:contentType>
+				
+					<category im:id="18" term="Hip Hop/Rap" scheme="https://itunes.apple.com/us/genre/music-hip-hop-rap/id18?uo=2" label="Hip-Hop/Rap"/>
+				
+					<im:artist href="https://itunes.apple.com/us/artist/j-cole/id73705833?uo=2">J Cole</im:artist>
+				
+					<im:price amount="13.99000" currency="USD">$13.99</im:price>
+				
+					<im:image height="55">http://a537.phobos.apple.com/us/r30/Music2/v4/c5/03/68/c5036883-38b9-702c-baf0-876db639b1f9/886444025935.55x55-70.jpg</im:image>
+				
+					<im:image height="60">http://a1259.phobos.apple.com/us/r30/Music2/v4/c5/03/68/c5036883-38b9-702c-baf0-876db639b1f9/886444025935.60x60-50.jpg</im:image>
+				
+					<im:image height="170">http://a1354.phobos.apple.com/us/r30/Music2/v4/c5/03/68/c5036883-38b9-702c-baf0-876db639b1f9/886444025935.170x170-75.jpg</im:image>
+				
+					<rights>&#8471; 2013, 2012 Roc Nation LLC</rights>
+				
+					<im:releaseDate label="June 14, 2013">2013-06-14T00:00:00-07:00</im:releaseDate>
+				
+					<im:itemCount>21</im:itemCount>
+				
+				
+					<content type="html">&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;
+                &lt;tr valign=&quot;top&quot; align=&quot;left&quot;&gt;
+                    
+                        &lt;td align=&quot;center&quot; width=&quot;166&quot; valign=&quot;top&quot;&gt;
+                            &lt;a href=&quot;https://itunes.apple.com/us/album/born-sinner-deluxe-version/id651105499?uo=2&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;J Cole - Born Sinner (Deluxe Version) artwork&quot; src=&quot;http://a1354.phobos.apple.com/us/r30/Music2/v4/c5/03/68/c5036883-38b9-702c-baf0-876db639b1f9/886444025935.170x170-75.jpg&quot; /&gt;&lt;/a&gt;
+                        &lt;/td&gt;
+                        &lt;td width=&quot;10&quot;&gt;&lt;img alt=&quot;&quot; width=&quot;10&quot; height=&quot;1&quot; src=&quot;https://s.mzstatic.com/images/spacer.gif&quot; /&gt;&lt;/td&gt;
+                    	&lt;td width=&quot;95%&quot;&gt;
+                    
+                    
+                        &lt;b&gt;&lt;a href=&quot;https://itunes.apple.com/us/album/born-sinner-deluxe-version/id651105499?uo=2&quot;&gt;Born Sinner (Deluxe Version)&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;
+                        
+                        
+                        
+                        
+
+                        &lt;a href=&quot;https://itunes.apple.com/us/artist/j-cole/id73705833?uo=2&quot;&gt;J Cole&lt;/a&gt;
+
+                       &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt;
+						
+						 	&lt;br/&gt;
+                            &lt;b&gt;Genre:&lt;/b&gt; &lt;a href=&quot;https://itunes.apple.com/us/genre/music-hip-hop-rap/id18?uo=2&quot;&gt;Hip-Hop/Rap&lt;/a&gt;
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Price:&lt;/b&gt; $13.99
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Release Date:&lt;/b&gt; June 14, 2013
+                        
+                        &lt;/font&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            
+            
+            
+                &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt; &amp;#169; ℗ 2013, 2012 Roc Nation LLC&lt;/font&gt;
+	        
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</content>
+				
+			</entry>
+		
+			<entry>
+				<updated>2013-06-25T06:27:25-07:00</updated>
+				
+					<id im:id="655052532">https://itunes.apple.com/us/album/rescue-restore/id655052532?uo=2</id>
+				
+					<title>Rescue &amp; Restore - August Burns Red</title>
+				
+					
+				
+					<im:name>Rescue &amp; Restore</im:name>
+				
+					<link rel="alternate" type="text/html" href="https://itunes.apple.com/us/album/rescue-restore/id655052532?uo=2"/>
+				
+					<im:contentType term="Music" label="Music"><im:contentType term="Album" label="Album"/></im:contentType>
+				
+					<category im:id="1153" term="Heavy Metal" scheme="https://itunes.apple.com/us/genre/music-rock-metal/id1153?uo=2" label="Metal"/>
+				
+					<im:artist href="https://itunes.apple.com/us/artist/august-burns-red/id47796394?uo=2">August Burns Red</im:artist>
+				
+					<im:price amount="9.99000" currency="USD">$9.99</im:price>
+				
+					<im:image height="55">http://a854.phobos.apple.com/us/r30/Music2/v4/05/81/64/05816462-e832-80e4-9fa1-554d9bdd2542/886443989689.55x55-70.jpg</im:image>
+				
+					<im:image height="60">http://a1576.phobos.apple.com/us/r30/Music2/v4/05/81/64/05816462-e832-80e4-9fa1-554d9bdd2542/886443989689.60x60-50.jpg</im:image>
+				
+					<im:image height="170">http://a359.phobos.apple.com/us/r30/Music2/v4/05/81/64/05816462-e832-80e4-9fa1-554d9bdd2542/886443989689.170x170-75.jpg</im:image>
+				
+					<rights>&#8471; 2013 Solid State Records</rights>
+				
+					<im:releaseDate label="June 25, 2013">2013-06-25T00:00:00-07:00</im:releaseDate>
+				
+					<im:itemCount>11</im:itemCount>
+				
+				
+					<content type="html">&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;
+                &lt;tr valign=&quot;top&quot; align=&quot;left&quot;&gt;
+                    
+                        &lt;td align=&quot;center&quot; width=&quot;166&quot; valign=&quot;top&quot;&gt;
+                            &lt;a href=&quot;https://itunes.apple.com/us/album/rescue-restore/id655052532?uo=2&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;August Burns Red - Rescue &amp; Restore artwork&quot; src=&quot;http://a359.phobos.apple.com/us/r30/Music2/v4/05/81/64/05816462-e832-80e4-9fa1-554d9bdd2542/886443989689.170x170-75.jpg&quot; /&gt;&lt;/a&gt;
+                        &lt;/td&gt;
+                        &lt;td width=&quot;10&quot;&gt;&lt;img alt=&quot;&quot; width=&quot;10&quot; height=&quot;1&quot; src=&quot;https://s.mzstatic.com/images/spacer.gif&quot; /&gt;&lt;/td&gt;
+                    	&lt;td width=&quot;95%&quot;&gt;
+                    
+                    
+                        &lt;b&gt;&lt;a href=&quot;https://itunes.apple.com/us/album/rescue-restore/id655052532?uo=2&quot;&gt;Rescue &amp;amp; Restore&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;
+                        
+                        
+                        
+                        
+
+                        &lt;a href=&quot;https://itunes.apple.com/us/artist/august-burns-red/id47796394?uo=2&quot;&gt;August Burns Red&lt;/a&gt;
+
+                       &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt;
+						
+						 	&lt;br/&gt;
+                            &lt;b&gt;Genre:&lt;/b&gt; &lt;a href=&quot;https://itunes.apple.com/us/genre/music-rock-metal/id1153?uo=2&quot;&gt;Metal&lt;/a&gt;
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Price:&lt;/b&gt; $9.99
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Release Date:&lt;/b&gt; June 25, 2013
+                        
+                        &lt;/font&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            
+            
+            
+                &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt; &amp;#169; ℗ 2013 Solid State Records&lt;/font&gt;
+	        
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</content>
+				
+			</entry>
+		
+			<entry>
+				<updated>2013-06-25T06:27:25-07:00</updated>
+				
+					<id im:id="650864146">https://itunes.apple.com/us/album/watching-movies-sound-off/id650864146?uo=2</id>
+				
+					<title>Watching Movies With the Sound Off (Deluxe Edition) - Mac Miller</title>
+				
+					
+				
+					<im:name>Watching Movies With the Sound Off (Deluxe Edition)</im:name>
+				
+					<link rel="alternate" type="text/html" href="https://itunes.apple.com/us/album/watching-movies-sound-off/id650864146?uo=2"/>
+				
+					<im:contentType term="Music" label="Music"><im:contentType term="Album" label="Album"/></im:contentType>
+				
+					<category im:id="18" term="Hip Hop/Rap" scheme="https://itunes.apple.com/us/genre/music-hip-hop-rap/id18?uo=2" label="Hip-Hop/Rap"/>
+				
+					<im:artist href="https://itunes.apple.com/us/artist/mac-miller/id419944559?uo=2">Mac Miller</im:artist>
+				
+					<im:price amount="11.99000" currency="USD">$11.99</im:price>
+				
+					<im:image height="55">http://a1599.phobos.apple.com/us/r30/Music/v4/7c/03/68/7c03681e-3cb6-23cb-5584-5b9dd42e54f7/040232021398_Cover.55x55-70.jpg</im:image>
+				
+					<im:image height="60">http://a321.phobos.apple.com/us/r30/Music/v4/7c/03/68/7c03681e-3cb6-23cb-5584-5b9dd42e54f7/040232021398_Cover.60x60-50.jpg</im:image>
+				
+					<im:image height="170">http://a1696.phobos.apple.com/us/r30/Music/v4/7c/03/68/7c03681e-3cb6-23cb-5584-5b9dd42e54f7/040232021398_Cover.170x170-75.jpg</im:image>
+				
+					<rights>&#8471; 2013 Rostrum Records</rights>
+				
+					<im:releaseDate label="June 18, 2013">2013-06-18T00:00:00-07:00</im:releaseDate>
+				
+					<im:itemCount>19</im:itemCount>
+				
+				
+					<content type="html">&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;
+                &lt;tr valign=&quot;top&quot; align=&quot;left&quot;&gt;
+                    
+                        &lt;td align=&quot;center&quot; width=&quot;166&quot; valign=&quot;top&quot;&gt;
+                            &lt;a href=&quot;https://itunes.apple.com/us/album/watching-movies-sound-off/id650864146?uo=2&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Mac Miller - Watching Movies With the Sound Off (Deluxe Edition) artwork&quot; src=&quot;http://a1696.phobos.apple.com/us/r30/Music/v4/7c/03/68/7c03681e-3cb6-23cb-5584-5b9dd42e54f7/040232021398_Cover.170x170-75.jpg&quot; /&gt;&lt;/a&gt;
+                        &lt;/td&gt;
+                        &lt;td width=&quot;10&quot;&gt;&lt;img alt=&quot;&quot; width=&quot;10&quot; height=&quot;1&quot; src=&quot;https://s.mzstatic.com/images/spacer.gif&quot; /&gt;&lt;/td&gt;
+                    	&lt;td width=&quot;95%&quot;&gt;
+                    
+                    
+                        &lt;b&gt;&lt;a href=&quot;https://itunes.apple.com/us/album/watching-movies-sound-off/id650864146?uo=2&quot;&gt;Watching Movies With the Sound Off (Deluxe Edition)&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;
+                        
+                        
+                        
+                        
+
+                        &lt;a href=&quot;https://itunes.apple.com/us/artist/mac-miller/id419944559?uo=2&quot;&gt;Mac Miller&lt;/a&gt;
+
+                       &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt;
+						
+						 	&lt;br/&gt;
+                            &lt;b&gt;Genre:&lt;/b&gt; &lt;a href=&quot;https://itunes.apple.com/us/genre/music-hip-hop-rap/id18?uo=2&quot;&gt;Hip-Hop/Rap&lt;/a&gt;
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Price:&lt;/b&gt; $11.99
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Release Date:&lt;/b&gt; June 18, 2013
+                        
+                        &lt;/font&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            
+            
+            
+                &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt; &amp;#169; ℗ 2013 Rostrum Records&lt;/font&gt;
+	        
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</content>
+				
+			</entry>
+		
+			<entry>
+				<updated>2013-06-25T06:27:25-07:00</updated>
+				
+					<id im:id="617154241">https://itunes.apple.com/us/album/random-access-memories/id617154241?uo=2</id>
+				
+					<title>Random Access Memories - Daft Punk</title>
+				
+					
+				
+					<im:name>Random Access Memories</im:name>
+				
+					<link rel="alternate" type="text/html" href="https://itunes.apple.com/us/album/random-access-memories/id617154241?uo=2"/>
+				
+					<im:contentType term="Music" label="Music"><im:contentType term="Album" label="Album"/></im:contentType>
+				
+					<category im:id="14" term="Pop" scheme="https://itunes.apple.com/us/genre/music-pop/id14?uo=2" label="Pop"/>
+				
+					<im:artist href="https://itunes.apple.com/us/artist/daft-punk/id5468295?uo=2">Daft Punk</im:artist>
+				
+					<im:price amount="11.99000" currency="USD">$11.99</im:price>
+				
+					<im:image height="55">http://a1849.phobos.apple.com/us/r1000/096/Music2/v4/52/aa/50/52aa5008-4934-0c27-a08d-8ebd7d13c030/886443919266.55x55-70.jpg</im:image>
+				
+					<im:image height="60">http://a923.phobos.apple.com/us/r1000/096/Music2/v4/52/aa/50/52aa5008-4934-0c27-a08d-8ebd7d13c030/886443919266.60x60-50.jpg</im:image>
+				
+					<im:image height="170">http://a1450.phobos.apple.com/us/r1000/096/Music2/v4/52/aa/50/52aa5008-4934-0c27-a08d-8ebd7d13c030/886443919266.170x170-75.jpg</im:image>
+				
+					<rights>&#8471; 2013 Daft Life Limited under exclusive license to Columbia Records, a Division of Sony Music Entertainment</rights>
+				
+					<im:releaseDate label="May 21, 2013">2013-05-21T00:00:00-07:00</im:releaseDate>
+				
+					<im:itemCount>13</im:itemCount>
+				
+				
+					<content type="html">&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;
+                &lt;tr valign=&quot;top&quot; align=&quot;left&quot;&gt;
+                    
+                        &lt;td align=&quot;center&quot; width=&quot;166&quot; valign=&quot;top&quot;&gt;
+                            &lt;a href=&quot;https://itunes.apple.com/us/album/random-access-memories/id617154241?uo=2&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Daft Punk - Random Access Memories artwork&quot; src=&quot;http://a1450.phobos.apple.com/us/r1000/096/Music2/v4/52/aa/50/52aa5008-4934-0c27-a08d-8ebd7d13c030/886443919266.170x170-75.jpg&quot; /&gt;&lt;/a&gt;
+                        &lt;/td&gt;
+                        &lt;td width=&quot;10&quot;&gt;&lt;img alt=&quot;&quot; width=&quot;10&quot; height=&quot;1&quot; src=&quot;https://s.mzstatic.com/images/spacer.gif&quot; /&gt;&lt;/td&gt;
+                    	&lt;td width=&quot;95%&quot;&gt;
+                    
+                    
+                        &lt;b&gt;&lt;a href=&quot;https://itunes.apple.com/us/album/random-access-memories/id617154241?uo=2&quot;&gt;Random Access Memories&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;
+                        
+                        
+                        
+                        
+
+                        &lt;a href=&quot;https://itunes.apple.com/us/artist/daft-punk/id5468295?uo=2&quot;&gt;Daft Punk&lt;/a&gt;
+
+                       &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt;
+						
+						 	&lt;br/&gt;
+                            &lt;b&gt;Genre:&lt;/b&gt; &lt;a href=&quot;https://itunes.apple.com/us/genre/music-pop/id14?uo=2&quot;&gt;Pop&lt;/a&gt;
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Price:&lt;/b&gt; $11.99
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Release Date:&lt;/b&gt; May 21, 2013
+                        
+                        &lt;/font&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            
+            
+            
+                &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt; &amp;#169; ℗ 2013 Daft Life Limited under exclusive license to Columbia Records, a Division of Sony Music Entertainment&lt;/font&gt;
+	        
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</content>
+				
+			</entry>
+		
+			<entry>
+				<updated>2013-06-25T06:27:25-07:00</updated>
+				
+					<id im:id="655774977">https://itunes.apple.com/us/album/rise/id655774977?uo=2</id>
+				
+					<title>Rise - Skillet</title>
+				
+					
+				
+					<im:name>Rise</im:name>
+				
+					<link rel="alternate" type="text/html" href="https://itunes.apple.com/us/album/rise/id655774977?uo=2"/>
+				
+					<im:contentType term="Music" label="Music"><im:contentType term="Album" label="Album"/></im:contentType>
+				
+					<category im:id="21" term="Rock" scheme="https://itunes.apple.com/us/genre/music-rock/id21?uo=2" label="Rock"/>
+				
+					<im:artist href="https://itunes.apple.com/us/artist/skillet/id1750802?uo=2">Skillet</im:artist>
+				
+					<im:price amount="10.99000" currency="USD">$10.99</im:price>
+				
+					<im:image height="55">http://a545.phobos.apple.com/us/r1000/050/Music/v4/b8/3f/7b/b83f7b74-4e7a-6b06-9385-667dc1288d7d/075679954787.55x55-70.jpg</im:image>
+				
+					<im:image height="60">http://a1267.phobos.apple.com/us/r1000/050/Music/v4/b8/3f/7b/b83f7b74-4e7a-6b06-9385-667dc1288d7d/075679954787.60x60-50.jpg</im:image>
+				
+					<im:image height="170">http://a114.phobos.apple.com/us/r1000/050/Music/v4/b8/3f/7b/b83f7b74-4e7a-6b06-9385-667dc1288d7d/075679954787.170x170-75.jpg</im:image>
+				
+					<rights>&#8471; 2013 Atlantic Recording Corporation for the United States and WEA International Inc. for the world outside of the United States</rights>
+				
+					<im:releaseDate label="June 21, 2013">2013-06-21T00:00:00-07:00</im:releaseDate>
+				
+					<im:itemCount>12</im:itemCount>
+				
+				
+					<content type="html">&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;
+                &lt;tr valign=&quot;top&quot; align=&quot;left&quot;&gt;
+                    
+                        &lt;td align=&quot;center&quot; width=&quot;166&quot; valign=&quot;top&quot;&gt;
+                            &lt;a href=&quot;https://itunes.apple.com/us/album/rise/id655774977?uo=2&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Skillet - Rise artwork&quot; src=&quot;http://a114.phobos.apple.com/us/r1000/050/Music/v4/b8/3f/7b/b83f7b74-4e7a-6b06-9385-667dc1288d7d/075679954787.170x170-75.jpg&quot; /&gt;&lt;/a&gt;
+                        &lt;/td&gt;
+                        &lt;td width=&quot;10&quot;&gt;&lt;img alt=&quot;&quot; width=&quot;10&quot; height=&quot;1&quot; src=&quot;https://s.mzstatic.com/images/spacer.gif&quot; /&gt;&lt;/td&gt;
+                    	&lt;td width=&quot;95%&quot;&gt;
+                    
+                    
+                        &lt;b&gt;&lt;a href=&quot;https://itunes.apple.com/us/album/rise/id655774977?uo=2&quot;&gt;Rise&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;
+                        
+                        
+                        
+                        
+
+                        &lt;a href=&quot;https://itunes.apple.com/us/artist/skillet/id1750802?uo=2&quot;&gt;Skillet&lt;/a&gt;
+
+                       &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt;
+						
+						 	&lt;br/&gt;
+                            &lt;b&gt;Genre:&lt;/b&gt; &lt;a href=&quot;https://itunes.apple.com/us/genre/music-rock/id21?uo=2&quot;&gt;Rock&lt;/a&gt;
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Price:&lt;/b&gt; $10.99
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Release Date:&lt;/b&gt; June 21, 2013
+                        
+                        &lt;/font&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            
+            
+            
+                &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt; &amp;#169; ℗ 2013 Atlantic Recording Corporation for the United States and WEA International Inc. for the world outside of the United States&lt;/font&gt;
+	        
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</content>
+				
+			</entry>
+		
+			<entry>
+				<updated>2013-06-25T06:27:25-07:00</updated>
+				
+					<id im:id="662457451">https://itunes.apple.com/us/album/rise-deluxe-version/id662457451?uo=2</id>
+				
+					<title>Rise (Deluxe Version) - Skillet</title>
+				
+					
+				
+					<im:name>Rise (Deluxe Version)</im:name>
+				
+					<link rel="alternate" type="text/html" href="https://itunes.apple.com/us/album/rise-deluxe-version/id662457451?uo=2"/>
+				
+					<im:contentType term="Music" label="Music"><im:contentType term="Album" label="Album"/></im:contentType>
+				
+					<category im:id="21" term="Rock" scheme="https://itunes.apple.com/us/genre/music-rock/id21?uo=2" label="Rock"/>
+				
+					<im:artist href="https://itunes.apple.com/us/artist/skillet/id1750802?uo=2">Skillet</im:artist>
+				
+					<im:price amount="19.99000" currency="USD">$19.99</im:price>
+				
+					<im:image height="55">http://a399.phobos.apple.com/us/r1000/022/Music/v4/87/3e/eb/873eebf6-618c-d8e1-b8df-4d0b60f6729b/075679954749.55x55-70.jpg</im:image>
+				
+					<im:image height="60">http://a1473.phobos.apple.com/us/r1000/022/Music/v4/87/3e/eb/873eebf6-618c-d8e1-b8df-4d0b60f6729b/075679954749.60x60-50.jpg</im:image>
+				
+					<im:image height="170">http://a880.phobos.apple.com/us/r1000/022/Music/v4/87/3e/eb/873eebf6-618c-d8e1-b8df-4d0b60f6729b/075679954749.170x170-75.jpg</im:image>
+				
+					<rights>&#8471; 2013 Atlantic Recording Corporation for the United States and WEA International Inc. for the world outside of the United States</rights>
+				
+					<im:releaseDate label="June 21, 2013">2013-06-21T00:00:00-07:00</im:releaseDate>
+				
+					<im:itemCount>24</im:itemCount>
+				
+				
+					<content type="html">&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;
+                &lt;tr valign=&quot;top&quot; align=&quot;left&quot;&gt;
+                    
+                        &lt;td align=&quot;center&quot; width=&quot;166&quot; valign=&quot;top&quot;&gt;
+                            &lt;a href=&quot;https://itunes.apple.com/us/album/rise-deluxe-version/id662457451?uo=2&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Skillet - Rise (Deluxe Version) artwork&quot; src=&quot;http://a880.phobos.apple.com/us/r1000/022/Music/v4/87/3e/eb/873eebf6-618c-d8e1-b8df-4d0b60f6729b/075679954749.170x170-75.jpg&quot; /&gt;&lt;/a&gt;
+                        &lt;/td&gt;
+                        &lt;td width=&quot;10&quot;&gt;&lt;img alt=&quot;&quot; width=&quot;10&quot; height=&quot;1&quot; src=&quot;https://s.mzstatic.com/images/spacer.gif&quot; /&gt;&lt;/td&gt;
+                    	&lt;td width=&quot;95%&quot;&gt;
+                    
+                    
+                        &lt;b&gt;&lt;a href=&quot;https://itunes.apple.com/us/album/rise-deluxe-version/id662457451?uo=2&quot;&gt;Rise (Deluxe Version)&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;
+                        
+                        
+                        
+                        
+
+                        &lt;a href=&quot;https://itunes.apple.com/us/artist/skillet/id1750802?uo=2&quot;&gt;Skillet&lt;/a&gt;
+
+                       &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt;
+						
+						 	&lt;br/&gt;
+                            &lt;b&gt;Genre:&lt;/b&gt; &lt;a href=&quot;https://itunes.apple.com/us/genre/music-rock/id21?uo=2&quot;&gt;Rock&lt;/a&gt;
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Price:&lt;/b&gt; $19.99
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Release Date:&lt;/b&gt; June 21, 2013
+                        
+                        &lt;/font&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            
+            
+            
+                &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt; &amp;#169; ℗ 2013 Atlantic Recording Corporation for the United States and WEA International Inc. for the world outside of the United States&lt;/font&gt;
+	        
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</content>
+				
+			</entry>
+		
+			<entry>
+				<updated>2013-06-25T06:27:25-07:00</updated>
+				
+					<id im:id="649587514">https://itunes.apple.com/us/album/about-that-life/id649587514?uo=2</id>
+				
+					<title>About That Life - Attila</title>
+				
+					
+				
+					<im:name>About That Life</im:name>
+				
+					<link rel="alternate" type="text/html" href="https://itunes.apple.com/us/album/about-that-life/id649587514?uo=2"/>
+				
+					<im:contentType term="Music" label="Music"><im:contentType term="Album" label="Album"/></im:contentType>
+				
+					<category im:id="1153" term="Heavy Metal" scheme="https://itunes.apple.com/us/genre/music-rock-metal/id1153?uo=2" label="Metal"/>
+				
+					<im:artist href="https://itunes.apple.com/us/artist/attila/id46893195?uo=2">Attila</im:artist>
+				
+					<im:price amount="9.99000" currency="USD">$9.99</im:price>
+				
+					<im:image height="55">http://a608.phobos.apple.com/us/r30/Music/v4/ee/7d/b2/ee7db2ad-e783-2c3a-2ad3-6549868315e7/793018342834.55x55-70.jpg</im:image>
+				
+					<im:image height="60">http://a1682.phobos.apple.com/us/r30/Music/v4/ee/7d/b2/ee7db2ad-e783-2c3a-2ad3-6549868315e7/793018342834.60x60-50.jpg</im:image>
+				
+					<im:image height="170">http://a1297.phobos.apple.com/us/r30/Music/v4/ee/7d/b2/ee7db2ad-e783-2c3a-2ad3-6549868315e7/793018342834.170x170-75.jpg</im:image>
+				
+					<rights>&#8471; 2013 Artery Recordings. Manufactured and marketed under exclusive license to Razor &amp; Tie Direct, LLC.</rights>
+				
+					<im:releaseDate label="June 25, 2013">2013-06-25T00:00:00-07:00</im:releaseDate>
+				
+					<im:itemCount>14</im:itemCount>
+				
+				
+					<content type="html">&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;
+                &lt;tr valign=&quot;top&quot; align=&quot;left&quot;&gt;
+                    
+                        &lt;td align=&quot;center&quot; width=&quot;166&quot; valign=&quot;top&quot;&gt;
+                            &lt;a href=&quot;https://itunes.apple.com/us/album/about-that-life/id649587514?uo=2&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;Attila - About That Life artwork&quot; src=&quot;http://a1297.phobos.apple.com/us/r30/Music/v4/ee/7d/b2/ee7db2ad-e783-2c3a-2ad3-6549868315e7/793018342834.170x170-75.jpg&quot; /&gt;&lt;/a&gt;
+                        &lt;/td&gt;
+                        &lt;td width=&quot;10&quot;&gt;&lt;img alt=&quot;&quot; width=&quot;10&quot; height=&quot;1&quot; src=&quot;https://s.mzstatic.com/images/spacer.gif&quot; /&gt;&lt;/td&gt;
+                    	&lt;td width=&quot;95%&quot;&gt;
+                    
+                    
+                        &lt;b&gt;&lt;a href=&quot;https://itunes.apple.com/us/album/about-that-life/id649587514?uo=2&quot;&gt;About That Life&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;
+                        
+                        
+                        
+                        
+
+                        &lt;a href=&quot;https://itunes.apple.com/us/artist/attila/id46893195?uo=2&quot;&gt;Attila&lt;/a&gt;
+
+                       &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt;
+						
+						 	&lt;br/&gt;
+                            &lt;b&gt;Genre:&lt;/b&gt; &lt;a href=&quot;https://itunes.apple.com/us/genre/music-rock-metal/id1153?uo=2&quot;&gt;Metal&lt;/a&gt;
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Price:&lt;/b&gt; $9.99
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Release Date:&lt;/b&gt; June 25, 2013
+                        
+                        &lt;/font&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            
+            
+            
+                &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt; &amp;#169; ℗ 2013 Artery Recordings. Manufactured and marketed under exclusive license to Razor &amp;amp; Tie Direct, LLC.&lt;/font&gt;
+	        
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</content>
+				
+			</entry>
+		
+			<entry>
+				<updated>2013-06-25T06:27:25-07:00</updated>
+				
+					<id im:id="659585460">https://itunes.apple.com/us/album/songversation-deluxe-edition/id659585460?uo=2</id>
+				
+					<title>SongVersation (Deluxe Edition) - India.Arie</title>
+				
+					
+				
+					<im:name>SongVersation (Deluxe Edition)</im:name>
+				
+					<link rel="alternate" type="text/html" href="https://itunes.apple.com/us/album/songversation-deluxe-edition/id659585460?uo=2"/>
+				
+					<im:contentType term="Music" label="Music"><im:contentType term="Album" label="Album"/></im:contentType>
+				
+					<category im:id="15" term="R&amp;B/Soul" scheme="https://itunes.apple.com/us/genre/music-r-b-soul/id15?uo=2" label="R&amp;B/Soul"/>
+				
+					<im:artist href="https://itunes.apple.com/us/artist/india.arie/id92325?uo=2">India.Arie</im:artist>
+				
+					<im:price amount="14.99000" currency="USD">$14.99</im:price>
+				
+					<im:image height="55">http://a1694.phobos.apple.com/us/r30/Music/v4/d5/65/b2/d565b212-4463-6486-7ee2-eeab22ff3d87/UMG_cvrart_00602537429486_01_RGB72_1500x1500_13UAAIM06584.55x55-70.jpg</im:image>
+				
+					<im:image height="60">http://a768.phobos.apple.com/us/r30/Music/v4/d5/65/b2/d565b212-4463-6486-7ee2-eeab22ff3d87/UMG_cvrart_00602537429486_01_RGB72_1500x1500_13UAAIM06584.60x60-50.jpg</im:image>
+				
+					<im:image height="170">http://a63.phobos.apple.com/us/r30/Music/v4/d5/65/b2/d565b212-4463-6486-7ee2-eeab22ff3d87/UMG_cvrart_00602537429486_01_RGB72_1500x1500_13UAAIM06584.170x170-75.jpg</im:image>
+				
+					<rights>&#8471; 2013 Motown Records, a Division of UMG Recordings, Inc.</rights>
+				
+					<im:releaseDate label="June 25, 2013">2013-06-25T00:00:00-07:00</im:releaseDate>
+				
+					<im:itemCount>20</im:itemCount>
+				
+				
+					<content type="html">&lt;table border=&quot;0&quot; width=&quot;100%&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot;&gt;
+                &lt;tr valign=&quot;top&quot; align=&quot;left&quot;&gt;
+                    
+                        &lt;td align=&quot;center&quot; width=&quot;166&quot; valign=&quot;top&quot;&gt;
+                            &lt;a href=&quot;https://itunes.apple.com/us/album/songversation-deluxe-edition/id659585460?uo=2&quot;&gt;&lt;img border=&quot;0&quot; alt=&quot;India.Arie - SongVersation (Deluxe Edition) artwork&quot; src=&quot;http://a63.phobos.apple.com/us/r30/Music/v4/d5/65/b2/d565b212-4463-6486-7ee2-eeab22ff3d87/UMG_cvrart_00602537429486_01_RGB72_1500x1500_13UAAIM06584.170x170-75.jpg&quot; /&gt;&lt;/a&gt;
+                        &lt;/td&gt;
+                        &lt;td width=&quot;10&quot;&gt;&lt;img alt=&quot;&quot; width=&quot;10&quot; height=&quot;1&quot; src=&quot;https://s.mzstatic.com/images/spacer.gif&quot; /&gt;&lt;/td&gt;
+                    	&lt;td width=&quot;95%&quot;&gt;
+                    
+                    
+                        &lt;b&gt;&lt;a href=&quot;https://itunes.apple.com/us/album/songversation-deluxe-edition/id659585460?uo=2&quot;&gt;SongVersation (Deluxe Edition)&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;
+                        
+                        
+                        
+                        
+
+                        &lt;a href=&quot;https://itunes.apple.com/us/artist/india.arie/id92325?uo=2&quot;&gt;India.Arie&lt;/a&gt;
+
+                       &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt;
+						
+						 	&lt;br/&gt;
+                            &lt;b&gt;Genre:&lt;/b&gt; &lt;a href=&quot;https://itunes.apple.com/us/genre/music-r-b-soul/id15?uo=2&quot;&gt;R&amp;B/Soul&lt;/a&gt;
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Price:&lt;/b&gt; $14.99
+                        
+						 	&lt;br/&gt;
+                            &lt;b&gt;Release Date:&lt;/b&gt; June 25, 2013
+                        
+                        &lt;/font&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;
+            
+            
+            
+                &lt;font size=&quot;2&quot; face=&quot;Helvetica,Arial,Geneva,Swiss,SunSans-Regular&quot;&gt; &amp;#169; ℗ 2013 Motown Records, a Division of UMG Recordings, Inc.&lt;/font&gt;
+	        
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</content>
+				
+			</entry>
+		
+	</feed>
