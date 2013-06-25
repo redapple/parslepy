@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 import re
 import lxml.etree
-import traceback
+#import traceback
 
 # ----------------------------------------------------------------------
 
@@ -78,8 +78,8 @@ def tostringnl(nodes):
                         keep_nl=True)
                     for e in nodes)
     except Exception as e:
-        print(traceback.format_exc())
-        print(str(e))
+        #print(traceback.format_exc())
+        #print(str(e))
         return nodes
 
 
