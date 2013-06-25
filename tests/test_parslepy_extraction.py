@@ -359,7 +359,7 @@ class test_optionality_operator():
 
 
 class test_xml_extraction(object):
-    debug=True
+    debug=False
 
     @classmethod
     def setup_class(cls):
