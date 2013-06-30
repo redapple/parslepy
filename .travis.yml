@@ -3,7 +3,6 @@ python:
     - "2.7"
     - "3.2"
     - "2.6"
-    - "3.3"
 install:
     # borrowed from https://github.com/facebook/tornado/blob/master/.travis.yml
     # always install unittest2 on py26

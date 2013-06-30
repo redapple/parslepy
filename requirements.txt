@@ -1,2 +1,1 @@
-cssselect
 lxml<3.0
