@@ -234,7 +234,10 @@ class DefaultSelectorHandler(XPathSelectorHandler):
             else:
                 selector = lxml.cssselect.CSSSelector(selection)
 
-        except lxml.cssselect.SelectorSyntaxError as syntax_error:
+        except (
+                lxml.cssselect.SelectorSyntaxError,
+                AssertionError,
+                TypeError) as syntax_error:
             if self.DEBUG:
                 print(repr(syntax_error), selection)
                 print("Try interpreting as XPath selector")

@@ -40,7 +40,7 @@ class TestKeySyntax(object):
         ({'test~(test)': 'h1'}, InvalidKeySyntax),
 
         ({'test(!)': 'h1'}, XPathSyntaxError),
-        ({'test(#)': 'h1'}, XPathSyntaxError),
+        #({'test(#)': 'h1'}, XPathSyntaxError),
         ({'test(.div ~)': 'h1'}, XPathSyntaxError),
     )
 

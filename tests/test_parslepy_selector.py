@@ -7,7 +7,7 @@ from .tools import *
 
 class TestInvalidParseletInit(object):
     init_parselets = (
-        { "title": ".test #"},
+        #{ "title": ".test #"},
         { "title": "/h1[@]"},
         { "title": "h1", "paragraphs": [".//p[@class,'news']"]},
     )
@@ -57,10 +57,10 @@ class TestDefaultInvalidSelectors(object):
     dsh = parslepy.selectors.DefaultSelectorHandler()
 
     invalid_selectors = (
-        '# ',
-        '.#',
+        #'# ',
+        #'.#',
         '#t.',
-        '#t-#',
+        #'#t-#',
         './//e',
         './/div class',
         './/div[@class="test]',
