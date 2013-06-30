@@ -1,2 +1,2 @@
 cssselect
-lxml==2.3
+lxml<3.0
