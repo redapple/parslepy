@@ -63,23 +63,50 @@ class ParsleyContext(object):
 
 
 class NonMatchingNonOptionalKey(RuntimeError):
+    """
+    Raised by a Parselet instance while extracting content in strict mode,
+    when a required key does not yield any content.
+
+    >>> rules = {
+    ...     "heading1": "h1#main",
+    ...     "heading2": "h2#main",
+    ... }
+    >>> p = parslepy.Parselet(rules, strict=True)
+    >>> p.extract(doc)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "parslepy/base.py", line 501, in extract
+        return self._extract(self.parselet_tree, document)
+      File "parslepy/base.py", line 582, in _extract
+        document.getroottree().getpath(document),v
+    parslepy.base.NonMatchingNonOptionalKey: key "heading2" is required but yield nothing
+    Current path: /html/(<Selector: inner=<CSSSelector 20a2758 for 'h2#main'>>)
+
+    """
     pass
 
 
 class InvalidKeySyntax(SyntaxError):
+    """
+    Raised when the input Parsley script's syntax is invalid
+
+    >>> p = parslepy.Parselet({"heading@": "#main"})
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "parslepy/base.py", line 325, in __init__
+        self.compile()
+      File "parslepy/base.py", line 393, in compile
+        self.parselet_tree = self._compile(self.parselet)
+      File "parslepy/base.py", line 432, in _compile
+        raise InvalidKeySyntax("Key %s is not valid" % k)
+    parslepy.base.InvalidKeySyntax: Key heading@ is not valid
+
+    """
     pass
 
 
 class Parselet(object):
-    """
-    Abstract representation of a Parsley script.
 
-    Instances should be initialized with a dict representing
-    key-to-objects mapping/structure to extract
-
-    Two helper methods instantiate the Parselet
-    from JSON Parsley scripts, either as files or strings
-    """
     DEBUG = False
     SPECIAL_LEVEL_KEY = "--"
     KEEP_ONLY_FIRST_ELEMENT_IF_LIST = True
@@ -87,20 +114,37 @@ class Parselet(object):
 
     def __init__(self, parselet, selector_handler=None, strict=False, debug=False):
         """
-        Take a parselet (dict) and optional selector_handler
-        (SelectorHandler subclass instance)
+        Take a parselet and optional selector_handler
         and build an abstract representation of the Parsley extraction
         logic.
-        Set the strict (boolean) parameter to True is you want to
-        enforce that missing required keys raise an Exception
-        (defaults to lenient/non-strict mode)
 
-        The internal abstract Parsley tree is a dict/tree of ParsleyNode
-        objects, with leaves being of type Selector (terminal elements).
+        Two helper class methods can be used to instantiate a Parselet
+        from JSON rules: :meth:`.from_jsonstring`, :meth:`.from_jsonfile`.
 
-        Parent and child ParsleyNode instances are linked through
-        ParsleyContext keys.
+        :param dict parselet: Parsley script as a Python dict object
+        :param boolean strict: Set to *True* is you want to
+            enforce that missing required keys raise an Exception
+            (defaults to lenient/non-strict mode)
+        :param selector_handler: an instance of :class:`selectors.SelectorHandler`
+            optional selector handler instance;
+            defaults to an instance of :class:`selectors.DefaultSelectorHandler`
+        :raises: :class:`.InvalidKeySyntax`
+
+        Example:
+
+        >>> rules = {
+        ...     "heading": "h1#main",
+        ...     "news(li.newsitem)": [{
+        ...         "title": ".",
+        ...         "url": "a/@href"
+        ...     }],
+        ... }
+        >>> p = parslepy.Parselet(rules)
+
+        Use :meth:`~base.Parselet.extract` or :meth:`~base.Parselet.parse`
+        to get extracted content from documents.
         """
+
         if debug:
             self.DEBUG = True
         if strict:
@@ -122,23 +166,29 @@ class Parselet(object):
     # accept comments in parselets
     REGEX_COMMENT_LINE = re.compile(r'^\s*#')
     @classmethod
-    def from_jsonfile(cls, fp, debug=False):
+    def from_jsonfile(cls, fp, selector_handler=None, strict=False, debug=False):
         """
-        Create a Parselet instance from fp (an open file pointer) containing
-        the Parsley script as JSON
+        Create a Parselet instance from a file containing
+        the Parsley script as a JSON object
 
         >>> import parslepy
         >>> with open('parselet.js') as fp:
         ...     parslepy.Parselet.from_jsonfile(fp)
         ...
         <parslepy.base.Parselet object at 0x2014e50>
-        >>>
+
+        :param file fp: an open file-like pointer containing the Parsley script
+        :rtype: base.Parselet
+
+        Other arguments: same as for __init__
+
         """
 
-        return cls._from_jsonlines(fp, debug=debug)
+        return cls._from_jsonlines(fp,
+            selector_handler=selector_handler, strict=strict, debug=debug)
 
     @classmethod
-    def from_jsonstring(cls, s, debug=False):
+    def from_jsonstring(cls, s, selector_handler=None, strict=False, debug=False):
         """
         Create a Parselet instance from s (str) containing
         the Parsley script as JSON
@@ -148,12 +198,17 @@ class Parselet(object):
         >>> parslepy.Parselet.from_jsonstring(parsley_string)
         <parslepy.base.Parselet object at 0x183a050>
         >>>
+
+        :param string s: a Parsley script as a JSON string
+        :rtype: base.Parselet
+
         """
 
-        return cls._from_jsonlines(s.split("\n"), debug=debug)
+        return cls._from_jsonlines(s.split("\n"),
+            selector_handler=selector_handler, strict=strict, debug=debug)
 
     @classmethod
-    def _from_jsonlines(cls, lines, debug=False):
+    def _from_jsonlines(cls, lines, selector_handler=None, strict=False, debug=False):
         """
         Interpret input lines as a JSON Parsley script.
         Python-style comment lines are skipped.
@@ -161,20 +216,38 @@ class Parselet(object):
 
         return cls(json.loads(
                 "\n".join([l for l in lines if not cls.REGEX_COMMENT_LINE.match(l)])
-            ), debug=debug)
+            ), selector_handler=selector_handler, strict=strict, debug=debug)
 
-    def parse(self, f, parser=None):
+    def parse(self, fp, parser=None):
         """
-        Parse an HTML document f (a file-like object) and
-        return the extacted object following the Parsley script structure.
+        Parse an HTML or XML document and
+        return the extacted object following the Parsley rules give at instantiation
 
-        Arguments:
-        f       -- file-like objects containing an HTML or XML document
-        parser  -- (optional) lxml parser instance; defaults to lxml.etree.HTMLParser()
+        :param fp: file-like object containing an HTML or XML document
+        :param parser: *lxml.etree._FeedParser* instance (optional); defaults to lxml.etree.HTMLParser()
+        :rtype: Python :class:`dict` object with mapped extracted content
+        :raises: :class:`base.NonMatchingNonOptionalKey`
+
         """
         if parser is None:
             parser = lxml.etree.HTMLParser()
-        doc = lxml.html.parse(f, parser=parser).getroot()
+        doc = lxml.etree.parse(fp, parser=parser).getroot()
+        return self.extract(doc)
+
+    def parse_fromstring(self, s, parser=None):
+        """
+        Parse an HTML or XML document and
+        return the extacted object following the Parsley rules give at instantiation
+
+        :param string s: an HTML or XML document as a string
+        :param parser: *lxml.etree._FeedParser* instance (optional); defaults to lxml.etree.HTMLParser()
+        :rtype: Python :class:`dict` object with mapped extracted content
+        :raises: :class:`base.NonMatchingNonOptionalKey`
+
+        """
+        if parser is None:
+            parser = lxml.etree.HTMLParser()
+        doc = lxml.etree.fromstring(s, parser=parser)
         return self.extract(doc)
 
     def compile(self):
@@ -291,6 +364,42 @@ class Parselet(object):
         """
         Extract values as a dict object following the structure
         of the Parsley script (recursive)
+
+        :param document: lxml-parsed document
+        :rtype: Python *dict* object with mapped extracted content
+        :raises: :class:`base.NonMatchingNonOptionalKey`
+
+        >>> import lxml.etree
+        >>> import parslepy
+        >>> html = '''
+        ... <!DOCTYPE html>
+        ... <html>
+        ... <head>
+        ...     <title>Sample document to test parslepy</title>
+        ...     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        ... </head>
+        ... <body>
+        ... <h1 id="main">What&rsquo;s new</h1>
+        ... <ul>
+        ...     <li class="newsitem"><a href="/article-001.html">This is the first article</a></li>
+        ...     <li class="newsitem"><a href="/article-002.html">A second report on something</a></li>
+        ...     <li class="newsitem"><a href="/article-003.html">Python is great!</a> <span class="fresh">New!</span></li>
+        ... </ul>
+        ... </body>
+        ... </html>
+        ... '''
+        >>> html_parser = lxml.etree.HTMLParser()
+        >>> doc = lxml.etree.fromstring(html, parser=html_parser)
+        >>> doc
+        <Element html at 0x7f5fb1fce9b0>
+        >>> rules = {
+        ...     "headingcss": "#main",
+        ...     "headingxpath": "//h1[@id='main']"
+        ... }
+        >>> p = parslepy.Parselet(rules)
+        >>> p.extract(doc)
+        {'headingcss': u'What\u2019s new', 'headingxpath': u'What\u2019s new'}
+
         """
 
         return self._extract(self.parselet_tree, document)

@@ -17,8 +17,8 @@ def xpathtohtml(context, nodes):
 
 class Selector(object):
     """
-    A dummy wrapper to easily detect that processing should be passed
-    to `SelectorHandler` when running the extraction on documents
+    Class of objcts returned by :class:`.SelectorHandler` instances'
+    :meth:`.SelectorHandler.make` method.
     """
 
     def __init__(self, selector):
@@ -46,30 +46,41 @@ class SelectorHandler(object):
         if debug:
             self.DEBUG = True
 
-    def make(self, selection):
+    def make(self, selection_string):
         """
-        Interpret `selection` (str) as a selector
+        Interpret a selection_string as a selector
         for elements or element attributes in a (semi-)structured document.
-        In cas of XPath selectors, this can also be a function call.
+        In case of XPath selectors, this can also be a function call.
 
-        Return a `Selector` instance
+        :param selection_string: a string representing a selector
+        :rtype: :class:`.Selector`
         """
+
         raise NotImplementedError
 
     def select(self, document, selector):
         """
-        Apply the selector (`Selector` instance) on the document (`lxml.etree.Element`)
-        and return a `lxml.etree.Element` list
+        Apply the selector on the document
+
+        :param document: lxml-parsed document
+        :param selector: input :class:`.Selector` to apply on the document
+        :rtype: lxml.etree.Element list
         """
+
         raise NotImplementedError
 
     def extract(self, document, selector):
         """
-        Apply the selector (`Selector` instance) on the document (`lxml.etree.Element`)
+        Apply the selector on the document
         and return a value for the matching elements, element attributes
 
-        This can be single- or multi-valued
+        :param document: lxml-parsed document
+        :param selector: input :class:`.Selector`  to apply on the document
+        :rtype: lxml.etree.Element or lxml.etree.Element list
+
+        Return value can be single- or multi-valued.
         """
+
         raise NotImplementedError
 
 
@@ -94,6 +105,12 @@ class XPathSelectorHandler(SelectorHandler):
     _selector_cache = {}
 
     def __init__(self, namespaces=None, extensions=None, debug=False):
+        """
+        :param namespaces: namespace mapping as :class:`dict`
+        :param extensions: extension :class:`tuple`
+        :rtype: :class:`.Selector`
+        """
+
         super(XPathSelectorHandler, self).__init__(debug=debug)
 
         # support EXSLT extensions
