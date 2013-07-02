@@ -1,11 +1,12 @@
 Changelog
 =========
 
-Version 0.1.1 - July 1, 2013
+Version 0.1.1 - July xx, 2013
 ----------------------------
 
 * Docstrings added to main classes and methods.
 * Added parse_fromstring() method to Parselet
+* Added tests for Parselet.parse() and Parselet.parse_fromstring()
 
 Version 0.1 - June 30, 2013
 ---------------------------
