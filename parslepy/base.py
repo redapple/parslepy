@@ -64,7 +64,7 @@ class ParsleyContext(object):
 
 class NonMatchingNonOptionalKey(RuntimeError):
     """
-    Raised by a Parselet instance while extracting content in strict mode,
+    Raised by a :class:`.Parselet` instance while extracting content in strict mode,
     when a required key does not yield any content.
 
     >>> rules = {
@@ -123,8 +123,8 @@ class Parselet(object):
 
         :param dict parselet: Parsley script as a Python dict object
         :param boolean strict: Set to *True* is you want to
-            enforce that missing required keys raise an Exception
-            (defaults to lenient/non-strict mode)
+            enforce that missing required keys raise an Exception; default is False
+            (i.e. lenient/non-strict mode)
         :param selector_handler: an instance of :class:`selectors.SelectorHandler`
             optional selector handler instance;
             defaults to an instance of :class:`selectors.DefaultSelectorHandler`
@@ -139,7 +139,8 @@ class Parselet(object):
         ...         "url": "a/@href"
         ...     }],
         ... }
-        >>> p = parslepy.Parselet(rules)
+        >>> parslepy.Parselet(rules)
+        <parslepy.base.Parselet object at 0x164cfd0>
 
         Use :meth:`~base.Parselet.extract` or :meth:`~base.Parselet.parse`
         to get extracted content from documents.
@@ -178,10 +179,9 @@ class Parselet(object):
         <parslepy.base.Parselet object at 0x2014e50>
 
         :param file fp: an open file-like pointer containing the Parsley script
-        :rtype: base.Parselet
+        :rtype: :class:`.Parselet`
 
-        Other arguments: same as for __init__
-
+        Other arguments: same as for :class:`.Parselet` contructor
         """
 
         return cls._from_jsonlines(fp,
@@ -200,8 +200,9 @@ class Parselet(object):
         >>>
 
         :param string s: a Parsley script as a JSON string
-        :rtype: base.Parselet
+        :rtype: :class:`.Parselet`
 
+        Other arguments: same as for :class:`.Parselet` contructor
         """
 
         return cls._from_jsonlines(s.split("\n"),
@@ -221,14 +222,21 @@ class Parselet(object):
     def parse(self, fp, parser=None):
         """
         Parse an HTML or XML document and
-        return the extacted object following the Parsley rules give at instantiation
+        return the extacted object following the Parsley rules give at instantiation.
 
-        :param fp: file-like object containing an HTML or XML document
+        :param fp: file-like object containing an HTML or XML document, or URL or filename
         :param parser: *lxml.etree._FeedParser* instance (optional); defaults to lxml.etree.HTMLParser()
         :rtype: Python :class:`dict` object with mapped extracted content
-        :raises: :class:`base.NonMatchingNonOptionalKey`
+        :raises: :class:`.NonMatchingNonOptionalKey`
 
+        To parse from a string, use the :meth:`~base.Parselet.parse_fromstring` method instead.
+
+        Note that the fp paramater is passed directly
+        to `lxml.etree.parse <http://lxml.de/api/lxml.etree-module.html#parse>`_,
+        so you can also give it an URL, and lxml will download it for you.
+        (Also see `<http://lxml.de/tutorial.html#the-parse-function>`_.)
         """
+
         if parser is None:
             parser = lxml.etree.HTMLParser()
         doc = lxml.etree.parse(fp, parser=parser).getroot()
@@ -237,12 +245,12 @@ class Parselet(object):
     def parse_fromstring(self, s, parser=None):
         """
         Parse an HTML or XML document and
-        return the extacted object following the Parsley rules give at instantiation
+        return the extacted object following the Parsley rules give at instantiation.
 
         :param string s: an HTML or XML document as a string
         :param parser: *lxml.etree._FeedParser* instance (optional); defaults to lxml.etree.HTMLParser()
         :rtype: Python :class:`dict` object with mapped extracted content
-        :raises: :class:`base.NonMatchingNonOptionalKey`
+        :raises: :class:`.NonMatchingNonOptionalKey`
 
         """
         if parser is None:
@@ -367,7 +375,7 @@ class Parselet(object):
 
         :param document: lxml-parsed document
         :rtype: Python *dict* object with mapped extracted content
-        :raises: :class:`base.NonMatchingNonOptionalKey`
+        :raises: :class:`.NonMatchingNonOptionalKey`
 
         >>> import lxml.etree
         >>> import parslepy

@@ -17,8 +17,8 @@ def xpathtohtml(context, nodes):
 
 class Selector(object):
     """
-    Class of objcts returned by :class:`.SelectorHandler` instances'
-    :meth:`.SelectorHandler.make` method.
+    Class of objects returned by :class:`.SelectorHandler` instances'
+    (and subclasses) :meth:`~.SelectorHandler.make` method.
     """
 
     def __init__(self, selector):
@@ -37,7 +37,8 @@ class SelectorHandler(object):
     This should be subclassed to implement the selector processing logic
     you need for your Parsley handling.
 
-    All 3 methods, `make()`, `select()` and `extract()` MUST be overridden
+    All 3 methods, :meth:`~.SelectorHandler.make`, :meth:`~.SelectorHandler.select`
+    and :meth:`~.SelectorHandler.extract` MUST be overridden
     """
 
     DEBUG = False
@@ -72,11 +73,12 @@ class SelectorHandler(object):
     def extract(self, document, selector):
         """
         Apply the selector on the document
-        and return a value for the matching elements, element attributes
+        and return a value for the matching elements (text content or
+        element attributes)
 
         :param document: lxml-parsed document
         :param selector: input :class:`.Selector`  to apply on the document
-        :rtype: lxml.etree.Element or lxml.etree.Element list
+        :rtype: depends on the selector (string, boolean value, ...)
 
         Return value can be single- or multi-valued.
         """
@@ -86,7 +88,8 @@ class SelectorHandler(object):
 
 class XPathSelectorHandler(SelectorHandler):
     """
-    This selector only accepts XPath selectors
+    This selector only accepts XPath selectors.
+
     It understands what lxml.etree.XPath understands, that is XPath 1.0
     expressions
     """
@@ -107,8 +110,9 @@ class XPathSelectorHandler(SelectorHandler):
     def __init__(self, namespaces=None, extensions=None, debug=False):
         """
         :param namespaces: namespace mapping as :class:`dict`
-        :param extensions: extension :class:`tuple`
-        :rtype: :class:`.Selector`
+        :param extensions: extension :class:`dict`
+
+        See `<http://lxml.de/extensions.html#xpath-extension-functions>`_
         """
 
         super(XPathSelectorHandler, self).__init__(debug=debug)
@@ -140,6 +144,7 @@ class XPathSelectorHandler(SelectorHandler):
         XPath expression can also use EXSLT functions (as long as they are
         understood by libxslt)
         """
+
         cached = self._selector_cache.get(selection)
         if cached:
             return cached
@@ -215,7 +220,7 @@ class XPathSelectorHandler(SelectorHandler):
 class DefaultSelectorHandler(XPathSelectorHandler):
     """
     Default selector logic, loosely based on the original
-    implementation
+    implementation.
 
     This handler understands what cssselect and lxml.etree.XPath understands,
     that is (roughly) XPath 1.0 and CSS3 for things that dont need browser context
