@@ -17,8 +17,8 @@ def xpathtohtml(context, nodes):
 
 class Selector(object):
     """
-    A dummy wrapper to easily detect that processing should be passed
-    to `SelectorHandler` when running the extraction on documents
+    Class of objects returned by :class:`.SelectorHandler` instances'
+    (and subclasses) :meth:`~.SelectorHandler.make` method.
     """
 
     def __init__(self, selector):
@@ -37,7 +37,8 @@ class SelectorHandler(object):
     This should be subclassed to implement the selector processing logic
     you need for your Parsley handling.
 
-    All 3 methods, `make()`, `select()` and `extract()` MUST be overridden
+    All 3 methods, :meth:`~.SelectorHandler.make`, :meth:`~.SelectorHandler.select`
+    and :meth:`~.SelectorHandler.extract` MUST be overridden
     """
 
     DEBUG = False
@@ -46,36 +47,49 @@ class SelectorHandler(object):
         if debug:
             self.DEBUG = True
 
-    def make(self, selection):
+    def make(self, selection_string):
         """
-        Interpret `selection` (str) as a selector
+        Interpret a selection_string as a selector
         for elements or element attributes in a (semi-)structured document.
-        In cas of XPath selectors, this can also be a function call.
+        In case of XPath selectors, this can also be a function call.
 
-        Return a `Selector` instance
+        :param selection_string: a string representing a selector
+        :rtype: :class:`.Selector`
         """
+
         raise NotImplementedError
 
     def select(self, document, selector):
         """
-        Apply the selector (`Selector` instance) on the document (`lxml.etree.Element`)
-        and return a `lxml.etree.Element` list
+        Apply the selector on the document
+
+        :param document: lxml-parsed document
+        :param selector: input :class:`.Selector` to apply on the document
+        :rtype: lxml.etree.Element list
         """
+
         raise NotImplementedError
 
     def extract(self, document, selector):
         """
-        Apply the selector (`Selector` instance) on the document (`lxml.etree.Element`)
-        and return a value for the matching elements, element attributes
+        Apply the selector on the document
+        and return a value for the matching elements (text content or
+        element attributes)
 
-        This can be single- or multi-valued
+        :param document: lxml-parsed document
+        :param selector: input :class:`.Selector`  to apply on the document
+        :rtype: depends on the selector (string, boolean value, ...)
+
+        Return value can be single- or multi-valued.
         """
+
         raise NotImplementedError
 
 
 class XPathSelectorHandler(SelectorHandler):
     """
-    This selector only accepts XPath selectors
+    This selector only accepts XPath selectors.
+
     It understands what lxml.etree.XPath understands, that is XPath 1.0
     expressions
     """
@@ -94,6 +108,13 @@ class XPathSelectorHandler(SelectorHandler):
     _selector_cache = {}
 
     def __init__(self, namespaces=None, extensions=None, debug=False):
+        """
+        :param namespaces: namespace mapping as :class:`dict`
+        :param extensions: extension :class:`dict`
+
+        See `<http://lxml.de/extensions.html#xpath-extension-functions>`_
+        """
+
         super(XPathSelectorHandler, self).__init__(debug=debug)
 
         # support EXSLT extensions
@@ -123,6 +144,7 @@ class XPathSelectorHandler(SelectorHandler):
         XPath expression can also use EXSLT functions (as long as they are
         understood by libxslt)
         """
+
         cached = self._selector_cache.get(selection)
         if cached:
             return cached
@@ -198,7 +220,7 @@ class XPathSelectorHandler(SelectorHandler):
 class DefaultSelectorHandler(XPathSelectorHandler):
     """
     Default selector logic, loosely based on the original
-    implementation
+    implementation.
 
     This handler understands what cssselect and lxml.etree.XPath understands,
     that is (roughly) XPath 1.0 and CSS3 for things that dont need browser context
