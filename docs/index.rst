@@ -33,7 +33,12 @@ Each rule should have the following format::
         |   |  scope, always within brackets (optional)
         |   |      |
         v   v      v
-    "somekey?(someselector)"
+    "somekey?(someselector)":   "someCSSSelector"
+
+    or         //           :   "someXPathExpression"
+
+    or         //           :    { ...some other rules... }
+
 
 And a collection of extraction rules --also called a *parselet*,
 or *Parsley script*-- looks like this::
