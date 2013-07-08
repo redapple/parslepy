@@ -226,6 +226,17 @@ class DefaultSelectorHandler(XPathSelectorHandler):
     that is (roughly) XPath 1.0 and CSS3 for things that dont need browser context
     """
 
+    # newer lxml version (>3) raise SelectorSyntaxError (directly from cssselect)
+    # for invalid CSS selectors
+    # but older lxml (2.3.8 for example) have cssselect included
+    # and for some selectors raise AssertionError and TypeError instead
+    CSSSELECT_SYNTAXERROR_EXCEPTIONS = [lxml.cssselect.SelectorSyntaxError]
+    for s in ('#a.', '//h1'):
+        try:
+            lxml.cssselect.CSSSelector(s)
+        except Exception as e:
+            CSSSELECT_SYNTAXERROR_EXCEPTIONS.append(type(e))
+
     # example: "a img @src" (fetch the 'src' attribute of an IMG tag)
     REGEX_ENDING_ATTRIBUTE = re.compile(r'^(?P<expr>.+)\s+(?P<attr>@[\w_\d-]+)$')
     def make(self, selection):
@@ -256,7 +267,7 @@ class DefaultSelectorHandler(XPathSelectorHandler):
             else:
                 selector = lxml.cssselect.CSSSelector(selection)
 
-        except lxml.cssselect.SelectorSyntaxError as syntax_error:
+        except tuple(self.CSSSELECT_SYNTAXERROR_EXCEPTIONS) as syntax_error:
             if self.DEBUG:
                 print(repr(syntax_error), selection)
                 print("Try interpreting as XPath selector")

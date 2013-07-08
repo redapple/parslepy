@@ -36,7 +36,7 @@ See https://github.com/redapple/parslepy/wiki#usage
       packages=['parslepy'],
       requires=['lxml', 'cssselect'],
       install_requires=[
-        "lxml >= 3.0",
+        "lxml >= 2.3",
         "cssselect",
       ],
       classifiers = [
@@ -47,7 +47,6 @@ See https://github.com/redapple/parslepy/wiki#usage
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
         'License :: OSI Approved :: MIT License',
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
