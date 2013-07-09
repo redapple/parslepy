@@ -19,8 +19,8 @@ Kudos go to Kyle Maxwell (@fizx) for coming up with this smart and easy syntax t
 ### Dependencies ###
 
 `master` branch:
-* lxml>=2.3 (http://lxml.de/)
-* cssselect (for lxml>=3)
+* lxml>=2.3 (http://lxml.de/, https://pypi.python.org/pypi/lxml)
+* cssselect (https://github.com/SimonSapin/cssselect/, https://pypi.python.org/pypi/cssselect) (for lxml>=3)
 
 ### Install ###
 
