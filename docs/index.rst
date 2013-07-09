@@ -112,13 +112,13 @@ Quickstart
     ... </body>
     ... </html>"""
     >>> rules = {
-             "heading": "h1#main",
-             "news(li.newsitem)": [{
-                 "title": ".",
-                 "url": "a/@href",
-                 "fresh": ".fresh"
-             }],
-        }
+    ...      "heading": "h1#main",
+    ...      "news(li.newsitem)": [{
+    ...          "title": ".",
+    ...          "url": "a/@href",
+    ...          "fresh": ".fresh"
+    ...      }],
+    ... }
     >>> p = parslepy.Parselet(rules)
     >>> extracted = p.parse_fromstring(html)
     >>> pprint.pprint(extracted)
@@ -179,28 +179,28 @@ to the Parselet constructor.
         >>> xml_parser = lxml.etree.XMLParser()
         >>> url = 'http://itunes.apple.com/us/rss/topalbums/limit=10/explicit=true/xml'
         >>> xsh = parslepy.XPathSelectorHandler(
-                namespaces={
-                    'atom': 'http://www.w3.org/2005/Atom',
-                    'im': 'http://itunes.apple.com/rss'
-                })
+        ...     namespaces={
+        ...         'atom': 'http://www.w3.org/2005/Atom',
+        ...         'im': 'http://itunes.apple.com/rss'
+        ...     })
         >>> rules = {
-                "entries(//atom:feed/atom:entry)": [
-                    {
-                        "title": "atom:title",
-                        "name": "im:name",
-                        "id": "atom:id/@im:id",
-                        "artist(im:artist)": {
-                            "name": ".",
-                            "href": "@href"
-                        },
-                        "images(im:image)": [{
-                            "height": "@height",
-                            "url": "."
-                        }],
-                        "releasedate": "im:releaseDate"
-                    }
-                ]
-            }
+        ...     "entries(//atom:feed/atom:entry)": [
+        ...         {
+        ...             "title": "atom:title",
+        ...             "name": "im:name",
+        ...             "id": "atom:id/@im:id",
+        ...             "artist(im:artist)": {
+        ...                 "name": ".",
+        ...                 "href": "@href"
+        ...             },
+        ...             "images(im:image)": [{
+        ...                 "height": "@height",
+        ...                 "url": "."
+        ...             }],
+        ...             "releasedate": "im:releaseDate"
+        ...         }
+        ...     ]
+        ... }
         >>> parselet = parslepy.Parselet(rules, selector_handler=xsh)
         >>> parselet.parse(url, parser=xml_parser)
         {'entries': [{'name': u'Born Sinner (Deluxe Version)', ...

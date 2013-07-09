@@ -67,22 +67,40 @@ class NonMatchingNonOptionalKey(RuntimeError):
     Raised by a :class:`.Parselet` instance while extracting content in strict mode,
     when a required key does not yield any content.
 
+    >>> import parslepy
+    >>> html = '''
+    ... <!DOCTYPE html>
+    ... <html>
+    ... <head>
+    ...     <title>Sample document to test parslepy</title>
+    ...     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    ... </head>
+    ... <body>
+    ... <h1 id="main">What&rsquo;s new</h1>
+    ... <ul>
+    ...     <li class="newsitem"><a href="/article-001.html">This is the first article</a></li>
+    ...     <li class="newsitem"><a href="/article-002.html">A second report on something</a></li>
+    ...     <li class="newsitem"><a href="/article-003.html">Python is great!</a> <span class="fresh">New!</span></li>
+    ... </ul>
+    ... </body>
+    ... </html>
+    ... '''
     >>> rules = {
     ...     "heading1": "h1#main",
     ...     "heading2": "h2#main",
     ... }
     >>> p = parslepy.Parselet(rules, strict=True)
-    >>> p.extract(doc)
+    >>> p.parse_fromstring(html)
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
       File "parslepy/base.py", line 501, in extract
         return self._extract(self.parselet_tree, document)
       File "parslepy/base.py", line 582, in _extract
         document.getroottree().getpath(document),v
-    parslepy.base.NonMatchingNonOptionalKey: key "heading2" is required but yield nothing
+    NonMatchingNonOptionalKey: key "heading2" is required but yield nothing
     Current path: /html/(<Selector: inner=<CSSSelector 20a2758 for 'h2#main'>>)
-
     """
+
     pass
 
 
@@ -90,6 +108,7 @@ class InvalidKeySyntax(SyntaxError):
     """
     Raised when the input Parsley script's syntax is invalid
 
+    >>> import parslepy
     >>> p = parslepy.Parselet({"heading@": "#main"})
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
@@ -99,9 +118,9 @@ class InvalidKeySyntax(SyntaxError):
         self.parselet_tree = self._compile(self.parselet)
       File "parslepy/base.py", line 432, in _compile
         raise InvalidKeySyntax("Key %s is not valid" % k)
-    parslepy.base.InvalidKeySyntax: Key heading@ is not valid
-
+    InvalidKeySyntax: Key heading@ is not valid
     """
+
     pass
 
 
@@ -132,6 +151,7 @@ class Parselet(object):
 
         Example:
 
+        >>> import parslepy
         >>> rules = {
         ...     "heading": "h1#main",
         ...     "news(li.newsitem)": [{
@@ -535,3 +555,8 @@ class Parselet(object):
             #        if selector handler returned None at compile time,
             #        probably yes
             pass
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

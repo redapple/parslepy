@@ -19,12 +19,8 @@ Kudos go to Kyle Maxwell (@fizx) for coming up with this smart and easy syntax t
 ### Dependencies ###
 
 `master` branch:
-* cssselect
-* lxml>=3.2 (http://lxml.de/): tested with lxml-3.2.1 + Python 2.6/2.7/3.2/3.3
-
-There is also a `lxml-2.3` branch that works for lxml-2.3 (cssselect included) and Python 2.6/2.7/3.2 (not 3.3) 
-[![Build Status](https://travis-ci.org/redapple/parslepy.png?branch=lxml-2.3)](https://travis-ci.org/redapple/parslepy).
-Note that some invalid CSS selectors are not detected. 
+* lxml>=2.3 (http://lxml.de/)
+* cssselect (for lxml>=3)
 
 ### Install ###
 
@@ -46,6 +42,10 @@ $ python setup.py install
 ...or
 $ sudo python setup.py install
 ```
+
+### Documentation
+
+http://pythonhosted.org/parslepy/
 
 ### Usage
 

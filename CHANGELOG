@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 0.1.2 - July 9, 2013
+-----------------------------
+
+* Bug fixes:
+ * #1: headingxpath rule does not seem to work as expected
+
 Version 0.1.1 - July 3, 2013
 -----------------------------
 
