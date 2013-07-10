@@ -8,7 +8,7 @@ import pprint
 import os
 
 
-def test_parslepy_parse_xml_file():
+def test_parslepy_xpathparse_xml_file():
     parselet_script = {"id": "//atom:id"}
     xsh = parslepy.selectors.XPathSelectorHandler(
                 namespaces={'atom': 'http://www.w3.org/2005/Atom'}
@@ -25,22 +25,60 @@ def test_parslepy_parse_xml_file():
     assert_dict_equal(extracted, expected)
 
 
-def test_parslepy_parse_xml_fromstring():
+def test_parslepy_defaultparse_xml_file():
+    parselet_script = {"id": "//atom:id"}
+    dsh = parslepy.selectors.DefaultSelectorHandler(
+                namespaces={'atom': 'http://www.w3.org/2005/Atom'}
+            )
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    fp = open(os.path.join(dirname, 'data/itunes.topalbums.rss'))
 
-    xmldoc = b"""<?xml version="1.0" encoding="utf-8"?>
+    expected = {
+        'id': 'https://itunes.apple.com/us/rss/topalbums/limit=10/explicit=true/xml'
+    }
+
+    parselet = parslepy.Parselet(parselet_script, selector_handler=dsh)
+    extracted = parselet.parse(fp, parser=lxml.etree.XMLParser())
+    assert_dict_equal(extracted, expected)
+
+
+def test_parslepy_defaultparse_xml_file_cssselectors():
+    parselet_script = {"id": "atom|id", "imid": "atom|id @im|id"}
+    dsh = parslepy.selectors.DefaultSelectorHandler(
+                namespaces={
+                    'atom': 'http://www.w3.org/2005/Atom',
+                    'im': 'http://itunes.apple.com/rss',
+                }
+            )
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    fp = open(os.path.join(dirname, 'data/itunes.topalbums.rss'))
+
+    expected = {
+        'id': 'https://itunes.apple.com/us/rss/topalbums/limit=10/explicit=true/xml',
+        'imid': '647928068',
+    }
+
+    parselet = parslepy.Parselet(parselet_script, selector_handler=dsh)
+    extracted = parselet.parse(fp, parser=lxml.etree.XMLParser())
+    assert_dict_equal(extracted, expected)
+
+
+xmldoc = b"""<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns:im="http://itunes.apple.com/rss" xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
-    <id>https://itunes.apple.com/us/rss/topalbums/limit=10/explicit=true/xml</id><title>iTunes Store: Top Albums</title><updated>2013-06-25T06:27:25-07:00</updated><link rel="alternate" type="text/html" href="https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?cc=us&amp;id=38&amp;popId=11"/><link rel="self" href="https://itunes.apple.com/us/rss/topalbums/limit=10/explicit=true/xml"/><icon>http://itunes.apple.com/favicon.ico</icon><author><name>iTunes Store</name><uri>http://www.apple.com/itunes/</uri></author><rights>Copyright 2008 Apple Inc.</rights>
-    <entry>
-        <updated>2013-06-25T06:27:25-07:00</updated>
-        <id im:id="647928068">https://itunes.apple.com/us/album/the-gifted/id647928068?uo=2</id>
-        <title>The Gifted - Wale</title>
-        <im:name>The Gifted</im:name>
-        <im:image height="55">http://a815.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.55x55-70.jpg</im:image>
-        <im:image height="60">http://a1537.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.60x60-50.jpg</im:image>
-        <im:image height="170">http://a976.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.170x170-75.jpg</im:image>
-    </entry>
+<id>https://itunes.apple.com/us/rss/topalbums/limit=10/explicit=true/xml</id><title>iTunes Store: Top Albums</title><updated>2013-06-25T06:27:25-07:00</updated><link rel="alternate" type="text/html" href="https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?cc=us&amp;id=38&amp;popId=11"/><link rel="self" href="https://itunes.apple.com/us/rss/topalbums/limit=10/explicit=true/xml"/><icon>http://itunes.apple.com/favicon.ico</icon><author><name>iTunes Store</name><uri>http://www.apple.com/itunes/</uri></author><rights>Copyright 2008 Apple Inc.</rights>
+<entry>
+    <updated>2013-06-25T06:27:25-07:00</updated>
+    <id im:id="647928068">https://itunes.apple.com/us/album/the-gifted/id647928068?uo=2</id>
+    <title>The Gifted - Wale</title>
+    <im:name>The Gifted</im:name>
+    <im:image height="55">http://a815.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.55x55-70.jpg</im:image>
+    <im:image height="60">http://a1537.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.60x60-50.jpg</im:image>
+    <im:image height="170">http://a976.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.170x170-75.jpg</im:image>
+</entry>
 </feed>
-    """
+"""
+
+def test_parslepy_xpathparse_xml_fromstring():
 
     parselet_script = {
         "--(//atom:feed/atom:entry)": {
@@ -80,6 +118,92 @@ def test_parslepy_parse_xml_fromstring():
     parselet = parslepy.Parselet(parselet_script, selector_handler=xsh)
     extracted = parselet.parse_fromstring(xmldoc, parser=lxml.etree.XMLParser())
     assert_dict_equal(extracted, expected)
+
+
+def test_parslepy_defaultparse_xml_fromstring():
+
+    parselet_script = {
+        "--(//atom:feed/atom:entry)": {
+            "title": "atom:title",
+            "name": "im:name",
+            "id": "atom:id/@im:id",
+            "images(im:image)": [{
+                "height": "@height",
+                "url": ".",
+            }],
+            "releasedate": "im:releaseDate",
+        }
+    }
+    dsh = parslepy.selectors.DefaultSelectorHandler(
+                namespaces={
+                    'atom': 'http://www.w3.org/2005/Atom',
+                    'im': 'http://itunes.apple.com/rss',
+                }
+            )
+
+    expected = {
+        'id': '647928068',
+        'images': [
+            {   'height': '55',
+                'url': 'http://a815.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.55x55-70.jpg'
+            },
+            {   'height': '60',
+                'url': 'http://a1537.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.60x60-50.jpg'
+            },
+            {   'height': '170',
+                'url': 'http://a976.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.170x170-75.jpg'
+            }
+        ],
+        'name': 'The Gifted',
+        'title': 'The Gifted - Wale',
+    }
+    parselet = parslepy.Parselet(parselet_script, selector_handler=dsh)
+    extracted = parselet.parse_fromstring(xmldoc, parser=lxml.etree.XMLParser())
+    assert_dict_equal(extracted, expected)
+
+
+def test_parslepy_defaultparse_xml_fromstring_cssselectors():
+
+    parselet_script = {
+        "--(atom|feed atom|entry)": {
+            "title": "atom|title",
+            "name": "im|name",
+            "id": "atom|id @im|id",
+            "images(im|image)": [{
+                "height": "@height",
+                "url": ".",
+            }],
+            "releasedate": "im|releaseDate",
+        }
+    }
+    dsh = parslepy.selectors.DefaultSelectorHandler(
+                namespaces={
+                    'atom': 'http://www.w3.org/2005/Atom',
+                    'im': 'http://itunes.apple.com/rss',
+                }
+            )
+
+    expected = {
+        'id': '647928068',
+        'images': [
+            {   'height': '55',
+                'url': 'http://a815.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.55x55-70.jpg'
+            },
+            {   'height': '60',
+                'url': 'http://a1537.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.60x60-50.jpg'
+            },
+            {   'height': '170',
+                'url': 'http://a976.phobos.apple.com/us/r30/Features/v4/02/cc/73/02cc7370-693c-f0fe-505b-bb84043ce186/dj.pehmruyt.170x170-75.jpg'
+            }
+        ],
+        'name': 'The Gifted',
+        'title': 'The Gifted - Wale',
+    }
+    parselet = parslepy.Parselet(parselet_script, selector_handler=dsh)
+    extracted = parselet.parse_fromstring(xmldoc, parser=lxml.etree.XMLParser())
+    assert_dict_equal(extracted, expected)
+
+
 
 
 def test_parslepy_parse_html_file():

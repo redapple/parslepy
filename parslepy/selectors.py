@@ -307,6 +307,13 @@ class DefaultSelectorHandler(XPathSelectorHandler):
                     print(repr(e), selection)
                 raise
 
+        # for exception when trying to convert <cssselector> @<attribute> syntax
+        except lxml.etree.XPathSyntaxError as syntax_error:
+            if self.DEBUG:
+                print(repr(syntax_error), selection)
+            syntax_error.msg += ": %s" % selection
+            raise syntax_error
+
         except Exception as e:
             if self.DEBUG:
                 print(repr(e), selection)
