@@ -156,9 +156,8 @@ class XPathSelectorHandler(SelectorHandler):
                 extensions = self.extensions)
 
         except lxml.etree.XPathSyntaxError as syntax_error:
-            if self.DEBUG:
-                print(repr(syntax_error), selection)
-            raise
+            syntax_error.msg += ": %s" % selection
+            raise syntax_error
 
         except Exception as e:
             if self.DEBUG:
@@ -230,15 +229,23 @@ class DefaultSelectorHandler(XPathSelectorHandler):
     # for invalid CSS selectors
     # but older lxml (2.3.8 for example) have cssselect included
     # and for some selectors raise AssertionError and TypeError instead
-    CSSSELECT_SYNTAXERROR_EXCEPTIONS = [lxml.cssselect.SelectorSyntaxError]
+    CSSSELECT_SYNTAXERROR_EXCEPTIONS = set([
+        # we could use lxml.cssselect.SelectorError (parent class for both),
+        # but for lxml<3, they're not related
+        lxml.cssselect.SelectorSyntaxError,
+        # for unsupported pseudo-class or XPath namespaces prefix syntax
+        lxml.cssselect.ExpressionError,
+    ])
+    # this is to add AssertionError and TypeError if lxml < 3.0.0
     for s in ('#a.', '//h1'):
         try:
             lxml.cssselect.CSSSelector(s)
         except Exception as e:
-            CSSSELECT_SYNTAXERROR_EXCEPTIONS.append(type(e))
+            CSSSELECT_SYNTAXERROR_EXCEPTIONS.add(type(e))
 
     # example: "a img @src" (fetch the 'src' attribute of an IMG tag)
-    REGEX_ENDING_ATTRIBUTE = re.compile(r'^(?P<expr>.+)\s+(?P<attr>@[\w_\d-]+)$')
+    # other example: "im|img @im|src" when using namespace prefixes
+    REGEX_ENDING_ATTRIBUTE = re.compile(r'^(?P<expr>.+)\s+(?P<attr>@[\:|\w_\d-]+)$')
     def make(self, selection):
         """
         Scopes and selectors are tested in this order:
@@ -257,15 +264,28 @@ class DefaultSelectorHandler(XPathSelectorHandler):
         self._add_parsley_ns(namespaces)
         try:
             # CSS with attribute? (non-standard but convenient)
+            # CSS selector cannot select attributes
+            # this "<css selector> @<attr>" syntax is a Parsley extension
             # construct CSS selector and append attribute to XPath expression
             m = self.REGEX_ENDING_ATTRIBUTE.match(selection)
             if m:
+                # the selector should be a regular CSS selector
+                # so should be converted directly using cssselect
                 cssselector = m.group("expr")
-                attribute = m.group("attr")
-                cssxpath = lxml.cssselect.CSSSelector(cssselector).path
-                selector = lxml.etree.XPath("%s/%s" % (cssxpath, attribute))
+                cssxpath = lxml.cssselect.CSSSelector(cssselector,
+                    namespaces = self.namespaces).path
+
+                # if "|" is used for namespace prefix reference,
+                #   convert it to XPath prefix syntax
+                attribute = m.group("attr").replace('|', ':')
+
+                selector = lxml.etree.XPath(
+                    "%s/%s" % (cssxpath, attribute),
+                    namespaces = self.namespaces,
+                    extensions = self.extensions)
             else:
-                selector = lxml.cssselect.CSSSelector(selection)
+                selector = lxml.cssselect.CSSSelector(selection,
+                    namespaces = self.namespaces)
 
         except tuple(self.CSSSELECT_SYNTAXERROR_EXCEPTIONS) as syntax_error:
             if self.DEBUG:
@@ -279,7 +299,8 @@ class DefaultSelectorHandler(XPathSelectorHandler):
             except lxml.etree.XPathSyntaxError as syntax_error:
                 if self.DEBUG:
                     print(repr(syntax_error), selection)
-                raise
+                syntax_error.msg += ": %s" % selection
+                raise syntax_error
 
             except Exception as e:
                 if self.DEBUG:
