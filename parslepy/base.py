@@ -540,7 +540,7 @@ class Parselet(object):
                             #empty list, dont bother?
                             pass
                 else:
-                    if extracted is not None:
+                    if extracted:
                         output[ctx.key] = extracted
                     else:
                         # do not add this optional key/value pair in the output

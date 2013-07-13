@@ -5,15 +5,45 @@ import lxml.etree
 import parslepy.funcs
 import re
 
-def xpathtostring(context, nodes):
-    return parslepy.funcs.tostring(nodes)
+def test_listitems_type(itemlist, checktype):
+    return all(map(lambda i: isinstance(i, checktype), itemlist))
 
-def xpathtostringnl(context, nodes):
-    return parslepy.funcs.tostringnl(nodes)
+def check_listitems_types(itemlist):
+    return list(set([type(i) for i in itemlist]))
+
+#def test_lxml_stringresult(types):
+#    set(types) - set([lxml.etree._ElementStringResult, lxml.etree._ElementUnicodeResult])
+
+def xpathtostring(context, nodes, with_tail=True, *args):
+    ltype = check_listitems_types(nodes)
+    #print "xpathtostring:", context, nodes
+    #print "xpathtostring:", ltype
+
+    if ltype == [lxml.etree._Element]:
+        return parslepy.funcs.tostring(nodes, with_tail=with_tail)
+
+    #elif ltype == [lxml.etree._ElementUnicodeResult]:
+    else:
+        try:
+            return [parslepy.funcs.remove_multiple_whitespaces(unicode(s))
+                    for s in nodes]
+        except Exception as e:
+            print e
+
+def xpathtostringnl(context, nodes, with_tail=True, *args):
+    return parslepy.funcs.tostringnl(nodes, with_tail=with_tail)
 
 def xpathtohtml(context, nodes):
     return parslepy.funcs.tohtml(nodes)
 
+def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
+    #print "xpathstrip: nodes of type", check_listitems_types(nodes)
+    if test_listitems_type(nodes, lxml.etree._Element):
+        return map(
+            lambda s: s.strip(stripchars),
+            parslepy.funcs.tostring(nodes, with_tail=with_tail))
+    else:
+        return map(lambda s: unicode(s).strip(stripchars), nodes)
 
 class Selector(object):
     """
@@ -99,6 +129,7 @@ class XPathSelectorHandler(SelectorHandler):
         (PARSLEY_NAMESPACE, 'strnl') : xpathtostringnl,
         (PARSLEY_NAMESPACE, 'nl') : xpathtostringnl,
         (PARSLEY_NAMESPACE, 'html') : xpathtohtml,
+        (PARSLEY_NAMESPACE, 'strip') : xpathstrip,
     }
     EXSLT_NAMESPACES={
         'math': 'http://exslt.org/math',

@@ -68,14 +68,14 @@ def format_htmltags_to_newline(tree):
         replacement="\n")
 
 
-def tostring(nodes):
-    return list(extract_unicode(e) for e in nodes)
+def tostring(nodes, with_tail=True):
+    return list(extract_unicode(e, with_tail=with_tail) for e in nodes)
 
 
-def tostringnl(nodes):
+def tostringnl(nodes, with_tail=True):
     try:
         return list(extract_unicode(format_htmltags_to_newline(e),
-                        keep_nl=True)
+                        with_tail=with_tail, keep_nl=True)
                     for e in nodes)
     except Exception as e:
         #print(traceback.format_exc())
