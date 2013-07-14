@@ -9,24 +9,23 @@ import lxml.etree
 
 try:
     unicode         # Python 2.x
-    def lxml_tostring(element, method="text", with_tail=True):
+    def lxml_element2string(element, method="text", with_tail=True):
         return lxml.etree.tostring(element, method=method,
                 encoding=unicode, with_tail=with_tail)
 except NameError:   # Python 3.x
-    def lxml_tostring(element, method="text", with_tail=True):
+    def lxml_element2string(element, method="text", with_tail=True):
         return lxml.etree.tostring(element, method=method,
                 encoding=str, with_tail=with_tail)
 except:
     raise
 
-def extract_unicode(element, keep_nl=False, with_tail=True):
+def extract_text(element, keep_nl=False, with_tail=True):
     return remove_multiple_whitespaces(
-        lxml_tostring(element, method="text", with_tail=with_tail),
+        lxml_element2string(element, method="text", with_tail=with_tail),
         keep_nl=keep_nl).strip()
 
 def extract_html(element, with_tail=False):
-    return lxml_tostring(element, method="html", with_tail=with_tail)
-
+    return lxml_element2string(element, method="html", with_tail=with_tail)
 
 REGEX_NEWLINE = re.compile(r'\n')
 REGEX_WHITESPACE = re.compile(r'\s+', re.UNICODE)
@@ -41,8 +40,9 @@ def remove_multiple_whitespaces(input_string, keep_nl = False):
 
 def format_alter_htmltags(tree, text_tags=[], tail_tags=[], replacement=" "):
     context = lxml.etree.iterwalk(tree, events=("end", ))
+    tag_set = set(text_tags + tail_tags)
     for action, elem in context:
-        if elem.tag not in set(text_tags + tail_tags):
+        if elem.tag not in tag_set:
             continue
         if elem.tag in text_tags:
             if elem.text is None:
@@ -56,27 +56,51 @@ def format_alter_htmltags(tree, text_tags=[], tail_tags=[], replacement=" "):
                 elem.tail += replacement
     return tree
 
+HTML_BLOCK_ELEMENTS = [
+    'address',
+    'article',
+    'aside',
+    'audio',
+    'blockquote',
+    'canvas',
+    'div',
+    'dl', 'dd', 'dt',
+    'fieldset',
+    'figcaption',
+    'figure',
+    'footer',
+    'form',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'header',
+    'hgroup',
+    'hr',
+    'noscript',
+    'li', 'ol', 'ul',
+    'output',
+    'p',
+    'pre',
+    'section',
+    'table',
+    'tfoot',
+    'video',
+]
 NEWLINE_TEXT_TAGS = ['br', 'hr']
-NEWLINE_TAIL_TAGS = ['p', 'div',
-    'ul', 'li', 'ol',
-    'dl', 'dt', 'dd',
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6']
 def format_htmltags_to_newline(tree):
     return format_alter_htmltags(tree,
         text_tags=NEWLINE_TEXT_TAGS,
-        tail_tags=NEWLINE_TAIL_TAGS,
+        tail_tags=HTML_BLOCK_ELEMENTS,
         replacement="\n")
 
 
 def tostring(nodes, with_tail=True):
-    return list(extract_unicode(e, with_tail=with_tail) for e in nodes)
+    return [extract_text(e, with_tail=with_tail) for e in nodes]
 
 
 def tostringnl(nodes, with_tail=True):
     try:
-        return list(extract_unicode(format_htmltags_to_newline(e),
+        return [extract_text(format_htmltags_to_newline(e),
                         with_tail=with_tail, keep_nl=True)
-                    for e in nodes)
+                    for e in nodes]
     except Exception as e:
         #print(traceback.format_exc())
         #print(str(e))
@@ -84,4 +108,4 @@ def tostringnl(nodes, with_tail=True):
 
 
 def tohtml(nodes):
-    return list(extract_html(e) for e in nodes)
+    return [extract_html(e) for e in nodes]

@@ -4,7 +4,15 @@ Changelog
 Version 0.1.3 - July xx, 2013
 -----------------------------
 
-* Support XPath namespace prefixes and CSS namespace prefixes in DefaultSelectorHandler
+* Improvements:
+ * Support XPath namespace prefixes (namespace:element) and CSS
+   namespace prefixes (namespace|element) in DefaultSelectorHandler
+ * new built-in extension function parsley:strip() mapped to Python's strip() for strings
+ * support for user-defined extension functions, which take an additional context
+   parameter when called (context is passed either at selector handler
+   instantiation or when calling Parselet.parse())
+ * use smart_strings=False for XPath compiled expressions (see http://lxml.de/xpathxslt.html#xpath-return-values)
+
 * Bug fixes:
  * #2: XPath namespace prefixes raise cssselect.xpath.ExpressionError with DefaultSelectorHandler
 

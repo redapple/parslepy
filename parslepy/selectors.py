@@ -205,11 +205,11 @@ class XPathSelectorHandler(SelectorHandler):
         if cached:
             return cached
 
-
         try:
             selector = lxml.etree.XPath(selection,
                 namespaces = self.namespaces,
-                extensions = self.extensions)
+                extensions = self.extensions,
+                smart_strings=False)
 
         except lxml.etree.XPathSyntaxError as syntax_error:
             syntax_error.msg += ": %s" % selection
@@ -241,7 +241,7 @@ class XPathSelectorHandler(SelectorHandler):
         returned some string(s) of some sort, so return that instead.
         """
         selected = self.select(document, selector)
-        if selected:
+        if selected is not None and len(selected):
             if self.DEBUG:
                 print(debug_offset, selected)
 
@@ -338,7 +338,8 @@ class DefaultSelectorHandler(XPathSelectorHandler):
                 selector = lxml.etree.XPath(
                     "%s/%s" % (cssxpath, attribute),
                     namespaces = self.namespaces,
-                    extensions = self.extensions)
+                    extensions = self.extensions,
+                    smart_strings=False)
             else:
                 selector = lxml.cssselect.CSSSelector(selection,
                     namespaces = self.namespaces)
@@ -350,7 +351,8 @@ class DefaultSelectorHandler(XPathSelectorHandler):
             try:
                 selector = lxml.etree.XPath(selection,
                     namespaces = self.namespaces,
-                    extensions = self.extensions)
+                    extensions = self.extensions,
+                    smart_strings=False)
 
             except lxml.etree.XPathSyntaxError as syntax_error:
                 syntax_error.msg += ": %s" % selection
