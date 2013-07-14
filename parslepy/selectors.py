@@ -6,29 +6,37 @@ import parslepy.funcs
 import re
 
 def test_listitems_type(itemlist, checktype):
-    return all(map(lambda i: isinstance(i, checktype), itemlist))
+    return all([isinstance(i, checktype) for i in itemlist])
 
 def check_listitems_types(itemlist):
     return list(set([type(i) for i in itemlist]))
 
-#def test_lxml_stringresult(types):
-#    set(types) - set([lxml.etree._ElementStringResult, lxml.etree._ElementUnicodeResult])
+try:
+    unicode         # Python 2.x
+    def xpathtostring(context, nodes, with_tail=True, *args):
+        ltype = check_listitems_types(nodes)
+        if ltype == [lxml.etree._Element]:
+            return parslepy.funcs.tostring(nodes, with_tail=with_tail)
+        #elif ltype == [lxml.etree._ElementUnicodeResult]:
+        else:
+            try:
+                return [parslepy.funcs.remove_multiple_whitespaces(unicode(s))
+                        for s in nodes]
+            except Exception as e:
+                print(e)
+except NameError:   # Python 3.x
+    def xpathtostring(context, nodes, with_tail=True, *args):
+        ltype = check_listitems_types(nodes)
+        if ltype == [lxml.etree._Element]:
+            return parslepy.funcs.tostring(nodes, with_tail=with_tail)
 
-def xpathtostring(context, nodes, with_tail=True, *args):
-    ltype = check_listitems_types(nodes)
-    #print "xpathtostring:", context, nodes
-    #print "xpathtostring:", ltype
-
-    if ltype == [lxml.etree._Element]:
-        return parslepy.funcs.tostring(nodes, with_tail=with_tail)
-
-    #elif ltype == [lxml.etree._ElementUnicodeResult]:
-    else:
-        try:
-            return [parslepy.funcs.remove_multiple_whitespaces(unicode(s))
-                    for s in nodes]
-        except Exception as e:
-            print e
+        #elif ltype == [lxml.etree._ElementUnicodeResult]:
+        else:
+            try:
+                return [parslepy.funcs.remove_multiple_whitespaces(str(s))
+                        for s in nodes]
+            except Exception as e:
+                print(e)
 
 def xpathtostringnl(context, nodes, with_tail=True, *args):
     return parslepy.funcs.tostringnl(nodes, with_tail=with_tail)
@@ -37,7 +45,6 @@ def xpathtohtml(context, nodes):
     return parslepy.funcs.tohtml(nodes)
 
 def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
-    #print "xpathstrip: nodes of type", check_listitems_types(nodes)
     if test_listitems_type(nodes, lxml.etree._Element):
         return map(
             lambda s: s.strip(stripchars),
@@ -346,8 +353,6 @@ class DefaultSelectorHandler(XPathSelectorHandler):
                     extensions = self.extensions)
 
             except lxml.etree.XPathSyntaxError as syntax_error:
-                if self.DEBUG:
-                    print(repr(syntax_error), selection)
                 syntax_error.msg += ": %s" % selection
                 raise syntax_error
 
@@ -358,8 +363,6 @@ class DefaultSelectorHandler(XPathSelectorHandler):
 
         # for exception when trying to convert <cssselector> @<attribute> syntax
         except lxml.etree.XPathSyntaxError as syntax_error:
-            if self.DEBUG:
-                print(repr(syntax_error), selection)
             syntax_error.msg += ": %s" % selection
             raise syntax_error
 
