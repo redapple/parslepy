@@ -239,7 +239,7 @@ class Parselet(object):
                 "\n".join([l for l in lines if not cls.REGEX_COMMENT_LINE.match(l)])
             ), selector_handler=selector_handler, strict=strict, debug=debug)
 
-    def parse(self, fp, parser=None):
+    def parse(self, fp, parser=None, context=None):
         """
         Parse an HTML or XML document and
         return the extacted object following the Parsley rules give at instantiation.
@@ -260,9 +260,9 @@ class Parselet(object):
         if parser is None:
             parser = lxml.etree.HTMLParser()
         doc = lxml.etree.parse(fp, parser=parser).getroot()
-        return self.extract(doc)
+        return self.extract(doc, context=context)
 
-    def parse_fromstring(self, s, parser=None):
+    def parse_fromstring(self, s, parser=None, context=None):
         """
         Parse an HTML or XML document and
         return the extacted object following the Parsley rules give at instantiation.
@@ -276,7 +276,7 @@ class Parselet(object):
         if parser is None:
             parser = lxml.etree.HTMLParser()
         doc = lxml.etree.fromstring(s, parser=parser)
-        return self.extract(doc)
+        return self.extract(doc, context=context)
 
     def compile(self):
         """
@@ -388,7 +388,7 @@ class Parselet(object):
                     "Unsupported type(%s) for Parselet node <%s>" % (
                         type(parselet_node), parselet_node))
 
-    def extract(self, document):
+    def extract(self, document, context=None):
         """
         Extract values as a dict object following the structure
         of the Parsley script (recursive)
@@ -429,7 +429,8 @@ class Parselet(object):
         {'headingcss': u'What\u2019s new', 'headingxpath': u'What\u2019s new'}
 
         """
-
+        if context:
+            self.selector_handler.context = context
         return self._extract(self.parselet_tree, document)
 
     def _extract(self, parselet_node, document, level=0):

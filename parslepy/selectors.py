@@ -132,13 +132,17 @@ class XPathSelectorHandler(SelectorHandler):
         (PARSLEY_NAMESPACE, 'strip') : xpathstrip,
     }
     EXSLT_NAMESPACES={
+        'date': 'http://exslt.org/dates-and-times',
         'math': 'http://exslt.org/math',
         're': 'http://exslt.org/regular-expressions',
+        'set': 'http://exslt.org/sets',
         'str': 'http://exslt.org/strings',
     }
+    _extension_router = {}
+
     _selector_cache = {}
 
-    def __init__(self, namespaces=None, extensions=None, debug=False):
+    def __init__(self, namespaces=None, extensions=None, context=None, debug=False):
         """
         :param namespaces: namespace mapping as :class:`dict`
         :param extensions: extension :class:`dict`
@@ -152,12 +156,26 @@ class XPathSelectorHandler(SelectorHandler):
         self.namespaces = self.EXSLT_NAMESPACES
         self._add_parsley_ns(self.namespaces)
         self.extensions = self.PARSLEY_XPATH_EXTENSIONS
+        self.context = context
 
         # add user-defined extensions
         if namespaces:
             self.namespaces.update(namespaces)
         if extensions:
-            self.extensions.update(extensions)
+            self._process_extensions(extensions)
+
+    def _make_xpathextension(self, fname):
+        def xpath_ext(*args):
+            return self._extension_router[fname](self.context, *args)
+        xpath_ext.__doc__ = "docstring for xpext_%s" % fname
+        xpath_ext.__name__ = "xpext_%s" % fname
+        setattr(self, xpath_ext.__name__, xpath_ext)
+        return xpath_ext
+
+    def _process_extensions(self, extensions):
+        for (ns, fname), func in extensions.iteritems():
+            self._extension_router[fname] = func
+            self.extensions[(ns, fname)] = self._make_xpathextension(fname=fname)
 
     @classmethod
     def _add_parsley_ns(cls, namespace_dict):
