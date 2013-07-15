@@ -151,6 +151,18 @@ class XPathSelectorHandler(SelectorHandler):
     expressions
     """
 
+    EXPECTED_NON_ELEMENT_TYPES = [
+        bool,
+        int,
+        float,
+        str,
+    ]
+    try:
+        unicode         # Python 2.x
+        EXPECTED_NON_ELEMENT_TYPES.append(unicode)
+    except NameError:
+        pass
+
     PARSLEY_NAMESPACE = 'local-parsley'
     PARSLEY_XPATH_EXTENSIONS = {
         (PARSLEY_NAMESPACE, 'str') : xpathtostring,
@@ -259,71 +271,63 @@ class XPathSelectorHandler(SelectorHandler):
         Try and convert matching Elements to unicode strings.
 
         If this fails, the selector evaluation probably already
-        returned some string(s) of some sort, so return that instead.
+        returned some string(s) of some sort, or boolean value,
+        or int/float, so return that instead.
         """
         selected = self.select(document, selector)
         if selected is not None:
-            # XPath compiled expressions (and CSSSelect translations)
-            # can return different types
-            # See http://lxml.de/xpathxslt.html#xpath-return-values
-            # - True or False, when the XPath expression
-            #       has a boolean result
-            # - a float, when the XPath expression has a numeric result
-            #       (integer or float)
-            # - a 'smart' string (as described below),
-            #       when the XPath expression has a string result.
-            # - a list of items, when the XPath expression has a list as result.
-            #       The items may include Elements
-            #       (also comments and processing instructions),
-            #       strings and tuples.
-            #
-            #   Note that in the default implementation,
-            #   smart strings are disabled
 
-            if isinstance(selected, (float, int)):
-                return selected
-
-            elif isinstance(selected, (bool)):
-                return selected
-
-            elif isinstance(selected, (list, tuple)):
+            if isinstance(selected, (list, tuple)):
 
                 # FIXME: return None or return empty list?
                 if not len(selected):
                     return
 
-                # try decoding to a string if no text() or prsl:str() has been used
-                try:
-                    retval = parslepy.funcs.elements2text(selected)
-                    if self.DEBUG:
-                        print(debug_offset, "return", retval)
-                    return retval
+                return [self._extract_single(m) for m in selected]
 
-                # assume the selection is already a string (or string list)
-                except Exception as e:
-                    if self.DEBUG:
-                        print(debug_offset, "tostring failed:", str(e))
-                        print(debug_offset, "return", selected)
-                    return selected
-
-
-                #output = []
-                #for m in selected:
-                    #if type(m) == lxml.etree._Element:
-                        #output.append(parslepy.funcs.extract_text(m))
-                    #else:
-                        #output.append(m)
-                #return output
             else:
-                if self.DEBUG:
-                    print(debug_offset, "selected is not a list; return", selected)
-                return selected
+                return self._extract_single(selected)
 
         # selector did not match anything
         else:
             if self.DEBUG:
                 print(debug_offset, "selector did not match anything; return None")
             return None
+
+    def _default_element_extract(self, element):
+        """
+        Overridable method to change how matching Elements
+        are represented in output
+        """
+
+        return parslepy.funcs.extract_text(element)
+
+    def _extract_single(self, retval):
+        # XPath compiled expressions (and CSSSelect translations)
+        # can return different types
+        # See http://lxml.de/xpathxslt.html#xpath-return-values
+        # - True or False, when the XPath expression
+        #       has a boolean result
+        # - a float, when the XPath expression has a numeric result
+        #       (integer or float)
+        # - a 'smart' string (as described below),
+        #       when the XPath expression has a string result.
+        # - a list of items, when the XPath expression has a list as result.
+        #       The items may include Elements
+        #       (also comments and processing instructions),
+        #       strings and tuples.
+        #
+        #   Note that in the default implementation,
+        #   smart strings are disabled
+        if type(retval) == lxml.etree._Element:
+            return self._default_element_extract(retval)
+
+        elif isinstance(retval, tuple(self.EXPECTED_NON_ELEMENT_TYPES)):
+            return retval
+
+        else:
+            raise Warning("unusual type %s" % type(retval))
+            return retval
 
 
 class DefaultSelectorHandler(XPathSelectorHandler):
