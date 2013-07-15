@@ -11,48 +11,54 @@ def test_listitems_type(itemlist, checktype):
 def check_listitems_types(itemlist):
     return list(set([type(i) for i in itemlist]))
 
+def apply2elements(elements, element_func, notelement_func=None):
+    ltype = check_listitems_types(elements)
+    if ltype == [lxml.etree._Element]:
+        return element_func(elements)
+    elif notelement_func:
+        return notelement_func(elements)
+    else:
+        return elements
+
+#def apply2element(element, element_func, notelement_func=None):
+    #if type(element) == lxml.etree._Element:
+        #return element_func(element)
+    #elif notelement_func:
+        #return notelement_func(element)
+    #else:
+        #return element
+
 try:
     unicode         # Python 2.x
     def xpathtostring(context, nodes, with_tail=True, *args):
-        ltype = check_listitems_types(nodes)
-        if ltype == [lxml.etree._Element]:
-            return parslepy.funcs.elements2text(nodes, with_tail=with_tail)
-        #elif ltype == [lxml.etree._ElementUnicodeResult]:
-        else:
-            try:
-                return [parslepy.funcs.remove_multiple_whitespaces(unicode(s))
-                        for s in nodes]
-            except Exception as e:
-                print(e)
+        return apply2elements(
+            nodes,
+            element_func=lambda nodes: parslepy.funcs.elements2text(
+                nodes, with_tail=with_tail),
+            notelement_func=lambda nodes: [
+                parslepy.funcs.remove_multiple_whitespaces(unicode(s))
+                    for s in nodes],
+        )
+
 except NameError:   # Python 3.x
     def xpathtostring(context, nodes, with_tail=True, *args):
-        ltype = check_listitems_types(nodes)
-        if ltype == [lxml.etree._Element]:
-            return parslepy.funcs.elements2text(nodes, with_tail=with_tail)
-        #elif ltype == [lxml.etree._ElementUnicodeResult]:
-        else:
-            try:
-                return [parslepy.funcs.remove_multiple_whitespaces(str(s))
-                        for s in nodes]
-            except Exception as e:
-                print(e)
+        return apply2elements(
+            nodes,
+            element_func=lambda nodes: parslepy.funcs.elements2textnl(
+                nodes, with_tail=with_tail),
+            notelement_func=lambda nodes: [
+                parslepy.funcs.remove_multiple_whitespaces(str(s))
+                    for s in nodes],
+        )
 
 def xpathtostringnl(context, nodes, with_tail=True, *args):
-    return parslepy.funcs.elements2textnl(nodes, with_tail=with_tail)
-    # FIXME: below not working now
-    #ltype = check_listitems_types(nodes)
-    #if ltype == [lxml.etree._Element]:
-        #return parslepy.funcs.elements2textnl(nodes, with_tail=with_tail)
-    #else:
-        #return nodes
+    return apply2elements(nodes,
+        element_func=lambda nodes: parslepy.funcs.elements2textnl(
+            nodes, with_tail=with_tail))
 
 def xpathtohtml(context, nodes):
-    return parslepy.funcs.elements2html(nodes)
-    #ltype = check_listitems_types(nodes)
-    #if ltype == [lxml.etree._Element]:
-        #return parslepy.funcs.elements2html(nodes)
-    #else:
-        #return nodes
+    return apply2elements(nodes,
+        element_func=lambda nodes: parslepy.funcs.elements2html(nodes))
 
 try:
     unicode         # Python 2.x
@@ -63,6 +69,7 @@ try:
                         nodes, with_tail=with_tail)]
         else:
             return [unicode(s).strip(stripchars) for s in nodes]
+
 except NameError:   # Python 3.x
     def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
         if test_listitems_type(nodes, lxml.etree._Element):

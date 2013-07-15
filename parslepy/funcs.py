@@ -97,12 +97,9 @@ def elements2text(nodes, with_tail=True):
 
 
 def elements2textnl(nodes, with_tail=True):
-    try:
-        return [extract_text(format_htmltags_to_newline(e),
-                    with_tail=with_tail, keep_nl=True)
-                for e in nodes]
-    except Exception as e:
-        return nodes
+    return [extract_text(format_htmltags_to_newline(e),
+                with_tail=with_tail, keep_nl=True)
+            for e in nodes]
 
 
 def elements2html(nodes):
