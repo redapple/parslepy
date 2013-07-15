@@ -92,20 +92,18 @@ def format_htmltags_to_newline(tree):
         replacement="\n")
 
 
-def tostring(nodes, with_tail=True):
+def elements2text(nodes, with_tail=True):
     return [extract_text(e, with_tail=with_tail) for e in nodes]
 
 
-def tostringnl(nodes, with_tail=True):
+def elements2textnl(nodes, with_tail=True):
     try:
         return [extract_text(format_htmltags_to_newline(e),
-                        with_tail=with_tail, keep_nl=True)
-                    for e in nodes]
+                    with_tail=with_tail, keep_nl=True)
+                for e in nodes]
     except Exception as e:
-        #print(traceback.format_exc())
-        #print(str(e))
         return nodes
 
 
-def tohtml(nodes):
+def elements2html(nodes):
     return [extract_html(e) for e in nodes]

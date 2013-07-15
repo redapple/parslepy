@@ -16,7 +16,7 @@ try:
     def xpathtostring(context, nodes, with_tail=True, *args):
         ltype = check_listitems_types(nodes)
         if ltype == [lxml.etree._Element]:
-            return parslepy.funcs.tostring(nodes, with_tail=with_tail)
+            return parslepy.funcs.elements2text(nodes, with_tail=with_tail)
         #elif ltype == [lxml.etree._ElementUnicodeResult]:
         else:
             try:
@@ -28,8 +28,7 @@ except NameError:   # Python 3.x
     def xpathtostring(context, nodes, with_tail=True, *args):
         ltype = check_listitems_types(nodes)
         if ltype == [lxml.etree._Element]:
-            return parslepy.funcs.tostring(nodes, with_tail=with_tail)
-
+            return parslepy.funcs.elements2text(nodes, with_tail=with_tail)
         #elif ltype == [lxml.etree._ElementUnicodeResult]:
         else:
             try:
@@ -39,18 +38,39 @@ except NameError:   # Python 3.x
                 print(e)
 
 def xpathtostringnl(context, nodes, with_tail=True, *args):
-    return parslepy.funcs.tostringnl(nodes, with_tail=with_tail)
+    return parslepy.funcs.elements2textnl(nodes, with_tail=with_tail)
+    # FIXME: below not working now
+    #ltype = check_listitems_types(nodes)
+    #if ltype == [lxml.etree._Element]:
+        #return parslepy.funcs.elements2textnl(nodes, with_tail=with_tail)
+    #else:
+        #return nodes
 
 def xpathtohtml(context, nodes):
-    return parslepy.funcs.tohtml(nodes)
+    return parslepy.funcs.elements2html(nodes)
+    #ltype = check_listitems_types(nodes)
+    #if ltype == [lxml.etree._Element]:
+        #return parslepy.funcs.elements2html(nodes)
+    #else:
+        #return nodes
 
-def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
-    if test_listitems_type(nodes, lxml.etree._Element):
-        return map(
-            lambda s: s.strip(stripchars),
-            parslepy.funcs.tostring(nodes, with_tail=with_tail))
-    else:
-        return map(lambda s: unicode(s).strip(stripchars), nodes)
+try:
+    unicode         # Python 2.x
+    def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
+        if test_listitems_type(nodes, lxml.etree._Element):
+            return [s.strip(stripchars)
+                    for s in  parslepy.funcs.elements2text(
+                        nodes, with_tail=with_tail)]
+        else:
+            return [unicode(s).strip(stripchars) for s in nodes]
+except NameError:   # Python 3.x
+    def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
+        if test_listitems_type(nodes, lxml.etree._Element):
+            return [s.strip(stripchars)
+                    for s in  parslepy.funcs.elements2text(
+                        nodes, with_tail=with_tail)]
+        else:
+            return [str(s).strip(stripchars) for s in nodes]
 
 class Selector(object):
     """
@@ -130,6 +150,7 @@ class XPathSelectorHandler(SelectorHandler):
     It understands what lxml.etree.XPath understands, that is XPath 1.0
     expressions
     """
+
     PARSLEY_NAMESPACE = 'local-parsley'
     PARSLEY_XPATH_EXTENSIONS = {
         (PARSLEY_NAMESPACE, 'str') : xpathtostring,
@@ -241,15 +262,39 @@ class XPathSelectorHandler(SelectorHandler):
         returned some string(s) of some sort, so return that instead.
         """
         selected = self.select(document, selector)
-        if selected is not None and len(selected):
-            if self.DEBUG:
-                print(debug_offset, selected)
+        if selected is not None:
+            # XPath compiled expressions (and CSSSelect translations)
+            # can return different types
+            # See http://lxml.de/xpathxslt.html#xpath-return-values
+            # - True or False, when the XPath expression
+            #       has a boolean result
+            # - a float, when the XPath expression has a numeric result
+            #       (integer or float)
+            # - a 'smart' string (as described below),
+            #       when the XPath expression has a string result.
+            # - a list of items, when the XPath expression has a list as result.
+            #       The items may include Elements
+            #       (also comments and processing instructions),
+            #       strings and tuples.
+            #
+            #   Note that in the default implementation,
+            #   smart strings are disabled
 
-            if isinstance(selected, (list, tuple)):
+            if isinstance(selected, (float, int)):
+                return selected
+
+            elif isinstance(selected, (bool)):
+                return selected
+
+            elif isinstance(selected, (list, tuple)):
+
+                # FIXME: return None or return empty list?
+                if not len(selected):
+                    return
 
                 # try decoding to a string if no text() or prsl:str() has been used
                 try:
-                    retval = parslepy.funcs.tostring(selected)
+                    retval = parslepy.funcs.elements2text(selected)
                     if self.DEBUG:
                         print(debug_offset, "return", retval)
                     return retval
@@ -260,6 +305,15 @@ class XPathSelectorHandler(SelectorHandler):
                         print(debug_offset, "tostring failed:", str(e))
                         print(debug_offset, "return", selected)
                     return selected
+
+
+                #output = []
+                #for m in selected:
+                    #if type(m) == lxml.etree._Element:
+                        #output.append(parslepy.funcs.extract_text(m))
+                    #else:
+                        #output.append(m)
+                #return output
             else:
                 if self.DEBUG:
                     print(debug_offset, "selected is not a list; return", selected)
