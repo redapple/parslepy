@@ -191,6 +191,58 @@ def test_creativecommon_extraction():
 
 
         ),
+        # strip brackets on element text content
+        (
+            {
+                "ccby": "//div[@id='deed-license']/h2/span[2]",
+                "ccby_str": "parsley:str(//div[@id='deed-license']/h2/span[2])",
+                "ccby_stripped": "parsley:strip(//div[@id='deed-license']/h2/span[2], '()')",
+                "ccby_str_stripped": "parsley:strip(parsley:str(//div[@id='deed-license']/h2/span[2]), '()')",
+            },
+            {
+                "ccby": "(CC BY 3.0)",
+                "ccby_str": "(CC BY 3.0)",
+                "ccby_stripped": "CC BY 3.0",
+                "ccby_str_stripped": "CC BY 3.0",
+            }
+        ),
+        # strip on element attributes
+        # get the last 10 links and strip "." and "/" characters
+        # NOTE: this is not really a realistic use-case but it shows
+        #       how powerful XPath expressions can be
+        (
+            {
+                "links": ["(//a)[position() > (last() - 10)]/@href"],
+                "links_stripped": ["parsley:strip((//a)[position() > (last() - 10)]/@href, '/.')"],
+            },
+            {
+                'links': [
+                    './deed.pt_BR',
+                    './deed.fi',
+                    './deed.sv',
+                    './deed.is',
+                    './deed.el',
+                    './deed.ru',
+                    './deed.uk',
+                    './deed.zh',
+                    './deed.zh_TW',
+                    './deed.ko'
+                    ],
+                'links_stripped': [
+                    'deed.pt_BR',
+                    'deed.fi',
+                    'deed.sv',
+                    'deed.is',
+                    'deed.el',
+                    'deed.ru',
+                    'deed.uk',
+                    'deed.zh',
+                    'deed.zh_TW',
+                    'deed.ko'
+                ],
+            }
+        ),
+
     )
     hp = lxml.etree.HTMLParser()
     dirname = os.path.dirname(os.path.abspath(__file__))
