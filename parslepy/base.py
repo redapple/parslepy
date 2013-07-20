@@ -447,6 +447,7 @@ class Parselet(object):
         # we must go deeper in the Parsley tree
         if isinstance(parselet_node, ParsleyNode):
 
+            # default output
             output = {}
 
             # process all children
@@ -470,6 +471,11 @@ class Parselet(object):
                                 elif isinstance(parse_result, list):
                                     extracted.extend(parse_result)
 
+                                # if we're not in an array,
+                                # we only care about the first iteration
+                                if not ctx.iterate:
+                                    break
+
                             if self.DEBUG:
                                 print(debug_offset,
                                     "parsed %d elements in scope (%s)" % (i, ctx.scope))
@@ -477,6 +483,7 @@ class Parselet(object):
                     # local extraction
                     else:
                         extracted = self._extract(v, document, level=level+1)
+
                 except NonMatchingNonOptionalKey as e:
                     if self.DEBUG:
                         print(debug_offset, str(e))
@@ -488,6 +495,12 @@ class Parselet(object):
                     if self.DEBUG:
                         print(str(e))
                     raise
+
+                # replace empty-list result when not looping by empty dict
+                if (    isinstance(extracted, list)
+                    and not extracted
+                    and not ctx.iterate):
+                        extracted = {}
 
                 # keep only the first element if we're not in an array
                 if self.KEEP_ONLY_FIRST_ELEMENT_IF_LIST:
@@ -541,13 +554,16 @@ class Parselet(object):
                             #empty list, dont bother?
                             pass
                 else:
+                    # required keys are handled above
                     if extracted is not None:
                         output[ctx.key] = extracted
                     else:
                         # do not add this optional key/value pair in the output
                         pass
+
             return output
 
+        # a leaf/Selector node
         elif isinstance(parselet_node, Selector):
             return self.selector_handler.extract(document, parselet_node)
 
