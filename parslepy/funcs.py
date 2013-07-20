@@ -27,6 +27,9 @@ def extract_text(element, keep_nl=False, with_tail=True):
 def extract_html(element, with_tail=False):
     return lxml_element2string(element, method="html", with_tail=with_tail)
 
+def extract_xml(element, with_tail=False):
+    return lxml_element2string(element, method="xml", with_tail=with_tail)
+
 REGEX_NEWLINE = re.compile(r'\n')
 REGEX_WHITESPACE = re.compile(r'\s+', re.UNICODE)
 def remove_multiple_whitespaces(input_string, keep_nl = False):
@@ -103,10 +106,11 @@ def elements2textnl(nodes, with_tail=True, replacement="\n"):
                 keep_nl=True)
             for e in nodes]
 
-
 def elements2html(nodes):
     return [extract_html(e) for e in nodes]
 
+def elements2xml(nodes):
+    return [extract_xml(e) for e in nodes]
 
 # ----------------------------------------------------------------------
 
@@ -164,6 +168,10 @@ def xpathtostringnl(context, nodes, with_tail=True, replacement="\n", *args):
 def xpathtohtml(context, nodes):
     return apply2elements(nodes,
         element_func=lambda nodes: elements2html(nodes))
+
+def xpathtoxml(context, nodes):
+    return apply2elements(nodes,
+        element_func=lambda nodes: elements2xml(nodes))
 
 try:
     unicode         # Python 2.x

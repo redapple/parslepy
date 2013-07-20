@@ -101,11 +101,18 @@ class XPathSelectorHandler(SelectorHandler):
 
     PARSLEY_NAMESPACE = 'local-parslepy'
     PARSLEY_XPATH_EXTENSIONS = {
+        (PARSLEY_NAMESPACE, 'text') : parslepy.funcs.xpathtostring,
+        (PARSLEY_NAMESPACE, 'textnl') : parslepy.funcs.xpathtostringnl,
+
+        # aliases
         (PARSLEY_NAMESPACE, 'str') : parslepy.funcs.xpathtostring,
         (PARSLEY_NAMESPACE, 'strnl') : parslepy.funcs.xpathtostringnl,
         (PARSLEY_NAMESPACE, 'nl') : parslepy.funcs.xpathtostringnl,
+
         (PARSLEY_NAMESPACE, 'html') : parslepy.funcs.xpathtohtml,
+        (PARSLEY_NAMESPACE, 'xml') : parslepy.funcs.xpathtoxml,
         (PARSLEY_NAMESPACE, 'strip') : parslepy.funcs.xpathstrip,
+
         (PARSLEY_NAMESPACE, 'attrname') : parslepy.funcs.xpathattrname,
         (PARSLEY_NAMESPACE, 'attrnames') : parslepy.funcs.xpathattrname,   # alias that's probably a better fit
     }
