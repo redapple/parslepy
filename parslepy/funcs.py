@@ -106,3 +106,84 @@ def elements2textnl(nodes, with_tail=True, replacement="\n"):
 
 def elements2html(nodes):
     return [extract_html(e) for e in nodes]
+
+
+# ----------------------------------------------------------------------
+
+def test_listitems_type(itemlist, checktype):
+    return all([isinstance(i, checktype) for i in itemlist])
+
+def check_listitems_types(itemlist):
+    return list(set([type(i) for i in itemlist]))
+
+def apply2elements(elements, element_func, notelement_func=None):
+    ltype = check_listitems_types(elements)
+    if ltype == [lxml.etree._Element]:
+        return element_func(elements)
+    elif notelement_func:
+        return notelement_func(elements)
+    else:
+        return elements
+
+#def apply2element(element, element_func, notelement_func=None):
+    #if type(element) == lxml.etree._Element:
+        #return element_func(element)
+    #elif notelement_func:
+        #return notelement_func(element)
+    #else:
+        #return element
+
+try:
+    unicode         # Python 2.x
+    def xpathtostring(context, nodes, with_tail=True, *args):
+        return apply2elements(
+            nodes,
+            element_func=lambda nodes: elements2text(
+                nodes, with_tail=with_tail),
+            notelement_func=lambda nodes: [
+                remove_multiple_whitespaces(unicode(s))
+                    for s in nodes],
+        )
+
+except NameError:   # Python 3.x
+    def xpathtostring(context, nodes, with_tail=True, *args):
+        return apply2elements(
+            nodes,
+            element_func=lambda nodes: elements2textnl(
+                nodes, with_tail=with_tail),
+            notelement_func=lambda nodes: [
+                remove_multiple_whitespaces(str(s))
+                    for s in nodes],
+        )
+
+def xpathtostringnl(context, nodes, with_tail=True, replacement="\n", *args):
+    return apply2elements(nodes,
+        element_func=lambda nodes: elements2textnl(
+            nodes, with_tail=with_tail, replacement=replacement))
+
+def xpathtohtml(context, nodes):
+    return apply2elements(nodes,
+        element_func=lambda nodes: elements2html(nodes))
+
+try:
+    unicode         # Python 2.x
+    def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
+        if test_listitems_type(nodes, lxml.etree._Element):
+            return [s.strip(stripchars)
+                    for s in elements2text(
+                        nodes, with_tail=with_tail)]
+        else:
+            return [unicode(s).strip(stripchars) for s in nodes]
+
+except NameError:   # Python 3.x
+    def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
+        if test_listitems_type(nodes, lxml.etree._Element):
+            return [s.strip(stripchars)
+                    for s in elements2text(
+                        nodes, with_tail=with_tail)]
+        else:
+            return [str(s).strip(stripchars) for s in nodes]
+
+
+def xpathattrname(context, attributes, *args):
+    return [a.attrname for a in attributes]

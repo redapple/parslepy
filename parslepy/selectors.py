@@ -5,84 +5,6 @@ import lxml.etree
 import parslepy.funcs
 import re
 
-def test_listitems_type(itemlist, checktype):
-    return all([isinstance(i, checktype) for i in itemlist])
-
-def check_listitems_types(itemlist):
-    return list(set([type(i) for i in itemlist]))
-
-def apply2elements(elements, element_func, notelement_func=None):
-    ltype = check_listitems_types(elements)
-    if ltype == [lxml.etree._Element]:
-        return element_func(elements)
-    elif notelement_func:
-        return notelement_func(elements)
-    else:
-        return elements
-
-#def apply2element(element, element_func, notelement_func=None):
-    #if type(element) == lxml.etree._Element:
-        #return element_func(element)
-    #elif notelement_func:
-        #return notelement_func(element)
-    #else:
-        #return element
-
-try:
-    unicode         # Python 2.x
-    def xpathtostring(context, nodes, with_tail=True, *args):
-        return apply2elements(
-            nodes,
-            element_func=lambda nodes: parslepy.funcs.elements2text(
-                nodes, with_tail=with_tail),
-            notelement_func=lambda nodes: [
-                parslepy.funcs.remove_multiple_whitespaces(unicode(s))
-                    for s in nodes],
-        )
-
-except NameError:   # Python 3.x
-    def xpathtostring(context, nodes, with_tail=True, *args):
-        return apply2elements(
-            nodes,
-            element_func=lambda nodes: parslepy.funcs.elements2textnl(
-                nodes, with_tail=with_tail),
-            notelement_func=lambda nodes: [
-                parslepy.funcs.remove_multiple_whitespaces(str(s))
-                    for s in nodes],
-        )
-
-def xpathtostringnl(context, nodes, with_tail=True, replacement="\n", *args):
-    return apply2elements(nodes,
-        element_func=lambda nodes: parslepy.funcs.elements2textnl(
-            nodes, with_tail=with_tail, replacement=replacement))
-
-def xpathtohtml(context, nodes):
-    return apply2elements(nodes,
-        element_func=lambda nodes: parslepy.funcs.elements2html(nodes))
-
-try:
-    unicode         # Python 2.x
-    def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
-        if test_listitems_type(nodes, lxml.etree._Element):
-            return [s.strip(stripchars)
-                    for s in  parslepy.funcs.elements2text(
-                        nodes, with_tail=with_tail)]
-        else:
-            return [unicode(s).strip(stripchars) for s in nodes]
-
-except NameError:   # Python 3.x
-    def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
-        if test_listitems_type(nodes, lxml.etree._Element):
-            return [s.strip(stripchars)
-                    for s in  parslepy.funcs.elements2text(
-                        nodes, with_tail=with_tail)]
-        else:
-            return [str(s).strip(stripchars) for s in nodes]
-
-
-def xpathattrname(context, attributes, *args):
-    return [a.attrname for a in attributes]
-
 
 class Selector(object):
     """
@@ -179,13 +101,13 @@ class XPathSelectorHandler(SelectorHandler):
 
     PARSLEY_NAMESPACE = 'local-parslepy'
     PARSLEY_XPATH_EXTENSIONS = {
-        (PARSLEY_NAMESPACE, 'str') : xpathtostring,
-        (PARSLEY_NAMESPACE, 'strnl') : xpathtostringnl,
-        (PARSLEY_NAMESPACE, 'nl') : xpathtostringnl,
-        (PARSLEY_NAMESPACE, 'html') : xpathtohtml,
-        (PARSLEY_NAMESPACE, 'strip') : xpathstrip,
-        (PARSLEY_NAMESPACE, 'attrname') : xpathattrname,
-        (PARSLEY_NAMESPACE, 'attrnames') : xpathattrname,   # alias that's probably a better fit
+        (PARSLEY_NAMESPACE, 'str') : parslepy.funcs.xpathtostring,
+        (PARSLEY_NAMESPACE, 'strnl') : parslepy.funcs.xpathtostringnl,
+        (PARSLEY_NAMESPACE, 'nl') : parslepy.funcs.xpathtostringnl,
+        (PARSLEY_NAMESPACE, 'html') : parslepy.funcs.xpathtohtml,
+        (PARSLEY_NAMESPACE, 'strip') : parslepy.funcs.xpathstrip,
+        (PARSLEY_NAMESPACE, 'attrname') : parslepy.funcs.xpathattrname,
+        (PARSLEY_NAMESPACE, 'attrnames') : parslepy.funcs.xpathattrname,   # alias that's probably a better fit
     }
     EXSLT_NAMESPACES={
         'date': 'http://exslt.org/dates-and-times',
