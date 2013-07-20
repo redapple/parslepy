@@ -51,10 +51,10 @@ except NameError:   # Python 3.x
                     for s in nodes],
         )
 
-def xpathtostringnl(context, nodes, with_tail=True, *args):
+def xpathtostringnl(context, nodes, with_tail=True, replacement="\n", *args):
     return apply2elements(nodes,
         element_func=lambda nodes: parslepy.funcs.elements2textnl(
-            nodes, with_tail=with_tail))
+            nodes, with_tail=with_tail, replacement=replacement))
 
 def xpathtohtml(context, nodes):
     return apply2elements(nodes,
@@ -78,6 +78,11 @@ except NameError:   # Python 3.x
                         nodes, with_tail=with_tail)]
         else:
             return [str(s).strip(stripchars) for s in nodes]
+
+
+def xpathattrname(context, attributes, *args):
+    return [a.attrname for a in attributes]
+
 
 class Selector(object):
     """
@@ -170,6 +175,8 @@ class XPathSelectorHandler(SelectorHandler):
     except NameError:
         pass
 
+    SMART_STRINGS = True
+
     PARSLEY_NAMESPACE = 'local-parsley'
     PARSLEY_XPATH_EXTENSIONS = {
         (PARSLEY_NAMESPACE, 'str') : xpathtostring,
@@ -177,6 +184,7 @@ class XPathSelectorHandler(SelectorHandler):
         (PARSLEY_NAMESPACE, 'nl') : xpathtostringnl,
         (PARSLEY_NAMESPACE, 'html') : xpathtohtml,
         (PARSLEY_NAMESPACE, 'strip') : xpathstrip,
+        (PARSLEY_NAMESPACE, 'attrname') : xpathattrname,
     }
     EXSLT_NAMESPACES={
         'date': 'http://exslt.org/dates-and-times',
@@ -249,7 +257,7 @@ class XPathSelectorHandler(SelectorHandler):
             selector = lxml.etree.XPath(selection,
                 namespaces = self.namespaces,
                 extensions = self.extensions,
-                smart_strings=False)
+                smart_strings=self.SMART_STRINGS)
 
         except lxml.etree.XPathSyntaxError as syntax_error:
             syntax_error.msg += ": %s" % selection
@@ -404,7 +412,7 @@ class DefaultSelectorHandler(XPathSelectorHandler):
                     "%s/%s" % (cssxpath, attribute),
                     namespaces = self.namespaces,
                     extensions = self.extensions,
-                    smart_strings=False)
+                    smart_strings=self.SMART_STRINGS)
             else:
                 selector = lxml.cssselect.CSSSelector(selection,
                     namespaces = self.namespaces)
@@ -417,7 +425,7 @@ class DefaultSelectorHandler(XPathSelectorHandler):
                 selector = lxml.etree.XPath(selection,
                     namespaces = self.namespaces,
                     extensions = self.extensions,
-                    smart_strings=False)
+                    smart_strings=self.SMART_STRINGS)
 
             except lxml.etree.XPathSyntaxError as syntax_error:
                 syntax_error.msg += ": %s" % selection
