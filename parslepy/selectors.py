@@ -185,6 +185,7 @@ class XPathSelectorHandler(SelectorHandler):
         (PARSLEY_NAMESPACE, 'html') : xpathtohtml,
         (PARSLEY_NAMESPACE, 'strip') : xpathstrip,
         (PARSLEY_NAMESPACE, 'attrname') : xpathattrname,
+        (PARSLEY_NAMESPACE, 'attrnames') : xpathattrname,   # alias that's probably a better fit
     }
     EXSLT_NAMESPACES={
         'date': 'http://exslt.org/dates-and-times',
