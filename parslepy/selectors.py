@@ -177,7 +177,7 @@ class XPathSelectorHandler(SelectorHandler):
 
     SMART_STRINGS = True
 
-    PARSLEY_NAMESPACE = 'local-parsley'
+    PARSLEY_NAMESPACE = 'local-parslepy'
     PARSLEY_XPATH_EXTENSIONS = {
         (PARSLEY_NAMESPACE, 'str') : xpathtostring,
         (PARSLEY_NAMESPACE, 'strnl') : xpathtostringnl,
@@ -239,6 +239,7 @@ class XPathSelectorHandler(SelectorHandler):
         """
 
         namespace_dict.update({
+            'parslepy' : cls.PARSLEY_NAMESPACE,
             'parsley' : cls.PARSLEY_NAMESPACE,
         })
         return namespace_dict
