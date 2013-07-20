@@ -85,20 +85,22 @@ HTML_BLOCK_ELEMENTS = [
     'video',
 ]
 NEWLINE_TEXT_TAGS = ['br', 'hr']
-def format_htmltags_to_newline(tree):
+def format_htmlblock_tags(tree, replacement="\n"):
     return format_alter_htmltags(tree,
         text_tags=NEWLINE_TEXT_TAGS,
         tail_tags=HTML_BLOCK_ELEMENTS,
-        replacement="\n")
+        replacement=replacement)
 
 
 def elements2text(nodes, with_tail=True):
     return [extract_text(e, with_tail=with_tail) for e in nodes]
 
 
-def elements2textnl(nodes, with_tail=True):
-    return [extract_text(format_htmltags_to_newline(e),
-                with_tail=with_tail, keep_nl=True)
+def elements2textnl(nodes, with_tail=True, replacement="\n"):
+    return [extract_text(
+                format_htmlblock_tags(e, replacement=replacement),
+                with_tail=with_tail,
+                keep_nl=True)
             for e in nodes]
 
 
