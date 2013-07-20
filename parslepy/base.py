@@ -574,6 +574,10 @@ class Parselet(object):
             pass
 
 
+# alias
+Parslet = Parselet
+
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
