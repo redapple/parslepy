@@ -153,7 +153,7 @@ except NameError:   # Python 3.x
     def xpathtostring(context, nodes, with_tail=True, *args):
         return apply2elements(
             nodes,
-            element_func=lambda nodes: elements2textnl(
+            element_func=lambda nodes: elements2text(
                 nodes, with_tail=with_tail),
             notelement_func=lambda nodes: [
                 remove_multiple_whitespaces(str(s))
