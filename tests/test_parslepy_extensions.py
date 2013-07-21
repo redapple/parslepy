@@ -142,3 +142,85 @@ def test_to_xml():
             input_parselet, selector_handler=xsh, strict=True)
         extracted = parselet.extract(root)
         assert_dict_equal(extracted, expected_output)
+
+
+def test_userdefined_extensions():
+
+    def myattrnames(ctx, xpctx, attributes, *args):
+        #print "myattrnames:", ctx, xpctx, attributes, args
+        return [a.attrname for a in attributes]
+
+    # extension to built full URLs from @href or @src attributes
+    try:
+        import urlparse     # Python 2.x
+    except ImportError:
+        import urllib.parse as urlparse
+
+    def absurl(ctx, xpctx, attributes, *args):
+        #print "absurl:", ctx, xpctx, attributes, args
+        return [urlparse.urljoin(ctx, u) for u in attributes]
+
+    parselets = (
+        (
+            {
+                "head_meta(head/meta)": [{
+                    "attrnames": ["myext:attrnames(@*)"],
+                    "attrvals": ["@*"],
+                }],
+                "img_links": ["//img/@src"],
+                "img_abslinks": ["myext:absurl(//img/@src)"],
+            },
+            {
+                'head_meta': [
+                    {'attrnames': ['http-equiv', 'content'],
+                     'attrvals': ['Content-Type', 'text/html;charset=utf-8']
+                    },
+                    {'attrnames': ['name', 'content'],
+                     'attrvals': ['keywords',
+                                  'HTML, HyperText Markup Language, Validation,\n      W3C Markup Validation Service']},
+                    {'attrnames': ['name', 'content'],
+                     'attrvals': ['description',
+                                   "W3C's easy-to-use\n      markup validation service, based on SGML and XML parsers."]}],
+                'img_abslinks': ['http://validator.w3.org/images/w3c.png',
+                               'http://validator.w3.org/images/arrow-closed.png',
+                               'http://validator.w3.org/images/arrow-closed.png',
+                               'http://validator.w3.org/images/arrow-closed.png',
+                               'http://www.w3.org/Icons/VSlogo',
+                               'http://www.w3.org/Icons/WWW/w3c_home_nb',
+                               'http://validator.w3.org/images/opensource-55x48.png',
+                               'http://www.w3.org/QA/Tools/I_heart_validator'],
+                'img_links': ['./images/w3c.png',
+                            './images/arrow-closed.png',
+                            './images/arrow-closed.png',
+                            './images/arrow-closed.png',
+                            'http://www.w3.org/Icons/VSlogo',
+                            'http://www.w3.org/Icons/WWW/w3c_home_nb',
+                            './images/opensource-55x48.png',
+                            'http://www.w3.org/QA/Tools/I_heart_validator']
+            }
+        ),
+    )
+    mynamespaces = {
+        "myext": "myextension"
+    }
+    myextensions = {
+        ("myextension", "absurl"): absurl,
+        ("myextension", "attrnames"): myattrnames,
+    }
+
+    sh = parslepy.DefaultSelectorHandler(
+        namespaces=mynamespaces,
+        extensions=myextensions)
+
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    for input_parselet, expected_output in parselets:
+        parselet = parslepy.Parselet(
+            input_parselet,
+            selector_handler=sh, strict=True)
+        extracted = parselet.parse(
+            os.path.join(dirname, 'data/validator.w3.org.html'),
+            context='http://validator.w3.org/')
+
+        #pprint.pprint(extracted)
+        #pprint.pprint(expected_output)
+        assert_dict_equal(extracted, expected_output)

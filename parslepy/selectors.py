@@ -4,6 +4,7 @@ import lxml.cssselect
 import lxml.etree
 import parslepy.funcs
 import re
+import copy
 
 
 class Selector(object):
@@ -97,8 +98,6 @@ class XPathSelectorHandler(SelectorHandler):
     except NameError:
         pass
 
-    SMART_STRINGS = True
-
     PARSLEY_NAMESPACE = 'local-parslepy'
     PARSLEY_XPATH_EXTENSIONS = {
         (PARSLEY_NAMESPACE, 'text') : parslepy.funcs.xpathtostring,
@@ -125,6 +124,12 @@ class XPathSelectorHandler(SelectorHandler):
     }
     _extension_router = {}
 
+    SMART_STRINGS = False
+    SMART_STRINGS_FUNCTIONS = [
+        (PARSLEY_NAMESPACE, 'attrname'),
+        (PARSLEY_NAMESPACE, 'attrnames'),
+    ]
+
     _selector_cache = {}
 
     def __init__(self, namespaces=None, extensions=None, context=None, debug=False):
@@ -138,29 +143,63 @@ class XPathSelectorHandler(SelectorHandler):
         super(XPathSelectorHandler, self).__init__(debug=debug)
 
         # support EXSLT extensions
-        self.namespaces = self.EXSLT_NAMESPACES
+        self.namespaces = copy.copy(self.EXSLT_NAMESPACES)
         self._add_parsley_ns(self.namespaces)
-        self.extensions = self.PARSLEY_XPATH_EXTENSIONS
+        self.extensions = copy.copy(self.PARSLEY_XPATH_EXTENSIONS)
+        self._user_extensions = None
         self.context = context
 
         # add user-defined extensions
         if namespaces:
             self.namespaces.update(namespaces)
         if extensions:
+            self._user_extensions = extensions
             self._process_extensions(extensions)
+        self._set_smart_strings_regexps()
 
-    def _make_xpathextension(self, fname):
+    def _test_smart_strings_needed(self, selector):
+        return any([r.search(selector)
+                    for r in self.smart_strings_regexps])
+
+    def _get_smart_strings_regexps(self, ns, fname):
+        # find out what prefixes match the supplied namespace
+        prefix_matches = []
+        for prefix, namespace in self.namespaces.items():
+            if namespace == ns:
+                prefix_matches.append(prefix)
+
+        return [re.compile("%s:%s\(" % (p, fname)) for p in prefix_matches]
+
+    def _set_smart_strings_regexps(self):
+        self.smart_strings_regexps = []
+        # smart_strings for built-in extensions
+        for (ns, fname) in self.SMART_STRINGS_FUNCTIONS:
+            self.smart_strings_regexps.extend(
+                self._get_smart_strings_regexps(ns, fname))
+
+        # smart_strings for user_defined extensions
+        if self._user_extensions:
+            for (ns, fname) in self._user_extensions:
+                self.smart_strings_regexps.extend(
+                    self._get_smart_strings_regexps(ns, fname))
+
+    def _make_xpathextension(self, ns, fname):
         def xpath_ext(*args):
-            return self._extension_router[fname](self.context, *args)
-        xpath_ext.__doc__ = "docstring for xpext_%s" % fname
-        xpath_ext.__name__ = "xpext_%s" % fname
+            return self._extension_router[(ns, fname)](self.context, *args)
+
+        # FIXME: name of attribute should be dependent on namespace also
+        #        possible redefinition
+        extension_name = str("xpext_%s" % fname)
+        xpath_ext.__doc__ = "docstring for %s" % extension_name
+        xpath_ext.__name__ = extension_name
         setattr(self, xpath_ext.__name__, xpath_ext)
+
         return xpath_ext
 
     def _process_extensions(self, extensions):
-        for (ns, fname), func in extensions.iteritems():
-            self._extension_router[fname] = func
-            self.extensions[(ns, fname)] = self._make_xpathextension(fname=fname)
+        for (ns, fname), func in extensions.items():
+            self._extension_router[(ns, fname)] = func
+            self.extensions[(ns, fname)] = self._make_xpathextension(ns=ns, fname=fname)
 
     @classmethod
     def _add_parsley_ns(cls, namespace_dict):
@@ -188,7 +227,9 @@ class XPathSelectorHandler(SelectorHandler):
             selector = lxml.etree.XPath(selection,
                 namespaces = self.namespaces,
                 extensions = self.extensions,
-                smart_strings=self.SMART_STRINGS)
+                smart_strings=(self.SMART_STRINGS
+                            or self._test_smart_strings_needed(selection)),
+                )
 
         except lxml.etree.XPathSyntaxError as syntax_error:
             syntax_error.msg += ": %s" % selection
@@ -343,7 +384,9 @@ class DefaultSelectorHandler(XPathSelectorHandler):
                     "%s/%s" % (cssxpath, attribute),
                     namespaces = self.namespaces,
                     extensions = self.extensions,
-                    smart_strings=self.SMART_STRINGS)
+                    smart_strings=(self.SMART_STRINGS
+                                or self._test_smart_strings_needed(selection)),
+                    )
             else:
                 selector = lxml.cssselect.CSSSelector(selection,
                     namespaces = self.namespaces)
@@ -356,7 +399,9 @@ class DefaultSelectorHandler(XPathSelectorHandler):
                 selector = lxml.etree.XPath(selection,
                     namespaces = self.namespaces,
                     extensions = self.extensions,
-                    smart_strings=self.SMART_STRINGS)
+                    smart_strings=(self.SMART_STRINGS
+                                or self._test_smart_strings_needed(selection)),
+                    )
 
             except lxml.etree.XPathSyntaxError as syntax_error:
                 syntax_error.msg += ": %s" % selection
