@@ -98,22 +98,22 @@ class XPathSelectorHandler(SelectorHandler):
     except NameError:
         pass
 
-    PARSLEY_NAMESPACE = 'local-parslepy'
-    PARSLEY_XPATH_EXTENSIONS = {
-        (PARSLEY_NAMESPACE, 'text') : parslepy.funcs.xpathtostring,
-        (PARSLEY_NAMESPACE, 'textnl') : parslepy.funcs.xpathtostringnl,
+    LOCAL_NAMESPACE = 'local-parslepy'
+    LOCAL_XPATH_EXTENSIONS = {
+        (LOCAL_NAMESPACE, 'text') : parslepy.funcs.xpathtostring,
+        (LOCAL_NAMESPACE, 'textnl') : parslepy.funcs.xpathtostringnl,
 
         # aliases
-        (PARSLEY_NAMESPACE, 'str') : parslepy.funcs.xpathtostring,
-        (PARSLEY_NAMESPACE, 'strnl') : parslepy.funcs.xpathtostringnl,
-        (PARSLEY_NAMESPACE, 'nl') : parslepy.funcs.xpathtostringnl,
+        (LOCAL_NAMESPACE, 'str') : parslepy.funcs.xpathtostring,
+        (LOCAL_NAMESPACE, 'strnl') : parslepy.funcs.xpathtostringnl,
+        (LOCAL_NAMESPACE, 'nl') : parslepy.funcs.xpathtostringnl,
 
-        (PARSLEY_NAMESPACE, 'html') : parslepy.funcs.xpathtohtml,
-        (PARSLEY_NAMESPACE, 'xml') : parslepy.funcs.xpathtoxml,
-        (PARSLEY_NAMESPACE, 'strip') : parslepy.funcs.xpathstrip,
+        (LOCAL_NAMESPACE, 'html') : parslepy.funcs.xpathtohtml,
+        (LOCAL_NAMESPACE, 'xml') : parslepy.funcs.xpathtoxml,
+        (LOCAL_NAMESPACE, 'strip') : parslepy.funcs.xpathstrip,
 
-        (PARSLEY_NAMESPACE, 'attrname') : parslepy.funcs.xpathattrname,
-        (PARSLEY_NAMESPACE, 'attrnames') : parslepy.funcs.xpathattrname,   # alias that's probably a better fit
+        (LOCAL_NAMESPACE, 'attrname') : parslepy.funcs.xpathattrname,
+        (LOCAL_NAMESPACE, 'attrnames') : parslepy.funcs.xpathattrname,   # alias that's probably a better fit
     }
     EXSLT_NAMESPACES={
         'date': 'http://exslt.org/dates-and-times',
@@ -126,8 +126,8 @@ class XPathSelectorHandler(SelectorHandler):
 
     SMART_STRINGS = False
     SMART_STRINGS_FUNCTIONS = [
-        (PARSLEY_NAMESPACE, 'attrname'),
-        (PARSLEY_NAMESPACE, 'attrnames'),
+        (LOCAL_NAMESPACE, 'attrname'),
+        (LOCAL_NAMESPACE, 'attrnames'),
     ]
 
     _selector_cache = {}
@@ -144,17 +144,21 @@ class XPathSelectorHandler(SelectorHandler):
 
         # support EXSLT extensions
         self.namespaces = copy.copy(self.EXSLT_NAMESPACES)
+
+        # add local XPath extension functions
         self._add_parsley_ns(self.namespaces)
-        self.extensions = copy.copy(self.PARSLEY_XPATH_EXTENSIONS)
-        self._user_extensions = None
-        self.context = context
+        self.extensions = copy.copy(self.LOCAL_XPATH_EXTENSIONS)
 
         # add user-defined extensions
+        self._user_extensions = None
+        self.context = context
         if namespaces:
             self.namespaces.update(namespaces)
         if extensions:
             self._user_extensions = extensions
             self._process_extensions(extensions)
+
+        # some functions need smart_strings=True
         self._set_smart_strings_regexps()
 
     def _test_smart_strings_needed(self, selector):
@@ -187,9 +191,7 @@ class XPathSelectorHandler(SelectorHandler):
         def xpath_ext(*args):
             return self._extension_router[(ns, fname)](self.context, *args)
 
-        # FIXME: name of attribute should be dependent on namespace also
-        #        possible redefinition
-        extension_name = str("xpext_%s" % fname)
+        extension_name = str("xpext_%s_%d" % (fname, hash(ns)))
         xpath_ext.__doc__ = "docstring for %s" % extension_name
         xpath_ext.__name__ = extension_name
         setattr(self, xpath_ext.__name__, xpath_ext)
@@ -208,8 +210,8 @@ class XPathSelectorHandler(SelectorHandler):
         """
 
         namespace_dict.update({
-            'parslepy' : cls.PARSLEY_NAMESPACE,
-            'parsley' : cls.PARSLEY_NAMESPACE,
+            'parslepy' : cls.LOCAL_NAMESPACE,
+            'parsley' : cls.LOCAL_NAMESPACE,
         })
         return namespace_dict
 
