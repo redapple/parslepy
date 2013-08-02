@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='parslepy',
-      version='0.1.2',
+      version='0.2.0a1',
       description='Parsley extraction library using lxml',
       long_description="""
 ========

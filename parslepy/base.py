@@ -246,6 +246,7 @@ class Parselet(object):
 
         :param fp: file-like object containing an HTML or XML document, or URL or filename
         :param parser: *lxml.etree._FeedParser* instance (optional); defaults to lxml.etree.HTMLParser()
+        :param context: user-supplied context that will be passed to custom XPath extensions (as first argument)
         :rtype: Python :class:`dict` object with mapped extracted content
         :raises: :class:`.NonMatchingNonOptionalKey`
 

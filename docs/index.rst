@@ -150,8 +150,8 @@ script, and, depending on your selectors, values will be:
 * element attributes
 * nested lists of extraction content
 
-.. autoclass:: base.Parselet
-    :members: from_jsonfile, from_jsonstring, extract, parse, parse_fromstring
+.. autoclass:: parslepy.base.Parselet
+    :members: parse, from_jsonfile, from_jsonstring, extract, parse_fromstring
 
 Customizing
 -----------
@@ -164,14 +164,14 @@ But you can also customize how selectors are interpreted by sub-classing
 :class:`.SelectorHandler` and passing an instance of your selector handler
 to the Parselet constructor.
 
-.. autoclass:: selectors.Selector
+.. autoclass:: parslepy.selectors.Selector
 
-.. autoclass:: selectors.SelectorHandler
+.. autoclass:: parslepy.selectors.SelectorHandler
     :members:
 
-.. autoclass:: selectors.XPathSelectorHandler
+.. autoclass:: parslepy.selectors.XPathSelectorHandler
 
-.. autoclass:: selectors.DefaultSelectorHandler
+.. autoclass:: parslepy.selectors.DefaultSelectorHandler
 
         Example with iTunes RSS feed:
 
@@ -208,10 +208,81 @@ to the Parselet constructor.
 Exceptions
 ----------
 
-.. autoclass:: base.InvalidKeySyntax
+.. autoexception:: parslepy.base.InvalidKeySyntax
 
-.. autoclass:: base.NonMatchingNonOptionalKey
+.. autoexception:: parslepy.base.NonMatchingNonOptionalKey
 
+
+Extension functions
+-------------------
+
+*parslepy* extends XPath 1.0 functions through `lxml`_'s XPath extensions.
+See http://lxml.de/extensions.html for details.
+
+Built-in extensions
+^^^^^^^^^^^^^^^^^^^
+
+*parslepy* comes with a few XPath extensions functions. These functions
+are available by default when you use :class:`.XPathSelectorHandler`
+or :class:`.DefaultSelectorHandler`.
+
+*   ``parslepy:text(xpath_expression[, false()])``:
+    returns the text content
+    for elements matching *xpath_expression*. The optional boolean second
+    parameter indicate wheter *tail* content should be included or not.
+    Use *true()* and *false()* XPath functions, not only *true* or *false*,
+    (or 1 or 0). Defaults to *true()*
+
+*   ``parslepy:textnl(xpath_expression)``:
+    similar to ``parslepy:text()`` but appends `\\n` characters to HTML
+    block elements such as `<br>`, `<hr>`, `<div>`
+
+*   ``parslepy:html(xpath_expression)``
+    returns the HTML content for elements matching *xpath_expression*.
+    Internally, this call `lxml.html.tostring()`
+
+*   ``parslepy:xml(xpath_expression)``
+    returns the XML content for elements matching *xpath_expression*
+    Internally, this call `lxml.etree.tostring()`
+
+*   ``parslepy:strip(xpath_expression[, chars])``
+    behaves like Python's `strip()` method for strings but for the text
+    content of elements matching *xpath_expression*.
+    See http://docs.python.org/2/library/string.html#string.strip
+
+*   ``parslepy:attrnames(xpath_expression_matching_attributes)``
+    returns a list of attribute names. This works only with the catch-all-attributes
+    `@*` expression or a specific attribute expression like `@class`.
+    This function can be useful combined with the simple `@*` like in the example below:
+
+    >>> img_attributes = {
+    ...     "images(img)": [{
+    ...         "attr_names": ["parslepy:attrname(@*)"],
+    ...         "attr_vals": ["@*"],
+    ...     }]
+    ... }
+    >>> extracted = parslepy.Parselet(img_attributes).parse('http://www.python.org')
+    >>> for r in extracted["images"]:
+    ...:     print dict(zip(r.get("attr_names"), r.get("attr_vals")))
+    ...:
+    {'src': '/images/python-logo.gif', 'alt': 'homepage', 'border': '0', 'id': 'logo'}
+    {'src': '/images/trans.gif', 'alt': 'skip to navigation', 'border': '0', 'id': 'skiptonav'}
+    {'src': '/images/trans.gif', 'alt': 'skip to content', 'border': '0', 'id': 'skiptocontent'}
+    {'width': '116', 'alt': '', 'src': '/images/donate.png', 'title': '', 'height': '42'}
+    {'width': '94', 'style': 'align:center', 'src': '/images/worldmap.jpg', 'alt': '[Python resources in languages other than English]', 'height': '46'}
+    {'src': '/images/success/Carmanah.png', 'alt': 'success story photo', 'class': 'success'}
+
+
+User-defined extensions
+^^^^^^^^^^^^^^^^^^^^^^^
+*parslepy* also lets you define your own XPath extension, just like
+`lxml`_ does, except the function you register must accept a user-supplied
+context object passed as first argument, subsequent arguments to your extension
+function will the same as for `lxml`_ extensions, i.e. an XPath context,
+followed by matching elements and whatever additional parameters your XPath
+call passes.
+
+The user-supplied context should be passed to :meth:`parslepy.base.Parselet.parse`.
 
 More examples
 =============
