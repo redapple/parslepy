@@ -57,17 +57,25 @@ See https://github.com/redapple/parslepy/wiki#usage and the other Wiki pages htt
 >>> import parslepy
 >>> import urllib2
 >>> import pprint
->>> rules = {"titles": ["h1,h2"], "links((//a[re:test(@href, '^http://')])[position()<=10])": [{"name":".","url": "@href"}]}
+>>>
+>>> # define extraction rules using a regular dict
+... rules = {"titles": ["h1,h2"], "links((//a[re:test(@href, '^http://')])[position()<=10])": [{"name":".","url": "@href"}]}
 >>> pprint.pprint(rules)
 {"links((//a[re:test(@href, '^http://')])[position()<=10])": [{'name': '.',
                                                                'url': '@href'}],
  'titles': ['h1,h2']}
->>> parselet = parslepy.Parselet(rules)
->>> url = 'http://en.wikipedia.org/wiki/Python_(programming_language)'
+>>>
+>>> # instantiate a Parselet() with these extraction rules
+... parselet = parslepy.Parselet(rules)
+>>>
+>>> # configure urllib2 to fetch Python's page on Wikipedia
+... url = 'http://en.wikipedia.org/wiki/Python_(programming_language)'
 >>> req = urllib2.Request(url)
 >>> ua = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.110 Safari/537.36'
 >>> req.add_header('User-Agent', ua)
->>> extracted = parselet.parse(urllib2.urlopen(req))
+>>>
+>>> # parse the HTML body stream through the Parselet instance
+... extracted = parselet.parse(urllib2.urlopen(req))
 >>> pprint.pprint(extracted)
 {'links': [{'name': u'Official website', 'url': 'http://www.python.org/'},
            {'name': u'"Why was Python created in the first place?".',
