@@ -112,41 +112,45 @@ See https://github.com/redapple/parslepy/wiki#usage and the other Wiki pages htt
 
 
 ```bash
-$ cat examples/engadget.let.json
+# Parselet file containing CSS selectors
+$ cat examples/engadget_css.let.json
 {
     "sections(nav#nav-main > ul li)": [{
         "title": ".",
-        "url_css": "a.item @href",
-        "url_xpath": "a[re:test(@class, 'item')]/@href"
+        "url": "a.item @href",
     }]
 }
-$ python run_parslepy.py --script examples/engadget.let.json --url http://www.engadget.com/
-{u'sections': [{u'title': u'News', u'url_css': '/', u'url_xpath': '/'},
-               {u'title': u'Reviews',
-                u'url_css': '/reviews/',
-                u'url_xpath': '/reviews/'},
-               {u'title': u'Features',
-                u'url_css': '/features/',
-                u'url_xpath': '/features/'},
-               {u'title': u'Galleries',
-                u'url_css': '/galleries/',
-                u'url_xpath': '/galleries/'},
-               {u'title': u'Videos',
-                u'url_css': '/videos/',
-                u'url_xpath': '/videos/'},
-               {u'title': u'Events',
-                u'url_css': '/events/',
-                u'url_xpath': '/events/'},
+$ python run_parslepy.py --script examples/engadget_css.let.json --url http://www.engadget.com/
+{u'sections': [{u'title': u'News', u'url': '/'},
+               {u'title': u'Reviews', u'url': '/reviews/'},
+               {u'title': u'Features', u'url': '/features/'},
+               {u'title': u'Galleries', u'url': '/galleries/'},
+               {u'title': u'Videos', u'url': '/videos/'},
+               {u'title': u'Events', u'url': '/events/'},
                {u'title': u'Podcasts',
-                u'url_css': '/podcasts/the-engadget-podcast/',
-                u'url_xpath': '/podcasts/the-engadget-podcast/'},
-               {u'title': u'Engadget Show',
-                u'url_css': '/videos/show/',
-                u'url_xpath': '/videos/show/'},
-               {u'title': u'Topics',
-                u'url_css': '#nav-topics',
-                u'url_xpath': '#nav-topics'}]}
+                u'url': '/podcasts/the-engadget-podcast/'},
+               {u'title': u'Engadget Show', u'url': '/videos/show/'},
+               {u'title': u'Topics', u'url': '#nav-topics'}]}
 
+# Parselet file containing XPath expressions
+$ cat examples/engadget_xpath.let.json
+{
+    "sections(//nav[@id='nav-main']/ul/li)": [{
+        "title": ".",
+        "url": ".//a[contains(@class, 'item')]/@href"
+    }]
+}
+$ python run_parslepy.py --script examples/engadget_xpath.let.json --url http://www.engadget.com/
+{u'sections': [{u'title': u'News', u'url': '/'},
+               {u'title': u'Reviews', u'url': '/reviews/'},
+               {u'title': u'Features', u'url': '/features/'},
+               {u'title': u'Galleries', u'url': '/galleries/'},
+               {u'title': u'Videos', u'url': '/videos/'},
+               {u'title': u'Events', u'url': '/events/'},
+               {u'title': u'Podcasts',
+                u'url': '/podcasts/the-engadget-podcast/'},
+               {u'title': u'Engadget Show', u'url': '/videos/show/'},
+               {u'title': u'Topics', u'url': '#nav-topics'}]}
 ```
 
 

@@ -1,0 +1,6 @@
+{
+    "sections(nav#nav-main > ul li)": [{
+        "title": ".",
+        "url": "a.item @href"
+    }]
+}

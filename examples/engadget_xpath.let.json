@@ -1,0 +1,6 @@
+{
+    "sections(//nav[@id='nav-main']/ul/li)": [{
+        "title": ".",
+        "url": ".//a[contains(@class, 'item')]/@href"
+    }]
+}
