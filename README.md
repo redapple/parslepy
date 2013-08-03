@@ -112,7 +112,7 @@ See https://github.com/redapple/parslepy/wiki#usage and the other Wiki pages htt
 
 
 ```bash
-$ cat examples/engadget.let.js
+$ cat examples/engadget.let.json
 {
     "sections(nav#nav-main > ul li)": [{
         "title": ".",
@@ -120,7 +120,7 @@ $ cat examples/engadget.let.js
         "url_xpath": "a[re:test(@class, 'item')]/@href"
     }]
 }
-$ python run_parslepy.py --script examples/engadget.let.js --url http://www.engadget.com/
+$ python run_parslepy.py --script examples/engadget.let.json --url http://www.engadget.com/
 {u'sections': [{u'title': u'News', u'url_css': '/', u'url_xpath': '/'},
                {u'title': u'Reviews',
                 u'url_css': '/reviews/',

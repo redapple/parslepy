@@ -193,7 +193,7 @@ class Parselet(object):
         the Parsley script as a JSON object
 
         >>> import parslepy
-        >>> with open('parselet.js') as fp:
+        >>> with open('parselet.json') as fp:
         ...     parslepy.Parselet.from_jsonfile(fp)
         ...
         <parslepy.base.Parselet object at 0x2014e50>

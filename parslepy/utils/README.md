@@ -7,7 +7,7 @@
 Provide your Parsley script at the command line:
 
 ```
-$ scrapy crawl MySpider -a parseletfile=myparselet.let.js
+$ scrapy crawl MySpider -a parseletfile=myparselet.let.json
 ```
 
 with a Scrapy spider similar to this:
