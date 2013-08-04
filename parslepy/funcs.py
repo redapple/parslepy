@@ -41,23 +41,19 @@ def remove_multiple_whitespaces(input_string, keep_nl = False):
         return REGEX_WHITESPACE.sub(" ", input_string).strip()
 
 
-def format_alter_htmltags(tree, text_tags=[], tail_tags=[], replacement=" "):
+def format_alter_htmltags(tree, tags=[], replacement=" "):
+    regex_repl_start = re.compile(r'^\s*%s' % replacement, re.UNICODE)
     context = lxml.etree.iterwalk(tree, events=("end", ))
-    tag_set = set(text_tags + tail_tags)
+    tag_set = set(tags)
     for action, elem in context:
         if elem.tag not in tag_set:
             continue
-        if elem.tag in text_tags:
-            if elem.text is None:
-                elem.text = replacement
-            else:
-                elem.text += replacement
-        elif elem.tag in tail_tags:
-            if elem.tail is None:
-                elem.tail = replacement
-            else:
-                elem.tail += replacement
+        if elem.tail is None:
+            elem.tail = replacement
+        elif not regex_repl_start.search(elem.tail):
+            elem.tail = "%s%s" % (replacement, elem.tail)
     return tree
+
 
 HTML_BLOCK_ELEMENTS = [
     'address',
@@ -65,6 +61,7 @@ HTML_BLOCK_ELEMENTS = [
     'aside',
     'audio',
     'blockquote',
+    'br',
     'canvas',
     'div',
     'dl', 'dd', 'dt',
@@ -87,11 +84,9 @@ HTML_BLOCK_ELEMENTS = [
     'tfoot',
     'video',
 ]
-NEWLINE_TEXT_TAGS = ['br', 'hr']
 def format_htmlblock_tags(tree, replacement="\n"):
     return format_alter_htmltags(tree,
-        text_tags=NEWLINE_TEXT_TAGS,
-        tail_tags=HTML_BLOCK_ELEMENTS,
+        tags=HTML_BLOCK_ELEMENTS,
         replacement=replacement)
 
 
@@ -175,7 +170,7 @@ def xpathtoxml(context, nodes):
 
 try:
     unicode         # Python 2.x
-    def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
+    def xpathstrip(context, nodes, stripchars=None, with_tail=True, *args):
         if test_listitems_type(nodes, lxml.etree._Element):
             return [s.strip(stripchars)
                     for s in elements2text(
@@ -184,7 +179,7 @@ try:
             return [unicode(s).strip(stripchars) for s in nodes]
 
 except NameError:   # Python 3.x
-    def xpathstrip(context, nodes, stripchars, with_tail=True, *args):
+    def xpathstrip(context, nodes, stripchars=None, with_tail=True, *args):
         if test_listitems_type(nodes, lxml.etree._Element):
             return [s.strip(stripchars)
                     for s in elements2text(
