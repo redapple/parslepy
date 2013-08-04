@@ -9,13 +9,15 @@ Welcome to parslepy's documentation!
 *parslepy* lets you extract content from HTML and XML documents
 where **extraction rules are defined using a JSON object**
 or equivalent Python :class:`dict`,
-where keys are names you want to assign to extracted document elements,
-and values are `CSS3 Selectors`_ or `XPath 1.0`_ expressions matching the
-document elements.
+where keys are names you want to assign to target document sections,
+elements or attributes,
+and values are `CSS3 Selectors`_ or `XPath 1.0`_ expressions matching
+these document parts.
 
 By default,
 
-* selectors for elements will output their matching element(s)' textual content. (children elements' content is also included)
+* selectors for elements will output their matching element(s)' textual content.
+  (children elements' content is also included)
 * Selectors matching element attributes will output the attribute's value.
 
 You can nest objects, generate list of objects, and mix CSS and XPath
@@ -80,6 +82,25 @@ of the Parsley extraction language defined by Kyle Maxwell and Andrew Cantino
 
 Quickstart
 ----------
+
+Install
+^^^^^^^
+
+* using PyPi (https://pypi.python.org/pypi/parslepy)
+
+.. code-block:: bash
+
+    $ [sudo] pip install parslepy
+
+* using source code
+
+.. code-block:: bash
+
+    $ git clone https://github.com/redapple/parslepy.git
+    $ [sudo] python setup.py install
+
+Usage
+^^^^^
 
     Extract the main heading of the Python.org homepage,
     and the first paragraph below that:
@@ -222,38 +243,138 @@ See http://lxml.de/extensions.html for details.
 Built-in extensions
 ^^^^^^^^^^^^^^^^^^^
 
-*parslepy* comes with a few XPath extensions functions. These functions
+*parslepy* comes with a few XPath extension functions. These functions
 are available by default when you use :class:`.XPathSelectorHandler`
 or :class:`.DefaultSelectorHandler`.
 
 *   ``parslepy:text(xpath_expression[, false()])``:
-    returns the text content
-    for elements matching *xpath_expression*. The optional boolean second
-    parameter indicate wheter *tail* content should be included or not.
+    returns the text content for elements matching *xpath_expression*.
+    The optional boolean second parameter indicate wheter *tail* content
+    should be included or not.
+    (Internally, this calls `lxml.etree.tostring(..., method="text", encoding=unicode)`.)
     Use *true()* and *false()* XPath functions, not only *true* or *false*,
-    (or 1 or 0). Defaults to *true()*
+    (or 1 or 0). Defaults to *true()*.
+
+    >>> import parslepy
+    >>> doc = """<!DOCTYPE html>
+    ... <html>
+    ... <head>
+    ...     <title>Some page title</title>
+    ... </head>
+    ...
+    ... <body>
+    ...     <h1>Some heading</h1>
+    ...
+    ...     Some text
+    ...
+    ...     <p>
+    ...     Some paragraph
+    ...     </p>
+    ... </body>
+    ...
+    ... </html>"""
+    >>> rules = {"heading": "h1"}
+    >>>
+    >>> # default text extraction includes tail text
+    ... parslepy.Parselet(rules).parse_fromstring(doc)
+    {'heading': u'Some heading Some text'}
+    >>>
+    >>> # 2nd argument to false means without tail text
+    ... rules = {"heading": "parslepy:text(//h1, false())"}
+    >>> parslepy.Parselet(rules).parse_fromstring(doc)
+    {'heading': 'Some heading'}
+    >>>
+    >>> # 2nd argument to true is equivalent to default text extraction
+    >>> rules = {"heading": "parslepy:text(//h1, true())"}
+    >>> parslepy.Parselet(rules).parse_fromstring(doc)
+    {'heading': 'Some heading Some text'}
+    >>>
+
+    See http://lxml.de/tutorial.html#elements-contain-text for details
+    on how `lxml`_ handles text and tail element properties
 
 *   ``parslepy:textnl(xpath_expression)``:
     similar to ``parslepy:text()`` but appends `\\n` characters to HTML
     block elements such as `<br>`, `<hr>`, `<div>`
 
+    >>> import parslepy
+    >>> doc = """<!DOCTYPE html>
+    ... <html>
+    ... <head>
+    ...     <title>Some page title</title>
+    ... </head>
+    ... <body>
+    ... <h1>Some heading</h1><p>Some paragraph<div>with some span inside</div>ending now.</p>
+    ... </body>
+    ... </html>
+    ... """
+    >>> parslepy.Parselet({"heading": "parslepy:text(//body)"}).parse_fromstring(doc)
+    {'heading': 'Some headingSome paragraphwith some span insideending now.'}
+    >>>
+    >>> parslepy.Parselet({"heading": "parslepy:textnl(//body)"}).parse_fromstring(doc)
+    {'heading': 'Some heading\nSome paragraph\nwith some span inside\nending now.'}
+    >>>
+
+
 *   ``parslepy:html(xpath_expression)``
     returns the HTML content for elements matching *xpath_expression*.
-    Internally, this call `lxml.html.tostring()`
+    Internally, this calls `lxml.html.tostring(element)`.
+
+    >>> import parslepy
+    >>> doc = """<!DOCTYPE html>
+    ... <html>
+    ... <head>
+    ...     <title>Some page title</title>
+    ... </head>
+    ... <body>
+    ... <h1>(Some heading)</h1>
+    ... <h2>[some sub-heading]</h2>
+    ... </body>
+    ... </html>
+    ... """
+    >>> parslepy.Parselet({"heading": "parslepy:html(//h1)"}).parse_fromstring(doc)
+    {'heading': '<h1>(Some heading)</h1>'}
+    >>> parslepy.Parselet({"heading": "parslepy:html(//body)"}).parse_fromstring(doc)
+    {'heading': '<body>\n<h1>(Some heading)</h1>\n<h2>[some sub-heading]</h2>\n</body>'}
+    >>>
+
 
 *   ``parslepy:xml(xpath_expression)``
-    returns the XML content for elements matching *xpath_expression*
-    Internally, this call `lxml.etree.tostring()`
+    returns the XML content for elements matching *xpath_expression*.
+    Internally, this calls `lxml.etree.tostring(element)`.
 
 *   ``parslepy:strip(xpath_expression[, chars])``
     behaves like Python's `strip()` method for strings but for the text
     content of elements matching *xpath_expression*.
     See http://docs.python.org/2/library/string.html#string.strip
 
-*   ``parslepy:attrnames(xpath_expression_matching_attributes)``
-    returns a list of attribute names. This works only with the catch-all-attributes
+    >>> import parslepy
+    >>> doc = """<!DOCTYPE html>
+    ... <html>
+    ... <head>
+    ...     <title>Some page title</title>
+    ... </head>
+    ... <body>
+    ... <h1>(Some heading)</h1>
+    ... <h2>[some sub-heading]</h2>
+    ... </body>
+    ... </html>
+    ... """
+    >>> parslepy.Parselet({"heading": "parslepy:strip(//h2, '[')"}).parse_fromstring(doc)
+    {'heading': 'some sub-heading]'}
+    >>> parslepy.Parselet({"heading": "parslepy:strip(//h2, ']')"}).parse_fromstring(doc)
+    {'heading': '[some sub-heading'}
+    >>> parslepy.Parselet({"heading": "parslepy:strip(//h2, '[]')"}).parse_fromstring(doc)
+    {'heading': 'some sub-heading'}
+    >>> parslepy.Parselet({"heading": "parslepy:strip(//h1, '()')"}).parse_fromstring(doc)
+    {'heading': 'Some heading'}
+    >>>
+
+*   ``parslepy:attrname(xpath_expression_matching_attribute)``
+    returns name of an attribute. This works with the catch-all-attributes
     `@*` expression or a specific attribute expression like `@class`.
-    This function can be useful combined with the simple `@*` like in the example below:
+    It may sound like a useless extension but it can be useful
+    when combined with the simple `@*` selector like in the example below:
 
     >>> img_attributes = {
     ...     "images(img)": [{
