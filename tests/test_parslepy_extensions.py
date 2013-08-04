@@ -71,6 +71,37 @@ def test_attrnames():
         yield compare_extracted_output, root, input_parselet, expected_output
 
 
+def test_strip():
+    parselets = (
+        (
+            # strip bracket from text content
+            {"selected_option": "parslepy:strip(//select[@id='uri-charset']/option[@selected], '()')"},
+            {'selected_option': 'detect automatically'}
+        ),
+        (
+            # strip brackets from attribute value
+            {"selected_option": "parslepy:strip(//select[@id='upload-charset']/option[@selected]/@value, '()')"},
+            {'selected_option': 'detect automatically'}
+        ),
+        (
+            # strip '#' from attribute values
+            {"legend_links(legend.toggletext > a)": ["parslepy:strip(@href, '#')"]},
+            {'legend_links': ['validate_by_uri+with_options',
+                              'validate_by_upload+with_options',
+                              'validate_by_input+with_options']}
+        ),
+    )
+    hp = lxml.etree.HTMLParser()
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    root = lxml.etree.parse(
+        open(os.path.join(
+                dirname,
+                'data/validator.w3.org.html')),
+        parser=hp).getroot()
+    for input_parselet, expected_output in parselets:
+        yield compare_extracted_output, root, input_parselet, expected_output
+
+
 def test_to_content():
     parselets = (
         (
