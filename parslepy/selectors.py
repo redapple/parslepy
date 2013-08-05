@@ -136,8 +136,22 @@ class XPathSelectorHandler(SelectorHandler):
         """
         :param namespaces: namespace mapping as :class:`dict`
         :param extensions: extension :class:`dict`
+        :param context: user-context passed to XPath extension functions
 
-        See `<http://lxml.de/extensions.html#xpath-extension-functions>`_
+        `namespaces` and `extensions` dicts should have the same format
+        as for `lxml`_:
+        see http://lxml.de/xpathxslt.html#namespaces-and-prefixes
+        and `<http://lxml.de/extensions.html#xpath-extension-functions>`_
+
+        Extension functions have a slightly different signature than
+        pure-lxml extension functions: they must expect a user-context
+        as first argument; all other arguments are the same as for
+        `lxml` extensions.
+
+        `context` will be passed as first argument to extension functions
+        registered through `extensions`.
+        Alternative: user-context can also be passed to :meth:`parslepy.base.Parselet.parse`
+
         """
 
         super(XPathSelectorHandler, self).__init__(debug=debug)

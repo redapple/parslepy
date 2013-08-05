@@ -249,7 +249,7 @@ or :class:`.DefaultSelectorHandler`.
 
 *   ``parslepy:text(xpath_expression[, false()])``:
     returns the text content for elements matching *xpath_expression*.
-    The optional boolean second parameter indicate wheter *tail* content
+    The optional boolean second parameter indicates whether *tail* content
     should be included or not.
     (Internally, this calls `lxml.etree.tostring(..., method="text", encoding=unicode)`.)
     Use *true()* and *false()* XPath functions, not only *true* or *false*,
@@ -396,14 +396,98 @@ or :class:`.DefaultSelectorHandler`.
 
 User-defined extensions
 ^^^^^^^^^^^^^^^^^^^^^^^
-*parslepy* also lets you define your own XPath extension, just like
+*parslepy* also lets you define your own XPath extensions, just like
 `lxml`_ does, except the function you register must accept a user-supplied
 context object passed as first argument, subsequent arguments to your extension
-function will the same as for `lxml`_ extensions, i.e. an XPath context,
+function will be the same as for `lxml`_ extensions, i.e. an XPath context,
 followed by matching elements and whatever additional parameters your XPath
 call passes.
 
-The user-supplied context should be passed to :meth:`parslepy.base.Parselet.parse`.
+The user-supplied context should be passed to :meth:`parslepy.base.Parselet.parse`,
+or globally to a XPathSelectorHandler subclass instance passed to instantiate a Parselet.
+
+Let's illustrate this with a custom extension to make `<img>` @src
+attributes "absolute".
+
+Suppose we already have an extraction rule that outputs the `@src` attributes
+from `<img>` tags on the Python.org homepage:
+
+    >>> import parslepy
+    >>> import pprint
+    >>> parselet = parslepy.Parselet({"img_abslinks": ["//img/@src"]})
+    >>> pprint.pprint(parselet.parse('http://www.python.org'))
+    {'img_abslinks': ['/images/python-logo.gif',
+                      '/images/trans.gif',
+                      '/images/trans.gif',
+                      '/images/donate.png',
+                      '/images/worldmap.jpg',
+                      '/images/success/afnic.fr.png']}
+
+We now want to generate full URLs for these images, not relative to
+http://www.python.org.
+
+**First we need to define our extension function as a Python function**:
+parslepy's extension functions must accept a user-context as first argument,
+then should expect an XPath context, followed by elements or strings
+matching the XPath expression,
+and finally whatever other parameters are passed to the function call
+in extraction rules.
+
+In our example, we expect `@src` attribute values as input from XPath,
+and combine them with a base URL (via `urlparse.urljoin()`),
+the URL from which the HTML document was fetched.
+The base URL will be passed as user-context, and we will receive it as
+first argument.
+So the Python extension function may look like this:
+
+    >>> import urlparse
+    >>> def absurl(ctx, xpctx, attributes, *args):
+    ...         # user-context "ctx" will be the URL of the page
+    ...         return [urlparse.urljoin(ctx, u) for u in attributes]
+    ...
+
+**Then, we need to register this function with parslepy** through
+a custom selector handler, with a custom namespace and its prefix:
+
+    >>> # choose a prefix and namespace, e.g. "myext" and "local-extensions"
+    ... mynamespaces = {
+    ...         "myext": "local-extensions"
+    ...     }
+    >>> myextensions = {
+    ...         ("local-extensions", "absurl"): absurl,
+    ...     }
+    >>>
+    >>> import parslepy
+    >>> sh = parslepy.DefaultSelectorHandler(
+    ...         namespaces=mynamespaces,
+    ...         extensions=myextensions)
+    >>>
+
+
+Now we can use this **absurl()** XPath extension within parslepy rules,
+with the "myext" prefix
+(**do not forget to pass your selector handler** to your Parselet instance):
+
+    >>> rules = {"img_abslinks": ["myext:absurl(//img/@src)"]}
+    >>> parselet = parslepy.Parselet(rules, selector_handler=sh)
+
+And finally, run the extraction rules on Python.org's homepage again,
+with a context argument set to the URL
+
+    >>> import pprint
+    >>> pprint.pprint(parselet.parse('http://www.python.org',
+    ...         context='http://www.python.org'))
+    {'img_abslinks': ['http://www.python.org/images/python-logo.gif',
+                      'http://www.python.org/images/trans.gif',
+                      'http://www.python.org/images/trans.gif',
+                      'http://www.python.org/images/donate.png',
+                      'http://www.python.org/images/worldmap.jpg',
+                      'http://www.python.org/images/success/afnic.fr.png']}
+    >>>
+
+In this case, it may feel odd to have to pass the URL *twice*,
+but parse(*URL*) does not store the URL anywhere, it processes only
+the HTML stream from the page.
 
 More examples
 =============
