@@ -1,7 +1,7 @@
 Changelog
 =========
 
-Version 0.2a1 - August xx, 2013
+Version 0.2.0 - August 5., 2013
 ---------------------------------
 
 * Improvements:
@@ -10,7 +10,7 @@ Version 0.2a1 - August xx, 2013
     * new built-in extension function ``parslepy:strip()`` mapped
       to Python's strip() for strings
     * new built-in extension function ``parslepy:attrname()``
-      that takes an attribute selector and returns it's name
+      that takes an attribute selector and returns the attribute's name
     * support for user-defined extension functions, which take an additional
       context parameter when called (context is passed either at selector
       handler instantiation or when calling Parselet.parse())
@@ -21,7 +21,7 @@ Version 0.2a1 - August xx, 2013
 * Bug fixes:
     * #2: XPath namespace prefixes raise cssselect.xpath.ExpressionError
       with DefaultSelectorHandler
-    * #3: Docs suggest using *.js files when they are JSON documents
+    * #3: Docs suggest using \*.js files when they are JSON documents
     * #4: The example usage should not have both url_css and url_xpath
     * #5: In example usage, skip lines between "configuration" and "execution"
     * #6: add underscore to _version__

@@ -23,7 +23,7 @@ By default,
 You can nest objects, generate list of objects, and mix CSS and XPath
 -- although not in the same selector.
 
-Parslepy uderstands what `lxml`_ and `cssselect`_ understand,
+Parslepy understands what `lxml`_ and `cssselect`_ understand,
 which is roughly `CSS3 Selectors`_ and `XPath 1.0`_.
 
 Each rule should have the following format::
@@ -39,7 +39,11 @@ Each rule should have the following format::
 
     or         //           :   "someXPathExpression"
 
+    or         //           :   ["someXPathOrCSSExpression"]
+
     or         //           :    { ...some other rules... }
+
+    or         //           :    [{ ...some other rules... }]
 
 
 And a collection of extraction rules --also called a *parselet*,
@@ -199,11 +203,16 @@ to the Parselet constructor.
         >>> import lxml.etree
         >>> xml_parser = lxml.etree.XMLParser()
         >>> url = 'http://itunes.apple.com/us/rss/topalbums/limit=10/explicit=true/xml'
-        >>> xsh = parslepy.XPathSelectorHandler(
+        >>>
+        >>> # register Atom and iTunes namespaces with prefixes "atom" and "im"
+        ... # with a custom SelectorHandler
+        ... xsh = parslepy.XPathSelectorHandler(
         ...     namespaces={
         ...         'atom': 'http://www.w3.org/2005/Atom',
         ...         'im': 'http://itunes.apple.com/rss'
         ...     })
+        >>>
+        >>> # use prefixes to target elements in the XML document
         >>> rules = {
         ...     "entries(//atom:feed/atom:entry)": [
         ...         {

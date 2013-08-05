@@ -336,7 +336,7 @@ class XPathSelectorHandler(SelectorHandler):
 class DefaultSelectorHandler(XPathSelectorHandler):
     """
     Default selector logic, loosely based on the original
-    implementation.
+    `Parsley` implementation.
 
     This handler understands what cssselect and lxml.etree.XPath understands,
     that is (roughly) XPath 1.0 and CSS3 for things that dont need browser context
