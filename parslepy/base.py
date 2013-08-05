@@ -466,11 +466,10 @@ class Parselet(object):
                             for i, elem in enumerate(selected, start=1):
                                 parse_result = self._extract(v, elem, level=level+1)
 
-                                if isinstance(parse_result, (dict, str)):
-                                    extracted.append(parse_result)
-
-                                elif isinstance(parse_result, list):
+                                if isinstance(parse_result, (list, tuple)):
                                     extracted.extend(parse_result)
+                                else:
+                                    extracted.append(parse_result)
 
                                 # if we're not in an array,
                                 # we only care about the first iteration
