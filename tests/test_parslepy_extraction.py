@@ -137,6 +137,46 @@ def test_w3c_validator_extraction():
             {"options(select#uri-charset)": "option[selected]"},
             {'options': '(detect automatically)'}
         ),
+        # testing numerical return values
+        (
+            {"nb_options(select)": ["count(option)"]},
+            {"nb_options": [42.0, 27.0, 42.0, 27.0, 27.0]}
+        ),
+        # testing boolean return values
+        (
+            {"imgs(img)": ["boolean(@id)"]},
+            {'imgs': [  True,
+                        True,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                ]
+            }
+        ),
+        (
+            {"imgs(img)": [
+                    {
+                        "has_class": "boolean(@class)",
+                        "has_id": "boolean(@id)",
+                        "src": "@src"
+                    }
+                ]
+            },
+            {'imgs': [
+                {'has_class': False, u'has_id': True, u'src': './images/w3c.png'},
+                {'has_class': True, 'has_id': True, 'src': './images/arrow-closed.png'},
+                {'has_class': True, 'has_id': False, 'src': './images/arrow-closed.png'},
+                {'has_class': True, 'has_id': False, 'src': './images/arrow-closed.png'},
+                {'has_class': False, 'has_id': False, 'src': 'http://www.w3.org/Icons/VSlogo'},
+                {'has_class': False, 'has_id': False, 'src': 'http://www.w3.org/Icons/WWW/w3c_home_nb'},
+                {'has_class': False, 'has_id': False, 'src': './images/opensource-55x48.png'},
+                {'has_class': False, 'has_id': False, 'src': 'http://www.w3.org/QA/Tools/I_heart_validator'}
+                ]
+            }
+        ),
     )
 
     hp = lxml.etree.HTMLParser()
