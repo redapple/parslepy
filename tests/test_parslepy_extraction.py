@@ -166,10 +166,10 @@ def test_w3c_validator_extraction():
                 ]
             },
             {'imgs': [
-                {'has_class': False, u'has_id': True, u'src': './images/w3c.png'},
-                {'has_class': True, 'has_id': True, 'src': './images/arrow-closed.png'},
-                {'has_class': True, 'has_id': False, 'src': './images/arrow-closed.png'},
-                {'has_class': True, 'has_id': False, 'src': './images/arrow-closed.png'},
+                {'has_class': False, 'has_id': True,  'src': './images/w3c.png'},
+                {'has_class': True,  'has_id': True,  'src': './images/arrow-closed.png'},
+                {'has_class': True,  'has_id': False, 'src': './images/arrow-closed.png'},
+                {'has_class': True,  'has_id': False, 'src': './images/arrow-closed.png'},
                 {'has_class': False, 'has_id': False, 'src': 'http://www.w3.org/Icons/VSlogo'},
                 {'has_class': False, 'has_id': False, 'src': 'http://www.w3.org/Icons/WWW/w3c_home_nb'},
                 {'has_class': False, 'has_id': False, 'src': './images/opensource-55x48.png'},
