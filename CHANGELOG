@@ -21,6 +21,11 @@ Version 0.2a1 - August xx, 2013
 * Bug fixes:
     * #2: XPath namespace prefixes raise cssselect.xpath.ExpressionError
       with DefaultSelectorHandler
+    * #3: Docs suggest using *.js files when they are JSON documents
+    * #4: The example usage should not have both url_css and url_xpath
+    * #5: In example usage, skip lines between "configuration" and "execution"
+    * #6: add underscore to _version__
+    * #7: Empty result set on boolean or numerical selectors
 
 Version 0.1.2 - July 9, 2013
 -----------------------------
