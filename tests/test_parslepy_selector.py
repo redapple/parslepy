@@ -24,7 +24,7 @@ class TestDefaultValidSelectors(object):
 
     dsh = parslepy.base.DefaultSelectorHandler()
 
-    selectors = (
+    selectors = [
         ("div.content", lxml.etree.XPath),
         (".content #bogus span.first", lxml.etree.XPath),
         ("div#main", lxml.etree.XPath),
@@ -34,10 +34,17 @@ class TestDefaultValidSelectors(object):
         ("//div", lxml.etree.XPath),
         ("//a/@href", lxml.etree.XPath),
         ("img @src", lxml.etree.XPath),
-        ("img::attr(src)", lxml.etree.XPath),
         ("table tr[class='main']", lxml.etree.XPath),
         ("tr[2]", lxml.etree.XPath),
-    )
+    ]
+
+    try:
+        from cssselect.parser import FunctionalPseudoElement
+        selectors.extend([
+            ("img::attr(src)", lxml.etree.XPath),
+        ])
+    except:
+        pass
 
     def test_selector_class(self):
         for selector_string, target_class in self.selectors:

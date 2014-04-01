@@ -2,9 +2,6 @@
 import re
 import copy
 
-from cssselect import HTMLTranslator
-from cssselect.parser import FunctionalPseudoElement
-from cssselect.xpath import _unicode_safe_getattr, XPathExpr
 import lxml.cssselect
 import lxml.etree
 
@@ -339,50 +336,70 @@ class XPathSelectorHandler(SelectorHandler):
             raise Warning("unusual type %s" % type(retval))
             return retval
 
+try:
+    from cssselect import HTMLTranslator
+    from cssselect.xpath import _unicode_safe_getattr, XPathExpr
 
+    class CssTranslator(HTMLTranslator):
 
+        def xpath_pseudo_element(self, xpath, pseudo_element):
 
-class CssTranslator(HTMLTranslator):
+            try:
 
-    def xpath_pseudo_element(self, xpath, pseudo_element):
-        if isinstance(pseudo_element, FunctionalPseudoElement):
-            method = 'xpath_%s_functional_pseudo_element' % (
-                pseudo_element.name.replace('-', '_'))
-            method = _unicode_safe_getattr(self, method, None)
-            if not method:
-                raise ExpressionError(
-                    "The functional pseudo-element ::%s() is unknown"
-                % pseudo_element.name)
-            xpath = method(xpath, pseudo_element.arguments)
-        else:
-            method = 'xpath_%s_simple_pseudo_element' % (
-                pseudo_element.replace('-', '_'))
-            method = _unicode_safe_getattr(self, method, None)
-            if not method:
-                raise ExpressionError(
-                    "The pseudo-element ::%s is unknown"
-                    % pseudo_element)
-            xpath = method(xpath)
-        return xpath
+                from cssselect.parser import FunctionalPseudoElement
+                from cssselect.xpath import _unicode_safe_getattr, XPathExpr
 
-    # functional pseudo-element:
-    # element's attribute by name
-    def xpath_attr_functional_pseudo_element(self, xpath, arguments):
-        attribute_name = arguments[0].value
-        other = XPathExpr('@%s' % attribute_name, '', )
-        return xpath.join('/', other)
+                if isinstance(pseudo_element, FunctionalPseudoElement):
+                    method = 'xpath_%s_functional_pseudo_element' % (
+                        pseudo_element.name.replace('-', '_'))
+                    method = _unicode_safe_getattr(self, method, None)
+                    if not method:
+                        raise ExpressionError(
+                            "The functional pseudo-element ::%s() is unknown"
+                        % pseudo_element.name)
+                    xpath = method(xpath, pseudo_element.arguments)
+                else:
+                    method = 'xpath_%s_simple_pseudo_element' % (
+                        pseudo_element.replace('-', '_'))
+                    method = _unicode_safe_getattr(self, method, None)
+                    if not method:
+                        raise ExpressionError(
+                            "The pseudo-element ::%s is unknown"
+                            % pseudo_element)
+                    xpath = method(xpath)
 
-    # pseudo-element:
-    # element's text() nodes
-    def xpath_text_simple_pseudo_element(self, xpath):
-        other = XPathExpr('text()', '', )
-        return xpath.join('/', other)
+            except ImportError:
+                pass
 
-    # pseudo-element:
-    # element's comment() nodes
-    def xpath_comment_simple_pseudo_element(self, xpath):
-        other = XPathExpr('comment()', '', )
-        return xpath.join('/', other)
+            return xpath
+
+        # functional pseudo-element:
+        # element's attribute by name
+        def xpath_attr_functional_pseudo_element(self, xpath, arguments):
+            attribute_name = arguments[0].value
+            other = XPathExpr('@%s' % attribute_name, '', )
+            return xpath.join('/', other)
+
+        # pseudo-element:
+        # element's text() nodes
+        def xpath_text_simple_pseudo_element(self, xpath):
+            other = XPathExpr('text()', '', )
+            return xpath.join('/', other)
+
+        # pseudo-element:
+        # element's comment() nodes
+        def xpath_comment_simple_pseudo_element(self, xpath):
+            other = XPathExpr('comment()', '', )
+            return xpath.join('/', other)
+
+    css_translator = CssTranslator()
+    def css_to_xpath(css):
+        return css_translator.css_to_xpath(css)
+
+except ImportError:
+
+    def css_to_xpath(css):
+        return lxml.cssselect.css_to_xpath(css)
 
 
 class DefaultSelectorHandler(XPathSelectorHandler):
@@ -411,7 +428,6 @@ class DefaultSelectorHandler(XPathSelectorHandler):
             lxml.cssselect.CSSSelector(s)
         except Exception as e:
             CSSSELECT_SYNTAXERROR_EXCEPTIONS.add(type(e))
-    _css_translator = CssTranslator()
 
     # example: "a img @src" (fetch the 'src' attribute of an IMG tag)
     # other example: "im|img @im|src" when using namespace prefixes
@@ -440,7 +456,7 @@ class DefaultSelectorHandler(XPathSelectorHandler):
             m = self.REGEX_ENDING_ATTRIBUTE.match(selection)
             if m:
                 # the selector should be a regular CSS selector
-                cssxpath = self._css_translator.css_to_xpath(m.group("expr"))
+                cssxpath = css_to_xpath(m.group("expr"))
 
                 # if "|" is used for namespace prefix reference,
                 #   convert it to XPath prefix syntax
@@ -448,7 +464,7 @@ class DefaultSelectorHandler(XPathSelectorHandler):
 
                 cssxpath = "%s/%s" % (cssxpath, attribute)
             else:
-                cssxpath = self._css_translator.css_to_xpath(selection)
+                cssxpath = css_to_xpath(selection)
 
             selector = lxml.etree.XPath(
                 cssxpath,
