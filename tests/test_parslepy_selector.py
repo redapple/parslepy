@@ -25,16 +25,17 @@ class TestDefaultValidSelectors(object):
     dsh = parslepy.base.DefaultSelectorHandler()
 
     selectors = (
-        ("div.content", lxml.cssselect.CSSSelector),
-        (".content #bogus span.first", lxml.cssselect.CSSSelector),
-        ("div#main", lxml.cssselect.CSSSelector),
+        ("div.content", lxml.etree.XPath),
+        (".content #bogus span.first", lxml.etree.XPath),
+        ("div#main", lxml.etree.XPath),
         ("div[@id='main']", lxml.etree.XPath),
         ('div[@id="main"]', lxml.etree.XPath),
-        ("div", lxml.cssselect.CSSSelector),
+        ("div", lxml.etree.XPath),
         ("//div", lxml.etree.XPath),
         ("//a/@href", lxml.etree.XPath),
         ("img @src", lxml.etree.XPath),
-        ("table tr[class='main']", lxml.cssselect.CSSSelector),
+        ("img::attr(src)", lxml.etree.XPath),
+        ("table tr[class='main']", lxml.etree.XPath),
         ("tr[2]", lxml.etree.XPath),
     )
 

@@ -20,7 +20,18 @@ def test_w3c_validator_extraction():
             {'httpequiv': 'text/html;charset=utf-8'}
         ),
         (
+            {"httpequiv": "head meta[http-equiv]::attr(content)"},
+            {'httpequiv': 'text/html;charset=utf-8'}
+        ),
+        (
             {"meta": ["meta @content"]},
+            {'meta': [
+                'text/html;charset=utf-8',
+                'HTML, HyperText Markup Language, Validation,\n      W3C Markup Validation Service',
+                "W3C's easy-to-use\n      markup validation service, based on SGML and XML parsers."]},
+        ),
+        (
+            {"meta": ["meta::attr(content)"]},
             {'meta': [
                 'text/html;charset=utf-8',
                 'HTML, HyperText Markup Language, Validation,\n      W3C Markup Validation Service',
@@ -37,9 +48,25 @@ def test_w3c_validator_extraction():
                 {'content': "W3C's easy-to-use\n      markup validation service, based on SGML and XML parsers.",
                     'name': 'description'}]}
         ),
-        # 3 equivalent expressions
+        (
+            {"meta(meta)": [{"content": "::attr(content)",
+                             "name": "::attr(name), ::attr(http-equiv)"}],
+            },
+            {'meta': [
+                {'content': 'text/html;charset=utf-8',
+                    'name': 'Content-Type'},
+                {'content': 'HTML, HyperText Markup Language, Validation,\n      W3C Markup Validation Service',
+                    'name': 'keywords'},
+                {'content': "W3C's easy-to-use\n      markup validation service, based on SGML and XML parsers.",
+                    'name': 'description'}]}
+        ),
+        # 4 equivalent expressions
         (
             {"title": "#banner #title a span"},
+            {'title': 'Markup Validation Service'}
+        ),
+        (
+            {"title": "#banner #title a span::text"},
             {'title': 'Markup Validation Service'}
         ),
         (
@@ -176,6 +203,17 @@ def test_w3c_validator_extraction():
                 {'has_class': False, 'has_id': False, 'src': 'http://www.w3.org/QA/Tools/I_heart_validator'}
                 ]
             }
+        ),
+        (
+            {"comment": "::comment"},
+            {'comment': 'invisible'}
+        ),
+        (
+            {"comments": ["::comment"]},
+            {'comments': ['invisible',
+                         '<br /><label for="parsemodel">Treat as:</label> <select id="parsemodel" name="parsemodel"> <option value="sgml">HTML</option> <option value="xml">XML (and XHTML)</option> </select>',
+                         'fields',
+                         'frontforms']}
         ),
     )
 
