@@ -9,17 +9,17 @@ import lxml.etree
 
 try:
     unicode         # Python 2.x
-    def lxml_element2string(element, method="text", with_tail=True):
+    def lxml_element2string(element, method="text", with_tail=False):
         return lxml.etree.tostring(element, method=method,
                 encoding=unicode, with_tail=with_tail)
 except NameError:   # Python 3.x
-    def lxml_element2string(element, method="text", with_tail=True):
+    def lxml_element2string(element, method="text", with_tail=False):
         return lxml.etree.tostring(element, method=method,
                 encoding=str, with_tail=with_tail)
 except:
     raise
 
-def extract_text(element, keep_nl=False, with_tail=True):
+def extract_text(element, keep_nl=False, with_tail=False):
     return remove_multiple_whitespaces(
         lxml_element2string(element, method="text", with_tail=with_tail),
         keep_nl=keep_nl).strip()
@@ -32,7 +32,7 @@ def extract_xml(element, with_tail=False):
 
 REGEX_NEWLINE = re.compile(r'\n')
 REGEX_WHITESPACE = re.compile(r'\s+', re.UNICODE)
-def remove_multiple_whitespaces(input_string, keep_nl = False):
+def remove_multiple_whitespaces(input_string, keep_nl=False):
 
     if keep_nl:
         lines = REGEX_NEWLINE.split(input_string)
