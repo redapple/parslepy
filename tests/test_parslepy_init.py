@@ -91,6 +91,20 @@ def test_parslepy_keys():
     ),
     (
         {
+            "--(#header)": {
+                "--(#banner)": {
+                    "--(#title)": {
+                        "--(a span)": {
+                            "title": "."
+                        }
+                    }
+                }
+            }
+        },
+        ["title"],
+    ),
+    (
+        {
             "--": {
                 "--(#banner)": {
                     "--(#title)": {
@@ -100,7 +114,7 @@ def test_parslepy_keys():
                     }
                 }
             },
-            "links": ["a::attr(href)"]
+            "links": [".//a/@href"]
         },
         ["title", "links"],
     ),
