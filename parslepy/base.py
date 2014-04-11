@@ -575,6 +575,18 @@ class Parselet(object):
             #        probably yes
             pass
 
+    def keys(self):
+        return self._keys(self.parselet_tree)
+
+    def _keys(self, parselet_node):
+        keys = []
+        if isinstance(parselet_node, ParsleyNode):
+            for ctx, v in list(parselet_node.items()):
+                if ctx.key == self.SPECIAL_LEVEL_KEY:
+                    keys.extend(self._keys(v))
+                else:
+                    keys.append(ctx.key)
+        return keys
 
 # alias
 Parslet = Parselet

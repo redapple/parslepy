@@ -10,7 +10,7 @@ from .tools import *
 
 def test_w3c_validator_extraction():
     debug = False
-    parselets = (
+    parselets = [
         (
             {"title": "h1"},
             {'title': 'Markup Validation Service'}
@@ -37,6 +37,7 @@ def test_w3c_validator_extraction():
                 {'content': "W3C's easy-to-use\n      markup validation service, based on SGML and XML parsers.",
                     'name': 'description'}]}
         ),
+
         # 3 equivalent expressions
         (
             {"title": "#banner #title a span"},
@@ -177,7 +178,55 @@ def test_w3c_validator_extraction():
                 ]
             }
         ),
-    )
+
+    ]
+
+    # CSS extensions via pseudo-elements and functional pseudo-elements
+    try:
+        from cssselect.parser import FunctionalPseudoElement
+
+        parselets.extend([
+        (
+            {"httpequiv": "head meta[http-equiv]::attr(content)"},
+            {'httpequiv': 'text/html;charset=utf-8'}
+        ),
+        (
+            {"meta": ["meta::attr(content)"]},
+            {'meta': [
+                'text/html;charset=utf-8',
+                'HTML, HyperText Markup Language, Validation,\n      W3C Markup Validation Service',
+                "W3C's easy-to-use\n      markup validation service, based on SGML and XML parsers."]},
+        ),
+        (
+            {"meta(meta)": [{"content": "::attr(content)",
+                             "name": "::attr(name), ::attr(http-equiv)"}],
+            },
+            {'meta': [
+                {'content': 'text/html;charset=utf-8',
+                    'name': 'Content-Type'},
+                {'content': 'HTML, HyperText Markup Language, Validation,\n      W3C Markup Validation Service',
+                    'name': 'keywords'},
+                {'content': "W3C's easy-to-use\n      markup validation service, based on SGML and XML parsers.",
+                    'name': 'description'}]}
+        ),
+        (
+            {"title": "#banner #title a span::text"},
+            {'title': 'Markup Validation Service'}
+        ),
+        (
+            {"comment": "::comment"},
+            {'comment': 'invisible'}
+        ),
+        (
+            {"comments": ["::comment"]},
+            {'comments': ['invisible',
+                         '<br /><label for="parsemodel">Treat as:</label> <select id="parsemodel" name="parsemodel"> <option value="sgml">HTML</option> <option value="xml">XML (and XHTML)</option> </select>',
+                         'fields',
+                         'frontforms']}
+        ),
+        ])
+    except:
+        pass
 
     hp = lxml.etree.HTMLParser()
     dirname = os.path.dirname(os.path.abspath(__file__))

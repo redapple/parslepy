@@ -66,5 +66,80 @@ def test_parslepy_init_selector_handler_error():
     parselet = parslepy.Parselet(parselet_script, selector_handler=mh)
     assert_is_instance(parselet.selector_handler, MyHandler)
 
+def test_parslepy_keys():
+    parselet_scripts = [
+    (
+        {
+            "title": "h1",
+            "subtitle": "//h2"
+        },
+        ["title", "subtitle"],
+    ),
+    (
+        {
+            "--": {
+                "--(#banner)": {
+                    "--(#title)": {
+                        "--(a span)": {
+                            "title": "."
+                        }
+                    }
+                }
+            }
+        },
+        ["title"],
+    ),
+    (
+        {
+            "--(#header)": {
+                "--(#banner)": {
+                    "--(#title)": {
+                        "--(a span)": {
+                            "title": "."
+                        }
+                    }
+                }
+            }
+        },
+        ["title"],
+    ),
+    (
+        {
+            "--": {
+                "--(#banner)": {
+                    "--(#title)": {
+                        "--(a span)": {
+                            "title": "."
+                        }
+                    }
+                }
+            },
+            "links": [".//a/@href"]
+        },
+        ["title", "links"],
+    ),
+    (
+        {
+            "title": "h1",
+            "--(.content)": {
+                "subtitle": ".//h2"
+            }
+        },
+        ["title", "subtitle"],
+    ),
+    (
+        {
+            "title": "h1",
+            "--(.content)": {
+                "title": ".//h2"
+            },
+            "footer": "parslepy:html(.//div[@class='footer'])"
+        },
+        ["title", "footer"],
+    ),
+    ]
 
-
+    for input_parselet, expected_output in parselet_scripts:
+        parselet = parslepy.Parselet(input_parselet)
+        assert_equal(set(parselet.keys()),
+                     set(expected_output))
