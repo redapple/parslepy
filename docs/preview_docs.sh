@@ -26,7 +26,7 @@ while [ "${1#-}" != "$1" ]; do
     shift
 done
 
-require when-changed || abort "Please install $1 first:   sudo pip install when-changed"
+require when-changed || abort "Please install this first:   sudo pip install when-changed"
 require "$browser" || abort "$browser is not available -- please specify another browser"
 
 # compile the first time
