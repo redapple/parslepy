@@ -3,36 +3,72 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to parslepy's documentation!
-====================================
+parslepy -- Documentation
+======================
+
 
 *parslepy* lets you extract content from HTML and XML documents
-where **extraction rules are defined using a JSON object**
-or equivalent Python :class:`dict`,
-where keys are names you want to assign to target document sections,
-elements or attributes,
-and values are `CSS3 Selectors`_ or `XPath 1.0`_ expressions matching
-these document parts.
+**using rules defined in a JSON object** (or a Python :class:`dict`).
+The object keys mean the names you want to assign for the data in each
+document section and the values are CSS selectors or XPath expressions
+that will match the document parts (elements or attributes).
 
-By default,
+Here is an example for extracting questions in StackOverflow first page::
 
-* selectors for elements will output their matching element(s)' textual content.
-  (children elements' content is also included)
-* Selectors matching element attributes will output the attribute's value.
+    {
+        "first_page_questions(//div[contains(@class,'question-summary')])": [{
+            "title": ".//h3/a",
+            "tags": "div.tags",
+            "votes": "div.votes div.mini-counts",
+            "views": "div.views div.mini-counts",
+            "answers": "div.status div.mini-counts"
+        }]
+    }
 
-You can nest objects, generate list of objects, and mix CSS and XPath
+
+Some details:
+-------------
+
+*parslepy* is a Python implementation (built on top of `lxml`_ and `cssselect`_)
+of the `Parsley DSL`_ for extraction content from structured documents,
+defined by Kyle Maxwell and Andrew Cantino
+(see the `parsley wiki`_ for more details and original C implementation).
+
+The default behavior for the selectors is:
+
+* selectors for elements will output their matching textual content (children elements' content is also included)
+* selectors matching element attributes will output the attribute's value
+
+So, if you use ``//h1/a`` in a selector, *parslepy* will extract the text inside of the ``a`` element
+and its children, and if you use ``//h1/a/@href`` it will extract the value for ``href``, i.e.,
+the address the link is pointing to.
+
+
+You can also nest objects, generate lists of objects, and mix CSS and XPath
 -- although not in the same selector.
 
-Parslepy understands what `lxml`_ and `cssselect`_ understand,
+*parslepy* understands what `lxml`_ and `cssselect`_ understand,
 which is roughly `CSS3 Selectors`_ and `XPath 1.0`_.
 
-Each rule should have the following format::
+
+.. _CSS3 Selectors: http://www.w3.org/TR/2011/REC-css3-selectors-20110929/
+.. _XPath 1.0: http://www.w3.org/TR/xpath/
+.. _lxml: http://lxml.de/
+.. _cssselect: https://github.com/SimonSapin/cssselect
+.. _Parsley DSL: https://github.com/fizx/parsley
+.. _parsley wiki: https://github.com/fizx/parsley/wiki
+
+
+Syntax summary
+^^^^^^^^^^^^^^
+
+Here is a quick description of the rules format::
 
     output key (mandatory)
         |
-      optionality operator (optional)
+        |  optionality operator (optional)
         |   |
-        |   |  scope, always within brackets (optional)
+        |   |   scope, always within brackets (optional)
         |   |      |
         v   v      v
     "somekey?(someselector)":   "someCSSSelector"
@@ -46,8 +82,8 @@ Each rule should have the following format::
     or         //           :    [{ ...some other rules... }]
 
 
-And a collection of extraction rules --also called a *parselet*,
-or *Parsley script*-- looks like this::
+A collection of extraction rules (also called a *parselet*,
+or *Parsley script*) looks like this::
 
     {
         "somekey": "#someID .someclass",                        # using a CSS selector
@@ -72,36 +108,26 @@ And the output would be something like::
 
 
 
-*parslepy* is a Python implementation -- using `lxml`_ and `cssselect`_ --
-of the Parsley extraction language defined by Kyle Maxwell and Andrew Cantino
-(see `parsley`_  and `parsley wiki`_ for details and original C implementation).
-
-.. _CSS3 Selectors: http://www.w3.org/TR/2011/REC-css3-selectors-20110929/
-.. _XPath 1.0: http://www.w3.org/TR/xpath/
-.. _lxml: http://lxml.de/
-.. _cssselect: https://github.com/SimonSapin/cssselect
-.. _parsley: https://github.com/fizx/parsley
-.. _parsley wiki: https://github.com/fizx/parsley/wiki
-
-
 Quickstart
 ----------
 
 Install
 ^^^^^^^
 
-* using PyPi (https://pypi.python.org/pypi/parslepy)
+You can install *parslepy* from `PyPI <https://pypi.python.org/pypi/parslepy>`_:
 
 .. code-block:: bash
 
-    $ [sudo] pip install parslepy
+    sudo pip install parslepy
 
-* using source code
+Or you can also install from source code (make sure you have the
+``lxml`` and ``cssselect`` libraries already installed):
 
 .. code-block:: bash
 
-    $ git clone https://github.com/redapple/parslepy.git
-    $ [sudo] python setup.py install
+    git clone https://github.com/redapple/parslepy.git
+    sudo python setup.py install
+
 
 Usage
 ^^^^^
@@ -405,6 +431,7 @@ or :class:`.DefaultSelectorHandler`.
 
 User-defined extensions
 ^^^^^^^^^^^^^^^^^^^^^^^
+
 *parslepy* also lets you define your own XPath extensions, just like
 `lxml`_ does, except the function you register must accept a user-supplied
 context object passed as first argument, subsequent arguments to your extension
@@ -436,7 +463,8 @@ We now want to generate full URLs for these images, not relative to
 http://www.python.org.
 
 **First we need to define our extension function as a Python function**:
-parslepy's extension functions must accept a user-context as first argument,
+
+*parslepy*'s extension functions must accept a user-context as first argument,
 then should expect an XPath context, followed by elements or strings
 matching the XPath expression,
 and finally whatever other parameters are passed to the function call
@@ -473,7 +501,7 @@ a custom selector handler, with a custom namespace and its prefix:
     >>>
 
 
-Now we can use this **absurl()** XPath extension within parslepy rules,
+Now we can use this **absurl()** XPath extension within *parslepy* rules,
 with the "myext" prefix
 (**do not forget to pass your selector handler** to your Parselet instance):
 
