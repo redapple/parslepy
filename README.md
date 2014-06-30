@@ -43,6 +43,7 @@ Alternatively, you can install from the latest source code:
 ### Online Resources ###
 
 * [Official Documentation](http://pythonhosted.org/parslepy)
+* [Wiki with examples and tutorials](https://github.com/redapple/parslepy/wiki)
 * [Parsley DSL](https://github.com/fizx/parsley)
 * [JSON Structure details -- Parsley wiki](https://github.com/fizx/parsley/wiki/JSON-Structure)
 * [Example Scrapy Spider using Parsley](http://snipplr.com/view/67016/parsley-spider/)
