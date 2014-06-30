@@ -114,13 +114,20 @@ Quickstart
 Install
 ^^^^^^^
 
+From PyPI
+#########
+
 You can install *parslepy* from `PyPI <https://pypi.python.org/pypi/parslepy>`_:
 
 .. code-block:: bash
 
     sudo pip install parslepy
 
-Or you can also install from source code (make sure you have the
+
+From latest source
+##################
+
+You can also install from source code (make sure you have the
 ``lxml`` and ``cssselect`` libraries already installed):
 
 .. code-block:: bash
@@ -128,20 +135,32 @@ Or you can also install from source code (make sure you have the
     git clone https://github.com/redapple/parslepy.git
     sudo python setup.py install
 
+You probably want also to make sure the tests passes:
+
+.. code-block:: bash
+
+    sudo pip install nosetests # only needed if you don't have nosetests installed
+    nosetests -v tests
 
 Usage
 ^^^^^
 
-    Extract the main heading of the Python.org homepage,
-    and the first paragraph below that:
+Here are some examples on how to use parslepy.
+You can also checkout the examples and tutorials at `parsley's wiki at GitHub <https://github.com/redapple/parslepy/wiki#usage>`_.
 
-    >>> import parslepy
-    >>> rules = {"heading": "#content h1.pageheading", "summary": "#intro > p > strong"}
-    >>> parslepy.Parselet(rules).parse("http://www.python.org")
-    {'heading': u'Python Programming Language \u2013 Official Website', 'summary': u'Python is a programming language that lets you work more quickly and integrate your systems more effectively. You can learn to use Python and see almost immediate gains in productivity and lower maintenance costs.'}
-    >>>
+Extract the questions from StackOverflow first page:
 
-    Extract a page heading and a list of item links from a HTML page as a string:
+    >>> import parslepy, urllib2
+    >>> rules = {"questions(//div[contains(@class,'question-summary')])": [{"title": ".//h3/a", "votes": "div.votes div.mini-counts"}]}
+    >>> parslepy.Parselet(rules).parse(urllib2.urlopen('http://stackoverflow.com'))
+    {'questions': [{'title': u'node.js RSS memory grows over time despite fairly consistent heap sizes',
+        'votes': u'0'},
+        {'title': u'SQL query for count of predicate applied on rows of subquery',
+        'votes': u'3'},
+        ...
+    }
+
+Extract a page heading and a list of item links from a string containing HTML:
 
     >>> import lxml.etree
     >>> import parslepy
@@ -180,6 +199,45 @@ Usage
               {'fresh': u'New!',
                'title': u'Python is great! New!',
                'url': '/article-003.html'}]}
+    >>>
+
+
+Extract using the rules in a JSON file (from *parslepy*'s ``examples/`` directory):
+
+.. code-block:: bash
+
+    # Parselet file containing CSS selectors
+    $ cat examples/engadget_css.let.json
+    {
+        "sections(nav#nav-main > ul li)": [{
+            "title": ".",
+            "url": "a.item @href",
+        }]
+    }
+    $ python run_parslepy.py --script examples/engadget_css.let.json --url http://www.engadget.com
+    {u'sections': [{u'title': u'News', u'url': '/'},
+                {u'title': u'Reviews', u'url': '/reviews/'},
+                {u'title': u'Features', u'url': '/features/'},
+                {u'title': u'Galleries', u'url': '/galleries/'},
+                {u'title': u'Videos', u'url': '/videos/'},
+                {u'title': u'Events', u'url': '/events/'},
+                {u'title': u'Podcasts',
+                    u'url': '/podcasts/the-engadget-podcast/'},
+                {u'title': u'Engadget Show', u'url': '/videos/show/'},
+                {u'title': u'Topics', u'url': '#nav-topics'}]}
+
+
+You may want to check out the other examples given in the ``examples/`` directory.
+You can run them using the ``run_parslepy.py`` script like shown above.
+
+
+Dependencies
+------------
+
+The current dependencies of the master branch are:
+
+* lxml>=2.3 (http://lxml.de/, https://pypi.python.org/pypi/lxml)
+* cssselect (https://github.com/SimonSapin/cssselect/, https://pypi.python.org/pypi/cssselect) (for lxml>=3)
 
 
 API
