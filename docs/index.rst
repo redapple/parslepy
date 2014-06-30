@@ -6,6 +6,8 @@
 parslepy -- Documentation
 ======================
 
+Introduction
+------------
 
 *parslepy* lets you extract content from HTML and XML documents
 **using rules defined in a JSON object** (or a Python :class:`dict`).
@@ -26,8 +28,8 @@ Here is an example for extracting questions in StackOverflow first page::
     }
 
 
-Some details:
--------------
+Some details
+^^^^^^^^^^^^
 
 *parslepy* is a Python implementation (built on top of `lxml`_ and `cssselect`_)
 of the `Parsley DSL`_ for extraction content from structured documents,
@@ -146,7 +148,7 @@ Usage
 ^^^^^
 
 Here are some examples on how to use parslepy.
-You can also checkout the examples and tutorials at `parsley's wiki at GitHub <https://github.com/redapple/parslepy/wiki#usage>`_.
+You can also check out the examples and tutorials at `parsley's wiki at GitHub <https://github.com/redapple/parslepy/wiki#usage>`_.
 
 Extract the questions from StackOverflow first page:
 
@@ -587,6 +589,6 @@ the HTML stream from the page.
 More examples
 =============
 
-See https://github.com/redapple/parslepy/wiki#usage
+Check out more examples and tutorials at `parsley's wiki at GitHub <https://github.com/redapple/parslepy/wiki#usage>`_.
 
 .. include:: ../CHANGELOG
