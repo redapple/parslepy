@@ -3,36 +3,74 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to parslepy's documentation!
-====================================
+parslepy -- Documentation
+======================
+
+Introduction
+------------
 
 *parslepy* lets you extract content from HTML and XML documents
-where **extraction rules are defined using a JSON object**
-or equivalent Python :class:`dict`,
-where keys are names you want to assign to target document sections,
-elements or attributes,
-and values are `CSS3 Selectors`_ or `XPath 1.0`_ expressions matching
-these document parts.
+**using rules defined in a JSON object** (or a Python :class:`dict`).
+The object keys mean the names you want to assign for the data in each
+document section and the values are CSS selectors or XPath expressions
+that will match the document parts (elements or attributes).
 
-By default,
+Here is an example for extracting questions in StackOverflow first page::
 
-* selectors for elements will output their matching element(s)' textual content.
-  (children elements' content is also included)
-* Selectors matching element attributes will output the attribute's value.
+    {
+        "first_page_questions(//div[contains(@class,'question-summary')])": [{
+            "title": ".//h3/a",
+            "tags": "div.tags",
+            "votes": "div.votes div.mini-counts",
+            "views": "div.views div.mini-counts",
+            "answers": "div.status div.mini-counts"
+        }]
+    }
 
-You can nest objects, generate list of objects, and mix CSS and XPath
+
+Some details
+^^^^^^^^^^^^
+
+*parslepy* is a Python implementation (built on top of `lxml`_ and `cssselect`_)
+of the `Parsley DSL`_ for extraction content from structured documents,
+defined by Kyle Maxwell and Andrew Cantino
+(see the `parsley wiki`_ for more details and original C implementation).
+
+The default behavior for the selectors is:
+
+* selectors for elements will output their matching textual content (children elements' content is also included)
+* selectors matching element attributes will output the attribute's value
+
+So, if you use ``//h1/a`` in a selector, *parslepy* will extract the text inside of the ``a`` element
+and its children, and if you use ``//h1/a/@href`` it will extract the value for ``href``, i.e.,
+the address the link is pointing to.
+
+
+You can also nest objects, generate lists of objects, and mix CSS and XPath
 -- although not in the same selector.
 
-Parslepy understands what `lxml`_ and `cssselect`_ understand,
+*parslepy* understands what `lxml`_ and `cssselect`_ understand,
 which is roughly `CSS3 Selectors`_ and `XPath 1.0`_.
 
-Each rule should have the following format::
+
+.. _CSS3 Selectors: http://www.w3.org/TR/2011/REC-css3-selectors-20110929/
+.. _XPath 1.0: http://www.w3.org/TR/xpath/
+.. _lxml: http://lxml.de/
+.. _cssselect: https://github.com/SimonSapin/cssselect
+.. _Parsley DSL: https://github.com/fizx/parsley
+.. _parsley wiki: https://github.com/fizx/parsley/wiki
+
+
+Syntax summary
+^^^^^^^^^^^^^^
+
+Here is a quick description of the rules format::
 
     output key (mandatory)
         |
-      optionality operator (optional)
+        |  optionality operator (optional)
         |   |
-        |   |  scope, always within brackets (optional)
+        |   |   scope, always within brackets (optional)
         |   |      |
         v   v      v
     "somekey?(someselector)":   "someCSSSelector"
@@ -46,8 +84,8 @@ Each rule should have the following format::
     or         //           :    [{ ...some other rules... }]
 
 
-And a collection of extraction rules --also called a *parselet*,
-or *Parsley script*-- looks like this::
+A collection of extraction rules (also called a *parselet*,
+or *Parsley script*) looks like this::
 
     {
         "somekey": "#someID .someclass",                        # using a CSS selector
@@ -72,50 +110,59 @@ And the output would be something like::
 
 
 
-*parslepy* is a Python implementation -- using `lxml`_ and `cssselect`_ --
-of the Parsley extraction language defined by Kyle Maxwell and Andrew Cantino
-(see `parsley`_  and `parsley wiki`_ for details and original C implementation).
-
-.. _CSS3 Selectors: http://www.w3.org/TR/2011/REC-css3-selectors-20110929/
-.. _XPath 1.0: http://www.w3.org/TR/xpath/
-.. _lxml: http://lxml.de/
-.. _cssselect: https://github.com/SimonSapin/cssselect
-.. _parsley: https://github.com/fizx/parsley
-.. _parsley wiki: https://github.com/fizx/parsley/wiki
-
-
 Quickstart
 ----------
 
 Install
 ^^^^^^^
 
-* using PyPi (https://pypi.python.org/pypi/parslepy)
+From PyPI
+#########
+
+You can install *parslepy* from `PyPI <https://pypi.python.org/pypi/parslepy>`_:
 
 .. code-block:: bash
 
-    $ [sudo] pip install parslepy
+    sudo pip install parslepy
 
-* using source code
+
+From latest source
+##################
+
+You can also install from source code (make sure you have the
+``lxml`` and ``cssselect`` libraries already installed):
 
 .. code-block:: bash
 
-    $ git clone https://github.com/redapple/parslepy.git
-    $ [sudo] python setup.py install
+    git clone https://github.com/redapple/parslepy.git
+    sudo python setup.py install
+
+You probably want also to make sure the tests passes:
+
+.. code-block:: bash
+
+    sudo pip install nosetests # only needed if you don't have nosetests installed
+    nosetests -v tests
 
 Usage
 ^^^^^
 
-    Extract the main heading of the Python.org homepage,
-    and the first paragraph below that:
+Here are some examples on how to use parslepy.
+You can also check out the examples and tutorials at `parsley's wiki at GitHub <https://github.com/redapple/parslepy/wiki#usage>`_.
 
-    >>> import parslepy
-    >>> rules = {"heading": "#content h1.pageheading", "summary": "#intro > p > strong"}
-    >>> parslepy.Parselet(rules).parse("http://www.python.org")
-    {'heading': u'Python Programming Language \u2013 Official Website', 'summary': u'Python is a programming language that lets you work more quickly and integrate your systems more effectively. You can learn to use Python and see almost immediate gains in productivity and lower maintenance costs.'}
-    >>>
+Extract the questions from StackOverflow first page:
 
-    Extract a page heading and a list of item links from a HTML page as a string:
+    >>> import parslepy, urllib2
+    >>> rules = {"questions(//div[contains(@class,'question-summary')])": [{"title": ".//h3/a", "votes": "div.votes div.mini-counts"}]}
+    >>> parslepy.Parselet(rules).parse(urllib2.urlopen('http://stackoverflow.com'))
+    {'questions': [{'title': u'node.js RSS memory grows over time despite fairly consistent heap sizes',
+        'votes': u'0'},
+        {'title': u'SQL query for count of predicate applied on rows of subquery',
+        'votes': u'3'},
+        ...
+    }
+
+Extract a page heading and a list of item links from a string containing HTML:
 
     >>> import lxml.etree
     >>> import parslepy
@@ -154,6 +201,45 @@ Usage
               {'fresh': u'New!',
                'title': u'Python is great! New!',
                'url': '/article-003.html'}]}
+    >>>
+
+
+Extract using the rules in a JSON file (from *parslepy*'s ``examples/`` directory):
+
+.. code-block:: bash
+
+    # Parselet file containing CSS selectors
+    $ cat examples/engadget_css.let.json
+    {
+        "sections(nav#nav-main > ul li)": [{
+            "title": ".",
+            "url": "a.item @href",
+        }]
+    }
+    $ python run_parslepy.py --script examples/engadget_css.let.json --url http://www.engadget.com
+    {u'sections': [{u'title': u'News', u'url': '/'},
+                {u'title': u'Reviews', u'url': '/reviews/'},
+                {u'title': u'Features', u'url': '/features/'},
+                {u'title': u'Galleries', u'url': '/galleries/'},
+                {u'title': u'Videos', u'url': '/videos/'},
+                {u'title': u'Events', u'url': '/events/'},
+                {u'title': u'Podcasts',
+                    u'url': '/podcasts/the-engadget-podcast/'},
+                {u'title': u'Engadget Show', u'url': '/videos/show/'},
+                {u'title': u'Topics', u'url': '#nav-topics'}]}
+
+
+You may want to check out the other examples given in the ``examples/`` directory.
+You can run them using the ``run_parslepy.py`` script like shown above.
+
+
+Dependencies
+------------
+
+The current dependencies of the master branch are:
+
+* lxml>=2.3 (http://lxml.de/, https://pypi.python.org/pypi/lxml)
+* cssselect (https://github.com/SimonSapin/cssselect/, https://pypi.python.org/pypi/cssselect) (for lxml>=3)
 
 
 API
@@ -405,6 +491,7 @@ or :class:`.DefaultSelectorHandler`.
 
 User-defined extensions
 ^^^^^^^^^^^^^^^^^^^^^^^
+
 *parslepy* also lets you define your own XPath extensions, just like
 `lxml`_ does, except the function you register must accept a user-supplied
 context object passed as first argument, subsequent arguments to your extension
@@ -436,7 +523,8 @@ We now want to generate full URLs for these images, not relative to
 http://www.python.org.
 
 **First we need to define our extension function as a Python function**:
-parslepy's extension functions must accept a user-context as first argument,
+
+*parslepy*'s extension functions must accept a user-context as first argument,
 then should expect an XPath context, followed by elements or strings
 matching the XPath expression,
 and finally whatever other parameters are passed to the function call
@@ -473,7 +561,7 @@ a custom selector handler, with a custom namespace and its prefix:
     >>>
 
 
-Now we can use this **absurl()** XPath extension within parslepy rules,
+Now we can use this **absurl()** XPath extension within *parslepy* rules,
 with the "myext" prefix
 (**do not forget to pass your selector handler** to your Parselet instance):
 
@@ -501,6 +589,6 @@ the HTML stream from the page.
 More examples
 =============
 
-See https://github.com/redapple/parslepy/wiki#usage
+Check out more examples and tutorials at `parsley's wiki at GitHub <https://github.com/redapple/parslepy/wiki#usage>`_.
 
 .. include:: ../CHANGELOG
