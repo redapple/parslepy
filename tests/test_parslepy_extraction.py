@@ -241,8 +241,8 @@ def test_w3c_validator_extraction():
 def compare_extracted_output(root, input_parselet, expected_output, debug=False):
     parselet = parslepy.Parselet(input_parselet, strict=True, debug=debug)
     extracted = parselet.extract(root)
-    #print("extracted:", extracted)
-    #print("expected_output:", expected_output)
+    print("extracted:", [extracted])
+    print("expected_output:", [expected_output])
     assert_dict_equal(extracted, expected_output)
 
 
@@ -256,7 +256,7 @@ def test_creativecommon_extraction():
         # subtle difference but there's an extra BR that is translated to "\n"
         (
             {"languages(div#languages)": "parsley:strnl(.)"},
-            {'languages': 'This page is available in the following languages:\n\n\nCastellano\n\nCastellano (Espa\u00f1a)\n\nCatal\u00e0\n\nDeutsch\n\nEnglish\n\nEsperanto\n\nfran\u00e7ais\n\nhrvatski\n\nIndonesia\n\nItaliano\n\nMagyar\n\nNederlands\n\nNorsk\n\npolski\n\nPortugu\u00eas\n\nPortugu\u00eas (BR)\n\nSuomeksi\n\nsvenska\n\n\u00edslenska\n\n\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac\n\n\u0440\u0443\u0441\u0441\u043a\u0438\u0439\n\n\u0443\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430\n\n\u4e2d\u6587\n\n\u83ef\u8a9e (\u53f0\u7063)\n\n\ud55c\uad6d\uc5b4'}
+            {'languages': 'This page is available in the following languages:\n\n\n\n\nCastellano\n\nCastellano (Espa\u00f1a)\n\nCatal\u00e0\n\nDeutsch\n\nEnglish\n\nEsperanto\n\nfran\u00e7ais\n\nhrvatski\n\nIndonesia\n\nItaliano\n\nMagyar\n\nNederlands\n\nNorsk\n\npolski\n\nPortugu\u00eas\n\nPortugu\u00eas (BR)\n\nSuomeksi\n\nsvenska\n\n\u00edslenska\n\n\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac\n\n\u0440\u0443\u0441\u0441\u043a\u0438\u0439\n\n\u0443\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430\n\n\u4e2d\u6587\n\n\u83ef\u8a9e (\u53f0\u7063)\n\n\ud55c\uad6d\uc5b4'}
         ),
         # HTML code output
         (
