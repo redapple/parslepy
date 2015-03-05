@@ -3,7 +3,7 @@ parslepy
 
 [![Build Status](https://travis-ci.org/redapple/parslepy.png?branch=master)](https://travis-ci.org/redapple/parslepy)
 
-*parslepy* is a Python implementation
+*parslepy* (pronounced *"parsley-pie"*, */ˈpɑːslipaɪ/*) is a Python implementation
 (built on top of [lxml](http://lxml.de) and [cssselect](https://github.com/SimonSapin/cssselect)) of the
 [Parsley DSL](https://github.com/fizx/parsley)
 for extracting structured data from web pages, as defined by Kyle Maxwell and Andrew Cantino
