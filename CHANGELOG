@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Version 0.3.0 - March 3., 2015
+----------------------------------
+
+* Improvements:
+    * CSS selectors extensions:
+        * pseudo-elements ``::text`` (borrowed from Scrapy) and ``::comment``
+        * functional pseudo-element ``::attr(name)``
+    * Cleaned up documentation (thanks @eliasdorneles!)
+    * New ``keys()`` method for ``Parselet`` nodes
+
 Version 0.2.0 - August 5., 2013
 ---------------------------------
 

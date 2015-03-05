@@ -241,8 +241,8 @@ def test_w3c_validator_extraction():
 def compare_extracted_output(root, input_parselet, expected_output, debug=False):
     parselet = parslepy.Parselet(input_parselet, strict=True, debug=debug)
     extracted = parselet.extract(root)
-    #print("extracted:", extracted)
-    #print("expected_output:", expected_output)
+    print("extracted:", [extracted])
+    print("expected_output:", [expected_output])
     assert_dict_equal(extracted, expected_output)
 
 

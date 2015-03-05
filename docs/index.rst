@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 parslepy -- Documentation
-======================
+=========================
 
 Introduction
 ------------
@@ -233,6 +233,103 @@ You may want to check out the other examples given in the ``examples/`` director
 You can run them using the ``run_parslepy.py`` script like shown above.
 
 
+Selector syntax
+^^^^^^^^^^^^^^^
+
+*parslepy* understands `CSS3 Selectors`_ and `XPath 1.0`_ expressions.
+
+Select elements attributes by name
+##################################
+
+It also accepts `Parsley DSL`_'s ``@attributename`` at the end of CSS
+selectors, to get the attribute(s) of the preceding selected element(s).
+*parslepy* supports `Scrapy`_'s ``::attr(attributename)`` functional pseudo
+element extension to CCS3, which gets attributes by ``attributename``.
+
+See the two syntax variants in use:
+
+.. code-block:: bash
+
+    >>> import parslepy
+    >>> import pprint
+    >>>
+    >>> html = """
+    ... <!DOCTYPE html>
+    ... <html>
+    ... <head>
+    ...     <title>Sample document to test parslepy</title>
+    ...     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    ... </head>
+    ... <body>
+    ... <div>
+    ... <a class="first" href="http://www.example.com/first">First link</a>
+    ... <a class="second" href="http://www.example.com/second">Second link</a>
+    ... </div>
+    ... </body>
+    ... </html>"""
+    >>> rules = {
+    ...      "links": {
+    ...         "first_class": ["a.first::attr(href)"],
+    ...         "second_class": ["a.second @href"],
+    ...     }
+    ... }
+    >>> p = parslepy.Parselet(rules)
+    >>> extracted = p.parse_fromstring(html)
+    >>> pprint.pprint(extracted)
+    {'links': {'first_class': ['http://www.example.com/first'],
+               'second_class': ['http://www.example.com/second']}}
+    >>>
+
+
+Select text and comments nodes
+##############################
+
+Borrowing from `Scrapy`_'s extension to CCS3 selectors,
+*parslepy* supports ``::text`` and ``::comment`` pseudo
+elements (resp. get text nodes of an element, and extract
+comments in XML/HTML elements)
+
+.. code-block:: bash
+
+    >>> import parslepy
+    >>> import pprint
+    >>>
+    >>> html = """
+    ... <!DOCTYPE html>
+    ... <html>
+    ... <head>
+    ...     <title>Sample document to test parslepy</title>
+    ...     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    ... </head>
+    ... <body>
+    ... <h1 id="main">News</h1>
+    ... <!-- this is a comment -->
+    ... <div>
+    ... <p>Something to say</p>
+    ... <!-- this is another comment -->
+    ... </div>
+    ... </body>
+    ... </html>"""
+    >>> rules = {
+    ...      "comments": {
+    ...         "all": ["::comment"],
+    ...         "inside_div": "div::comment"
+    ...     }
+    ... }
+    >>> p = parslepy.Parselet(rules)
+    >>> extracted = p.parse_fromstring(html)
+    >>> pprint.pprint(extracted)
+    {'comments': {'all': [u'this is a comment', u'this is another comment'],
+                  'inside_div': u'this is another comment'}}
+    >>>
+
+
+.. _CSS3 Selectors: http://www.w3.org/TR/2011/REC-css3-selectors-20110929/
+.. _XPath 1.0: http://www.w3.org/TR/xpath/
+.. _Parsley DSL: https://github.com/fizx/parsley
+.. _Scrapy: http://scrapy.org/
+
+
 Dependencies
 ------------
 
@@ -262,7 +359,7 @@ script, and, depending on your selectors, values will be:
 * nested lists of extraction content
 
 .. autoclass:: parslepy.base.Parselet
-    :members: parse, from_jsonfile, from_jsonstring, extract, parse_fromstring
+    :members: parse, from_jsonfile, from_jsonstring, extract, parse_fromstring, keys
 
 Customizing
 -----------

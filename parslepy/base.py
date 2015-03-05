@@ -90,15 +90,11 @@ class NonMatchingNonOptionalKey(RuntimeError):
     ...     "heading2": "h2#main",
     ... }
     >>> p = parslepy.Parselet(rules, strict=True)
-    >>> p.parse_fromstring(html)
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "parslepy/base.py", line 501, in extract
-        return self._extract(self.parselet_tree, document)
-      File "parslepy/base.py", line 582, in _extract
-        document.getroottree().getpath(document),v
-    NonMatchingNonOptionalKey: key "heading2" is required but yield nothing
-    Current path: /html/(<Selector: inner=<CSSSelector 20a2758 for 'h2#main'>>)
+    >>> try:
+    ...     p.parse_fromstring(html)
+    ... except parslepy.base.NonMatchingNonOptionalKey as e:
+    ...     print "Missing mandatory key"
+    Missing mandatory key
     """
 
     pass
@@ -109,16 +105,11 @@ class InvalidKeySyntax(SyntaxError):
     Raised when the input Parsley script's syntax is invalid
 
     >>> import parslepy
-    >>> p = parslepy.Parselet({"heading@": "#main"})
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "parslepy/base.py", line 325, in __init__
-        self.compile()
-      File "parslepy/base.py", line 393, in compile
-        self.parselet_tree = self._compile(self.parselet)
-      File "parslepy/base.py", line 432, in _compile
-        raise InvalidKeySyntax("Key %s is not valid" % k)
-    InvalidKeySyntax: Key heading@ is not valid
+    >>> try:
+    ...     p = parslepy.Parselet({"heading@": "#main"})
+    ... except parslepy.base.InvalidKeySyntax as e:
+    ...     print e
+    Key heading@ is not valid
     """
 
     pass
@@ -159,8 +150,9 @@ class Parselet(object):
         ...         "url": "a/@href"
         ...     }],
         ... }
-        >>> parslepy.Parselet(rules)
-        <parslepy.base.Parselet object at 0x164cfd0>
+        >>> p = parslepy.Parselet(rules)
+        >>> type(p)
+        <class 'parslepy.base.Parselet'>
 
         Use :meth:`~base.Parselet.extract` or :meth:`~base.Parselet.parse`
         to get extracted content from documents.
@@ -215,8 +207,9 @@ class Parselet(object):
 
         >>> import parslepy
         >>> parsley_string = '{ "title": "h1", "link": "a @href"}'
-        >>> parslepy.Parselet.from_jsonstring(parsley_string)
-        <parslepy.base.Parselet object at 0x183a050>
+        >>> p = parslepy.Parselet.from_jsonstring(parsley_string)
+        >>> type(p)
+        <class 'parslepy.base.Parselet'>
         >>>
 
         :param string s: a Parsley script as a JSON string
@@ -576,6 +569,19 @@ class Parselet(object):
             pass
 
     def keys(self):
+        """
+        Return a list of 1st level keys of the output data model
+
+        >>> import parslepy
+        >>> rules = {
+        ...     "headingcss": "#main",
+        ...     "headingxpath": "//h1[@id='main']"
+        ... }
+        >>> p = parslepy.Parselet(rules)
+        >>> sorted(p.keys())
+        ['headingcss', 'headingxpath']
+
+        """
         return self._keys(self.parselet_tree)
 
     def _keys(self, parselet_node):
