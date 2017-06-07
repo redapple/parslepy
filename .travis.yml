@@ -9,6 +9,6 @@ env:
     - LXML_VERSION=lxml-3.8
     - LXML_VERSION=lxml-latest
 install:
-    - pip install -r requirements-$LXML_VERSION.txt --use-mirrors
+    - pip install -r requirements-$LXML_VERSION.txt
 script: nosetests tests
 
