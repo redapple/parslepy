@@ -7,7 +7,6 @@ import lxml.html
 import re
 import json
 
-
 # http://stackoverflow.com/questions/11301138/how-to-check-if-variable-is-string-with-python-2-and-3-compatibility
 try:
     isinstance("", basestring)
@@ -128,8 +127,9 @@ class Parselet(object):
         and build an abstract representation of the Parsley extraction
         logic.
 
-        Two helper class methods can be used to instantiate a Parselet
-        from JSON rules: :meth:`.from_jsonstring`, :meth:`.from_jsonfile`.
+        Four helper class methods can be used to instantiate a Parselet
+        from JSON/YAML rules: :meth:`.from_jsonstring`, :meth:`.from_jsonfile`,
+        :meth:`.from_yamlstring`, :meth:`.from_yamlfile`.
 
         :param dict parselet: Parsley script as a Python dict object
         :param boolean strict: Set to *True* is you want to
@@ -198,6 +198,51 @@ class Parselet(object):
 
         return cls._from_jsonlines(fp,
             selector_handler=selector_handler, strict=strict, debug=debug)
+
+    @classmethod
+    def from_yamlfile(cls, fp, selector_handler=None, strict=False, debug=False):
+        """
+        Create a Parselet instance from a file containing
+        the Parsley script as a YAML object
+
+        >>> import parslepy
+        >>> with open('parselet.yml') as fp:
+        ...     parslepy.Parselet.from_yamlfile(fp)
+        ...
+        <parslepy.base.Parselet object at 0x2014e50>
+
+        :param file fp: an open file-like pointer containing the Parsley script
+        :rtype: :class:`.Parselet`
+
+        Other arguments: same as for :class:`.Parselet` contructor
+        """
+
+        return cls.from_yamlstring(fp.read(), selector_handler=selector_handler, strict=strict, debug=debug)
+
+    @classmethod
+    def from_yamlstring(cls, s, selector_handler=None, strict=False, debug=False):
+        """
+        Create a Parselet instance from s (str) containing
+        the Parsley script as YAML
+
+        >>> import parslepy
+        >>> parsley_string = '''---
+            title: h1
+            link: a @href
+        '''
+        >>> p = parslepy.Parselet.from_yamlstring(parsley_string)
+        >>> type(p)
+        <class 'parslepy.base.Parselet'>
+        >>>
+
+        :param string s: a Parsley script as a YAML string
+        :rtype: :class:`.Parselet`
+
+        Other arguments: same as for :class:`.Parselet` contructor
+        """
+
+        import yaml
+        return cls(yaml.load(s), selector_handler=selector_handler, strict=strict, debug=debug)
 
     @classmethod
     def from_jsonstring(cls, s, selector_handler=None, strict=False, debug=False):
@@ -279,8 +324,8 @@ class Parselet(object):
         (recursive)
         """
         if not isinstance(self.parselet, dict):
-            raise ValueError(
-                "Parselet must be a dict of some sort. Or use .from_jsonstring() or .from_jsonfile()")
+            raise ValueError("Parselet must be a dict of some sort. Or use .from_jsonstring(), " \
+                ".from_jsonfile(), .from_yamlstring(), or .from_yamlfile()")
         self.parselet_tree = self._compile(self.parselet)
 
     VALID_KEY_CHARS = "\w-"

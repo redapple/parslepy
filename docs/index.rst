@@ -27,7 +27,6 @@ Here is an example for extracting questions in StackOverflow first page::
         }]
     }
 
-
 Some details
 ^^^^^^^^^^^^
 
@@ -85,7 +84,7 @@ Here is a quick description of the rules format::
 
 
 A collection of extraction rules (also called a *parselet*,
-or *Parsley script*) looks like this::
+or *Parsley script*) looks like this in JSON format::
 
     {
         "somekey": "#someID .someclass",                        # using a CSS selector
@@ -94,6 +93,14 @@ or *Parsley script*) looks like this::
             "somenestedkey": "somenestedtag/@someattribute"     # XPath expression for an attribbute
        }]
     }
+
+... or like this in YAML format:
+
+    ---
+    somekey: "#someID .someclass"                        # using a CSS selector
+    anotherkey: "//sometag[@someattribute='somevalue']"  # using an XPath expression
+    nestedkey(.somelistclass):                           # CSS selector for multiple elements (scope selector)
+    - somenestedkey: somenestedtag/@someattribute        # XPath expression for an attribbute
 
 And the output would be something like::
 
@@ -359,7 +366,7 @@ script, and, depending on your selectors, values will be:
 * nested lists of extraction content
 
 .. autoclass:: parslepy.base.Parselet
-    :members: parse, from_jsonfile, from_jsonstring, extract, parse_fromstring, keys
+    :members: parse, from_jsonfile, from_jsonstring, from_yamlfile, from_yamlstring, extract, parse_fromstring, keys
 
 Customizing
 -----------
