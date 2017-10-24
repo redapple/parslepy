@@ -6,7 +6,6 @@ import lxml.etree
 import lxml.html
 import re
 import json
-import yaml
 
 # http://stackoverflow.com/questions/11301138/how-to-check-if-variable-is-string-with-python-2-and-3-compatibility
 try:
@@ -239,7 +238,8 @@ class Parselet(object):
         Other arguments: same as for :class:`.Parselet` contructor
         """
 
-        return cls(yaml.load(s), selector_handler=selector_handler, strict=strict, debug=debug)
+        from yaml import load as yaml_load
+        return cls(yaml_load(s), selector_handler=selector_handler, strict=strict, debug=debug)
 
     @classmethod
     def from_jsonstring(cls, s, selector_handler=None, strict=False, debug=False):

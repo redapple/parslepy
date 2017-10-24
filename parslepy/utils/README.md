@@ -7,7 +7,7 @@
 Provide your Parsley script at the command line:
 
 ```
-$ scrapy crawl MySpider -a parseletfile=myparselet.let.json
+$ scrapy crawl MySpider -a parseletfile=myparselet.let.yml
 ```
 
 with a Scrapy spider similar to this:
@@ -31,8 +31,8 @@ class MySpider(BaseSpider):
     def __init__(self, parseletfile=None):
 
         if parseletfile:
-            with open(parseletfile) as jsonfp:
-                self.parselet = parslepy.Parselet.from_jsonfile(jsonfp)
+            with open(parseletfile) as yamlfp:
+                self.parselet = parslepy.Parselet.from_yamlfile(yamlfp)
 
     def parse(self, response):
 

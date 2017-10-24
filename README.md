@@ -16,17 +16,15 @@ Kudos to Kyle Maxwell (@fizx) for coming up with this smart and easy syntax to d
 Check out the [official docs](http://pythonhosted.org/parslepy) for more information on how to install
 and use *parslepy*. There is also some useful information at the [parslepy Wiki](https://github.com/redapple/parslepy/wiki)
 
-Here is an example of a parselet script that extracts the questions from StackOverflow first page:
+Here is an example of a [YAML](https://en.wikipedia.org/wiki/YAML) parselet script that extracts the questions from StackOverflow first page:
 
-    {
-        "first_page_questions(//div[contains(@class,'question-summary')])": [{
-            "title": ".//h3/a",
-            "tags": "div.tags",
-            "votes": "div.votes div.mini-counts",
-            "views": "div.views div.mini-counts",
-            "answers": "div.status div.mini-counts"
-        }]
-    }
+    ---
+    first_page_questions(//div[contains(@class,'question-summary')]):
+    - title: ".//h3/a"
+    tags: div.tags
+    votes: div.votes div.mini-counts
+    views: div.views div.mini-counts
+    answers: div.status div.mini-counts
 
 ### Install
 

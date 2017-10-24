@@ -15,18 +15,15 @@ The object keys mean the names you want to assign for the data in each
 document section and the values are CSS selectors or XPath expressions
 that will match the document parts (elements or attributes).
 
-Here is an example for extracting questions in StackOverflow first page::
+Here is a [YAML](https://en.wikipedia.org/wiki/YAML) example of a parselet for extracting questions in StackOverflow first page::
 
-    {
-        "first_page_questions(//div[contains(@class,'question-summary')])": [{
-            "title": ".//h3/a",
-            "tags": "div.tags",
-            "votes": "div.votes div.mini-counts",
-            "views": "div.views div.mini-counts",
-            "answers": "div.status div.mini-counts"
-        }]
-    }
-
+    ---
+    first_page_questions(//div[contains(@class,'question-summary')]):
+    - title: ".//h3/a"
+    tags: div.tags
+    votes: div.votes div.mini-counts
+    views: div.views div.mini-counts
+    answers: div.status div.mini-counts
 
 Some details
 ^^^^^^^^^^^^
@@ -85,7 +82,15 @@ Here is a quick description of the rules format::
 
 
 A collection of extraction rules (also called a *parselet*,
-or *Parsley script*) looks like this::
+or *Parsley script*) looks like this in YAML format::
+
+    ---
+    somekey: "#someID .someclass"                        # using a CSS selector
+    anotherkey: "//sometag[@someattribute='somevalue']"  # using an XPath expression
+    nestedkey(.somelistclass):                           # CSS selector for multiple elements (scope selector)
+    - somenestedkey: somenestedtag/@someattribute        # XPath expression for an attribbute
+
+... or like this in JSON format:
 
     {
         "somekey": "#someID .someclass",                        # using a CSS selector
@@ -359,7 +364,7 @@ script, and, depending on your selectors, values will be:
 * nested lists of extraction content
 
 .. autoclass:: parslepy.base.Parselet
-    :members: parse, from_jsonfile, from_jsonstring, extract, parse_fromstring, keys
+    :members: parse, from_jsonfile, from_jsonstring, from_yamlfile, from_yamlstring, extract, parse_fromstring, keys
 
 Customizing
 -----------
