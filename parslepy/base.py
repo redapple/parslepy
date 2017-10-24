@@ -241,8 +241,8 @@ class Parselet(object):
         Other arguments: same as for :class:`.Parselet` contructor
         """
 
-        from yaml import load as yaml_load
-        return cls(yaml_load(s), selector_handler=selector_handler, strict=strict, debug=debug)
+        import yaml
+        return cls(yaml.load(s), selector_handler=selector_handler, strict=strict, debug=debug)
 
     @classmethod
     def from_jsonstring(cls, s, selector_handler=None, strict=False, debug=False):
