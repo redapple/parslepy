@@ -20,10 +20,10 @@ Here is a [YAML](https://en.wikipedia.org/wiki/YAML) example of a parselet for e
     ---
     first_page_questions(//div[contains(@class,'question-summary')]):
     - title: ".//h3/a"
-    tags: div.tags
-    votes: div.votes div.mini-counts
-    views: div.views div.mini-counts
-    answers: div.status div.mini-counts
+      tags: div.tags
+      votes: div.votes div.mini-counts
+      views: div.views div.mini-counts
+      answers: div.status div.mini-counts
 
 Some details
 ^^^^^^^^^^^^
