@@ -226,7 +226,10 @@ class Parselet(object):
         the Parsley script as YAML
 
         >>> import parslepy
-        >>> parsley_string = '---\ntitle: h1\nlink: a @href'
+        >>> parsley_string = '''---
+            title: h1
+            link: a @href
+        '''
         >>> p = parslepy.Parselet.from_yamlstring(parsley_string)
         >>> type(p)
         <class 'parslepy.base.Parselet'>
